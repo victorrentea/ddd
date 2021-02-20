@@ -1,7 +1,8 @@
 package victor.training.ddd.repo;
 
-import org.springframework.data.jpa.repository.JpaRepository;
 import victor.training.ddd.model.Customer;
+import victor.training.ddd.model.Customer.CustomerId;
+import victor.training.ddd.repo.base.CustomJpaRepository;
 
-public interface CustomerRepo extends JpaRepository<Customer, Long> {
+public interface CustomerRepo extends CustomJpaRepository<Customer, CustomerId> {
 }

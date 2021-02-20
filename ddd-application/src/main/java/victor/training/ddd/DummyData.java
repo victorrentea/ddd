@@ -6,6 +6,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import victor.training.ddd.model.Customer;
+import victor.training.ddd.model.Customer.CustomerId;
 import victor.training.ddd.model.CustomerAddress;
 import victor.training.ddd.model.Site;
 import victor.training.ddd.model.User;
@@ -30,7 +31,8 @@ public class DummyData {
 
       Long siteId = siteRepo.save(new Site("Under the sea")).getId();
       CustomerAddress address = new CustomerAddress(1L, "Paris", "Champs Elysees");
-      Customer customer = new Customer("John", address,"a@b.com", siteId);
+      CustomerId id = customerRepo.newId();
+      Customer customer = new Customer(id, "John", address,"a@b.com", siteId);
 
       customerRepo.save(customer);
 

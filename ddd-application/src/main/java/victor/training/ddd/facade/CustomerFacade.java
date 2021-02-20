@@ -3,6 +3,7 @@ package victor.training.ddd.facade;
 import lombok.RequiredArgsConstructor;
 import victor.training.ddd.facade.dto.CustomerSearchCriteria;
 import victor.training.ddd.facade.dto.CustomerSearchResult;
+import victor.training.ddd.model.Customer.CustomerId;
 import victor.training.ddd.repo.CustomerSearchRepo;
 import victor.training.ddd.service.EmailSender;
 import victor.training.ddd.model.Email;
@@ -29,17 +30,18 @@ public class CustomerFacade {
 	}
 
 	public CustomerDto findById(long customerId) {
-		Customer customer = customerRepo.findById(customerId).get();
+		Customer customer = customerRepo.findById(new CustomerId(customerId)).get();
 		CustomerDto dto = new CustomerDto();
 		dto.name = customer.name();
 		dto.email = customer.email();
 		dto.creationDateStr = new SimpleDateFormat("yyyy-MM-dd").format(customer.getCreationDate());
-		dto.id = customer.getId();
+		dto.id = customer.id().value();
 		return dto;
 	}
 
 	public void registerCustomer(CustomerDto dto) {
-		Customer customer = new Customer(dto.name, null, "a@b.com", dto.siteId);
+		CustomerId id = customerRepo.newId();
+		Customer customer = new Customer(id, dto.name, null, "a@b.com", dto.siteId);
 //		customer.setEmail(dto.email);
 //		customer.setName(dto.name);
 //		customer.setSite(siteRepo.getReference(dto.countryId)); // JPA link

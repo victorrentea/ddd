@@ -1,6 +1,7 @@
 package victor.training.ddd.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Value;
 
 import javax.persistence.*;
@@ -10,14 +11,18 @@ import java.util.UUID;
 @Entity
 public class User {
 
-   @Data
+   @EqualsAndHashCode
    @Embeddable
    public static class UserId implements Serializable {
       private String uuid = UUID.randomUUID().toString();
 
-      protected UserId() {} // for hibernate
+      public UserId() {} // generates Unique from java
       public UserId(String uuid) {
          this.uuid = uuid;
+      }
+
+      public String uuid() {
+         return uuid;
       }
    }
    @EmbeddedId // generated in Java
