@@ -1,8 +1,5 @@
 package victor.training.ddd.model;
 
-import lombok.Data;
-import lombok.Getter;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -11,14 +8,20 @@ import javax.persistence.Id;
 public class Site {
     @Id
     @GeneratedValue
-    @Getter
     private Long id;
 
-    @Getter
     private String name;
 
     protected Site() {} // hibernate
     public Site(String name) {
         this.name = name;
+    }
+
+    public Long id() {
+        return id;
+    }
+
+    public String name() {
+        return name;
     }
 }

@@ -1,8 +1,13 @@
 package victor.training.ddd.events;
 
-import lombok.Value;
-
-@Value
 public class CustomerAddressChanged implements DomainEvent{
-   long customerId;
+   private final long customerId;
+
+   public CustomerAddressChanged(long customerId) {
+      this.customerId = customerId;
+   }
+
+   public long getCustomerId() {
+      return customerId;
+   }
 }

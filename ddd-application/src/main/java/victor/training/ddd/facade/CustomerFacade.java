@@ -66,8 +66,8 @@ public class CustomerFacade {
 	private void sendRegistrationEmail(String emailAddress) {
 		System.out.println("Sending activation link via email to "+ emailAddress);
 		Email email = new Email();
-		email.setFromAddress("noreply");
 		email.setToAddress(emailAddress);
+		email.setFromAddress("noreply");
 		email.setSubject("Welcome!");
 		email.setBody("You'll like it! Sincerely, Team");
 		

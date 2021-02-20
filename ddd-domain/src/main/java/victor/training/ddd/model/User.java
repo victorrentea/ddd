@@ -1,8 +1,6 @@
 package victor.training.ddd.model;
 
-import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Value;
 
 import javax.persistence.*;
 import java.io.Serializable;

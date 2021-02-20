@@ -29,7 +29,7 @@ public class DummyData {
    public void insertDummyData() {
       Stream.of("eric", "vaughn", "greg", "scott").map(User::new).forEach(userRepo::save);
 
-      Long siteId = siteRepo.save(new Site("Under the sea")).getId();
+      Long siteId = siteRepo.save(new Site("Under the sea")).id();
       CustomerAddress address = new CustomerAddress(1L, "Paris", "Champs Elysees");
       CustomerId id = customerRepo.newId();
       Customer customer = new Customer(id, "John", address,"a@b.com", siteId);
