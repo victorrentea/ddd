@@ -1,4 +1,4 @@
-package victor.training.ddd.service;
+package victor.training.ddd.facade;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
