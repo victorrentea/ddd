@@ -22,6 +22,8 @@ public class CustomerSearchRepo {
                     " FROM Customer c " +
                     " WHERE 1=1 ";
 
+      // TODO Brain: is it ok to JOIN Site too ?
+
       Map<String, Object> paramMap = new HashMap<>();
 
       if (StringUtils.isNotEmpty(criteria.name)) {
