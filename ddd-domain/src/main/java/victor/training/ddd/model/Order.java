@@ -2,6 +2,7 @@ package victor.training.ddd.model;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -17,7 +18,7 @@ public class Order {
    @JoinColumn // otherwise generates a join table
    private List<OrderLine> orderLines;
 
-   private boolean payed;
+   private LocalDateTime paymentTime;
    private boolean shipped;
 
    // TODO 1 factory method for OrderLines
@@ -45,7 +46,7 @@ public class Order {
       return this;
    }
    public Order pay() {
-      this.payed = true;
+      this.paymentTime = LocalDateTime.now();
       return this;
    }
 }
