@@ -10,22 +10,23 @@ import org.junit.Test;
 
 import static com.tngtech.archunit.base.DescribedPredicate.alwaysTrue;
 import static com.tngtech.archunit.core.domain.JavaClass.Predicates.resideInAPackage;
+import static com.tngtech.archunit.core.domain.JavaClass.Predicates.resideInAnyPackage;
 import static java.util.stream.Collectors.joining;
 
-public class ObserverArchUnitTest {
+public class IndependentSubdomainsArchUnitTest {
 
    @Test
    public void independentSubdomains() {
       JavaClasses classes = new ClassFileImporter()
-          .importPackages("victor.training.patterns.behavioral.observer");
+          .importPackages("victor.training.ddd.service");
 
       String names = classes.stream().map(JavaClass::getSimpleName).collect(joining());
       System.out.println("Studying classes: " + names);
 
       SliceRule sliceRule = SlicesRuleDefinition.slices()
-          .matching("..observer.(**)")
+          .matching("..service.(**)")
           .should().notDependOnEachOther()
-          .ignoreDependency(alwaysTrue(), resideInAPackage("..events")); // allow dependencies to .events
+          .ignoreDependency(alwaysTrue(), resideInAnyPackage("..events", "..infra")); // allow dependencies to .events
 
       // progressive strangling the monolith
       EvaluationResult evaluationResult = sliceRule.evaluate(classes);

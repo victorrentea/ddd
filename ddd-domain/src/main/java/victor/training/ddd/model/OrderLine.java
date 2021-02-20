@@ -29,4 +29,16 @@ public class OrderLine {
    public BigDecimal computePrice() {
       return itemPrice.multiply(BigDecimal.valueOf(itemCount));
    }
+
+   public Long productId() {
+      return productId;
+   }
+
+   void itemCount(int itemCount) { // package protected
+      this.itemCount = itemCount;
+   }
+
+   public int itemCount() {
+      return itemCount;
+   }
 }

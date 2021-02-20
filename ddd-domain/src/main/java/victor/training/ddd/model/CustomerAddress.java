@@ -4,7 +4,7 @@ import lombok.*;
 
 import javax.persistence.Embeddable;
 
-@Data
+@Data // TODO inconsistent: getter names
 @Setter(AccessLevel.NONE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED) // hibernate
 @Embeddable
