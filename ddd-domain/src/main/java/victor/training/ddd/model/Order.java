@@ -17,6 +17,9 @@ public class Order {
    @JoinColumn // otherwise generates a join table
    private List<OrderLine> orderLines;
 
+   private boolean payed;
+   private boolean shipped;
+
    // TODO 1 factory method for OrderLines
    // TODO 2 hide OrderLine completely
    public void add(OrderLine orderLine) {
@@ -31,5 +34,18 @@ public class Order {
       orderLine.itemCount(newCount);
       BigDecimal newLinePrice = orderLine.computePrice();
       totalPrice = totalPrice.add(newLinePrice).subtract(previousLinePrice);
+   }
+
+   public Long id() {
+      return id;
+   }
+
+   public Order ship() {
+      this.shipped = true;
+      return this;
+   }
+   public Order pay() {
+      this.payed = true;
+      return this;
    }
 }
