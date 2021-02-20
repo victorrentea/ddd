@@ -49,4 +49,7 @@ public class Order {
       this.paymentTime = LocalDateTime.now();
       return this;
    }
+   public boolean payed() {
+      return paymentTime != null;
+   }
 }
