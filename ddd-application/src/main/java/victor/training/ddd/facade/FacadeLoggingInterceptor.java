@@ -95,7 +95,7 @@ public class FacadeLoggingInterceptor {
 			if (!shouldNotBeLogged(joinPoint)) {
 				returnString = objectToJson(returnedObject);
 			}
-			log.debug("Return from {}.{} ({} sec): {}",
+			log.debug("Return from {}.{} ({}): {}",
 					joinPoint.getTarget().getClass().getSimpleName(),
 					joinPoint.getSignature().getName(),
 					formatDeltaTime(deltaMillis),

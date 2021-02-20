@@ -1,4 +1,4 @@
-package victor.training.ddd.behavioral.observer;
+package victor.training.ddd;
 
 import com.tngtech.archunit.core.domain.JavaClass;
 import com.tngtech.archunit.core.domain.JavaClasses;
@@ -31,7 +31,7 @@ public class IndependentSubdomainsArchUnitTest {
       // progressive strangling the monolith
       EvaluationResult evaluationResult = sliceRule.evaluate(classes);
       int violations = evaluationResult.getFailureReport().getDetails().size();
-      System.out.println("Got Violations: " + violations);
+      System.out.println("Number of violations: " + violations);
 
       sliceRule.check(classes);
 

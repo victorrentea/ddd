@@ -2,6 +2,7 @@ package victor.training.ddd.model;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 import org.springframework.data.domain.AbstractAggregateRoot;
 import victor.training.ddd.events.CustomerAddressChanged;
 import victor.training.ddd.events.DomainEventsPublisher;
@@ -12,6 +13,7 @@ import java.time.LocalDate;
 
 import static java.util.Objects.requireNonNull;
 
+@ToString
 @Entity
 public class Customer extends AbstractAggregateRoot<Customer> {
 

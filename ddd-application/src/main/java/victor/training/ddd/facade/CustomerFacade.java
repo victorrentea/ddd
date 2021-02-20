@@ -1,6 +1,8 @@
 package victor.training.ddd.facade;
 
 import lombok.RequiredArgsConstructor;
+import victor.training.ddd.MyException;
+import victor.training.ddd.MyException.ErrorCode;
 import victor.training.ddd.facade.dto.CustomerSearchCriteria;
 import victor.training.ddd.facade.dto.CustomerSearchResult;
 import victor.training.ddd.model.Customer.CustomerId;
@@ -48,7 +50,7 @@ public class CustomerFacade {
 //		customer.setSiteId(dto.siteId);
 
 		if (customer.name().trim().length() <= 5) {
-			throw new IllegalArgumentException("Name too short");
+			throw new MyException(ErrorCode.CUSTOMER_NAME_TOO_SHORT, customer.name());
 		}
 		
 //		if (customerRepo.customerExistsWithEmail(customer.getEmail())) {

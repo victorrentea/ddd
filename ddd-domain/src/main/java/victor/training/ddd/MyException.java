@@ -2,7 +2,8 @@ package victor.training.ddd;
 
 public class MyException extends RuntimeException {
    public enum ErrorCode {
-      GENERAL
+      GENERAL,
+      CUSTOMER_NAME_TOO_SHORT
    }
    private final ErrorCode errorCode;
    private final String[] parameters;

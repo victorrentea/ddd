@@ -9,8 +9,8 @@ import victor.training.ddd.repo.base.EntityRepositoryFactoryBean;
 @EnableAsync
 @SpringBootApplication
 @EnableJpaRepositories(repositoryFactoryBeanClass= EntityRepositoryFactoryBean.class)
-public class DDDApp {
+public class Application {
    public static void main(String[] args) {
-       SpringApplication.run(DDDApp.class, args);
+       SpringApplication.run(Application.class, args);
    }
 }

@@ -7,6 +7,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import victor.training.ddd.model.Customer;
+import victor.training.ddd.model.Customer.CustomerId;
 import victor.training.ddd.model.CustomerAddress;
 import victor.training.ddd.repo.CustomerRepo;
 
@@ -33,6 +34,8 @@ class Some {
       Customer aCustomer = customerRepo.findAll().get(0);
       long differentCountryId = 5L;
       aCustomer.setAddress(new CustomerAddress(differentCountryId, "Paris", "Champs Elysees"));
-      customerRepo.save(aCustomer);
+//      customerRepo.save(aCustomer); <--- required if using @DomainEvents
+
+      System.out.println(customerRepo.findById(new CustomerId(aCustomer.id().value())));
    }
 }
