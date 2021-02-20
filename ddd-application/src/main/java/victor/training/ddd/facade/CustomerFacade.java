@@ -1,6 +1,9 @@
 package victor.training.ddd.facade;
 
 import lombok.RequiredArgsConstructor;
+import victor.training.ddd.facade.dto.CustomerSearchCriteria;
+import victor.training.ddd.facade.dto.CustomerSearchResult;
+import victor.training.ddd.repo.CustomerSearchRepo;
 import victor.training.ddd.service.EmailSender;
 import victor.training.ddd.model.Email;
 import victor.training.ddd.facade.dto.CustomerDto;
@@ -10,6 +13,7 @@ import victor.training.ddd.repo.EmailRepo;
 import victor.training.ddd.repo.SiteRepo;
 
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 @Facade
 @RequiredArgsConstructor
@@ -18,6 +22,11 @@ public class CustomerFacade {
 	private final EmailSender emailSender;
 	private final EmailRepo emailRepo;
 	private final SiteRepo siteRepo;
+	private final CustomerSearchRepo searchRepo;
+
+	public List<CustomerSearchResult> search(CustomerSearchCriteria searchCriteria) {
+	    return searchRepo.search(searchCriteria);
+	}
 
 	public CustomerDto findById(long customerId) {
 		Customer customer = customerRepo.findById(customerId).get();
