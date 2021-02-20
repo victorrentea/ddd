@@ -29,7 +29,9 @@ public class Customer extends AbstractAggregateRoot<Customer> {
    private CustomerAddress address;
    private String email;
 
-   private Long siteId;
+//@ManyToOne
+//Site site2;
+      private Long siteId;
 
    protected Customer() {}
    public Customer(String name, CustomerAddress address, String email, long siteId) {
