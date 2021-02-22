@@ -3,6 +3,7 @@ package victor.training.ddd.model;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -14,9 +15,10 @@ public class Order {
 
    private BigDecimal totalPrice = BigDecimal.ZERO;
 
-   @OneToMany
-   @JoinColumn // otherwise generates a join table
-   private List<OrderLine> orderLines;
+
+   @ElementCollection
+//   @JoinColumn // otherwise generates a join table
+   private List<OrderLine> orderLines = new ArrayList<>();
 
    private LocalDateTime paymentTime;
    private boolean shipped;
@@ -26,16 +28,16 @@ public class Order {
    public void add(OrderLine orderLine) {
       orderLines.add(orderLine);
       totalPrice = totalPrice.add(orderLine.computePrice());
-
    }
 
    // hiding OrderLine child entity
    public void setItemCount(Long productId, int newCount) {
       OrderLine orderLine = orderLines.stream().filter(line -> line.productId().equals(productId)).findFirst().get();
-      BigDecimal previousLinePrice = orderLine.computePrice();
+      BigDecimal oldPrice = orderLine.computePrice();
       orderLine.itemCount(newCount);
-      BigDecimal newLinePrice = orderLine.computePrice();
-      totalPrice = totalPrice.add(newLinePrice).subtract(previousLinePrice);
+      BigDecimal newPrice = orderLine.computePrice();
+      totalPrice = totalPrice.add(newPrice).subtract(oldPrice);
+
    }
 
    public Long id() {

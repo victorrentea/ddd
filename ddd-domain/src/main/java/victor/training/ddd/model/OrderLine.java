@@ -1,5 +1,6 @@
 package victor.training.ddd.model;
 
+import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -8,11 +9,12 @@ import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
 
-@Entity
+//@Entity
+@Embeddable
 public class OrderLine {
-   @Id
-   @GeneratedValue
-   private Long id;
+//   @Id
+//   @GeneratedValue
+//   private Long id;
 
    private Long productId;
    private BigDecimal itemPrice;
