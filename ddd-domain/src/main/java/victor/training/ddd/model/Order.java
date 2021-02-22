@@ -17,6 +17,7 @@ public class Order {
 
 
 //   @ElementCollection
+   @OneToMany
    @JoinColumn // otherwise generates a join table
    private List<OrderLine> orderLines = new ArrayList<>();
 

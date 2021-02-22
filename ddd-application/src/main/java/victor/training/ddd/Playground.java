@@ -30,13 +30,16 @@ public class Playground implements CommandLineRunner {
 class Some {
    private final CustomerRepo customerRepo;
 
-   //   @Transactional
+   @Transactional
    public void update() {
       Customer aCustomer = customerRepo.findAll().get(0);
       long differentCountryId = 5L;
-      aCustomer.setAddress(new CustomerAddress(differentCountryId, "Paris", "Champs Elysees"));
-      customerRepo.save(aCustomer); //<--- required if using @DomainEvents
+      extracted(aCustomer, differentCountryId);
 
       System.out.println(customerRepo.findById(new CustomerId(aCustomer.id().value())));
+   }
+
+   private void extracted(Customer aCustomer, long differentCountryId) {
+      aCustomer.setAddress(new CustomerAddress(differentCountryId, "Paris", "Champs Elysees"));
    }
 }
