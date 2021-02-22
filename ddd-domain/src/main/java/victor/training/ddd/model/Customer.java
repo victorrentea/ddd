@@ -4,10 +4,13 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 import org.springframework.data.domain.AbstractAggregateRoot;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import victor.training.ddd.events.CustomerAddressChanged;
 import victor.training.ddd.events.DomainEventsPublisher;
 
 import javax.persistence.*;
+import javax.validation.Validator;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDate;
 
@@ -33,11 +36,11 @@ public class Customer extends AbstractAggregateRoot<Customer> {
    @EmbeddedId
    private CustomerId id;
    private String name;
+   private String email;
    @Embedded
    private CustomerAddress address;
-   private String email;
 
-//@ManyToOne
+   //@ManyToOne
 //Site site2;
       private Long siteId;
 
