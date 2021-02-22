@@ -61,9 +61,9 @@ public class Customer extends AbstractAggregateRoot<Customer> {
       this.address = newAddress;
 
       CustomerAddressChanged event = new CustomerAddressChanged(id.value());
-      registerEvent(event);
+//      registerEvent(event);
 
-//      DomainEventsPublisher.publish(event);
+      DomainEventsPublisher.publish(event);
    }
 
    @Getter

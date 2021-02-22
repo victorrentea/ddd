@@ -7,8 +7,6 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-
 @Service
 public class DomainEventsPublisher {
    private static final Logger log = LoggerFactory.getLogger(DomainEventsPublisher.class);
@@ -27,7 +25,7 @@ public class DomainEventsPublisher {
       }
    }
 
-   static void setPublisher(ApplicationEventPublisher publisher) {
+   static void setPublisherFromTests(ApplicationEventPublisher publisher) {
       DomainEventsPublisher.publisher = publisher;
    }
 
@@ -37,6 +35,6 @@ public class DomainEventsPublisher {
 
    @Autowired
    public void injectSpringPublisher(ApplicationEventPublisher publisher) {
-      setPublisher(publisher);
+      setPublisherFromTests(publisher);
    }
 }

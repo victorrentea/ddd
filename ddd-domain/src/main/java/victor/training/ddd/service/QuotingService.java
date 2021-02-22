@@ -13,11 +13,11 @@ import victor.training.ddd.events.CustomerAddressChanged;
 @Service
 @RequiredArgsConstructor
 public class QuotingService {
-//   @EventListener
+   @EventListener
    // or
-   @Async
-   @TransactionalEventListener
-   @Transactional
+//   @Async
+//   @TransactionalEventListener
+//   @Transactional
    public void handleCustomerAddressChanged(CustomerAddressChanged event) {
       log.info("Got Address changed: " + event);
    }
