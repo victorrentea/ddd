@@ -26,6 +26,7 @@ public class Order {
    public void add(OrderLine orderLine) {
       orderLines.add(orderLine);
       totalPrice = totalPrice.add(orderLine.computePrice());
+
    }
 
    // hiding OrderLine child entity
