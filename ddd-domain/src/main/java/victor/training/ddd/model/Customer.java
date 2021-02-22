@@ -53,7 +53,7 @@ public class Customer extends AbstractAggregateRoot<Customer> {
       this.siteId = siteId;
    }
 
-   public void setAddress(CustomerAddress newAddress) {
+   public void setAddress(CustomerAddress /*= VO*/ newAddress) {
       if (this.address.equals(newAddress)) {
          return;
       }
@@ -61,9 +61,9 @@ public class Customer extends AbstractAggregateRoot<Customer> {
       this.address = newAddress;
 
       CustomerAddressChanged event = new CustomerAddressChanged(id.value());
-//      registerEvent(event);
+      registerEvent(event);
 
-      DomainEventsPublisher.publish(event);
+//      DomainEventsPublisher.publish(event);
    }
 
    @Getter

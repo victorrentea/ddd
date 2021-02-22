@@ -1,5 +1,6 @@
 package victor.training.ddd.model;
 
+import javax.persistence.ManyToOne;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,6 +8,13 @@ import static java.util.Collections.unmodifiableList;
 
 //Aggregate Root
 public class BacklogItem {
+//   @ManyToOne
+//   Product product;
+
+//   Long productId;
+
+
+
    private Status status = Status.NEW;
    private List<Task> tasks = new ArrayList<>();
 
