@@ -9,12 +9,12 @@ import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
 
-//@Entity
-@Embeddable
+@Entity
+//@Embeddable
 public class OrderLine {
-//   @Id
-//   @GeneratedValue
-//   private Long id;
+   @Id
+   @GeneratedValue
+   private Long id;
 
    private Long productId;
    private BigDecimal itemPrice;

@@ -16,8 +16,8 @@ public class Order {
    private BigDecimal totalPrice = BigDecimal.ZERO;
 
 
-   @ElementCollection
-//   @JoinColumn // otherwise generates a join table
+//   @ElementCollection
+   @JoinColumn // otherwise generates a join table
    private List<OrderLine> orderLines = new ArrayList<>();
 
    private LocalDateTime paymentTime;
