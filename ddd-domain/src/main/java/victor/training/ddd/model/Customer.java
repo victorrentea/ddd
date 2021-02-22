@@ -3,6 +3,7 @@ package victor.training.ddd.model;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.AbstractAggregateRoot;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import victor.training.ddd.events.CustomerAddressChanged;
