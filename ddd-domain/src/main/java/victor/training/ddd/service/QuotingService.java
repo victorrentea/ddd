@@ -13,13 +13,18 @@ import victor.training.ddd.events.CustomerAddressChanged;
 @Service
 @RequiredArgsConstructor
 public class QuotingService {
-   @EventListener // by default Spring RUNs this sync and in the same TX as from where you publish it
+//   @EventListener // by default Spring RUNs this sync and in the same TX as from where you publish it
    // or
 //   @Async
-//   @TransactionalEventListener
-//   @Transactional
+   @TransactionalEventListener
+   @Transactional
    public void handleCustomerAddressChanged(CustomerAddressChanged event) {
-      // Running in the same transaction as the change to the aggregate
+      // Running in a second transaction AFTER the one that changed the Aggregate
       log.info("Got Address changed: " + event);
+      // imagine load quotation for that customer
+      // requote
+      // persist new quote
+      // send message over to another system to notify customer
+
    }
 }

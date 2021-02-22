@@ -65,6 +65,7 @@ public class Customer extends AbstractAggregateRoot<Customer> {
 //      registerEvent(event);
 
       DomainEventsPublisher.publish(event);
+      System.out.println("AFTER");
    }
 
    @Getter
