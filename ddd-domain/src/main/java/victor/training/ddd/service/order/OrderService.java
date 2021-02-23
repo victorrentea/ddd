@@ -1,4 +1,4 @@
-package victor.training.ddd.service;
+package victor.training.ddd.service.order;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

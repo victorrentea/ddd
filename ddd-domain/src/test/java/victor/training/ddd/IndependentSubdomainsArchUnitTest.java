@@ -12,6 +12,7 @@ import static com.tngtech.archunit.base.DescribedPredicate.alwaysTrue;
 import static com.tngtech.archunit.core.domain.JavaClass.Predicates.resideInAPackage;
 import static com.tngtech.archunit.core.domain.JavaClass.Predicates.resideInAnyPackage;
 import static java.util.stream.Collectors.joining;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class IndependentSubdomainsArchUnitTest {
 
@@ -33,6 +34,8 @@ public class IndependentSubdomainsArchUnitTest {
       EvaluationResult evaluationResult = sliceRule.evaluate(classes);
       int violations = evaluationResult.getFailureReport().getDetails().size();
       System.out.println("Number of violations: " + violations);
+
+      assertThat(violations).isLessThan(110);
 
       sliceRule.check(classes);
 

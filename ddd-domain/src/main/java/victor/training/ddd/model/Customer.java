@@ -42,12 +42,16 @@ public class Customer extends AbstractAggregateRoot<Customer> {
 
    public Customer(CustomerId id, String name, String email, long siteId) {
       this.id = requireNonNull(id);
+      setName(name);
+      this.email = requireNonNull(email);
+      this.siteId = siteId;
+   }
+
+   public void setName(String name) {
       if (name.trim().length() <= 5) {
          throw new MyException(ErrorCode.CUSTOMER_NAME_TOO_SHORT, name);
       }
-      this.name = requireNonNull(name);
-      this.email = requireNonNull(email);
-      this.siteId = siteId;
+      this.name = name;
    }
 
    public void setAddress(CustomerAddress /*= VO*/ newAddress) {
