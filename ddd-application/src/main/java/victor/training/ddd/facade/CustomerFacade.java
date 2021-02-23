@@ -14,6 +14,7 @@ import victor.training.ddd.model.Customer;
 import victor.training.ddd.repo.CustomerRepo;
 import victor.training.ddd.repo.EmailRepo;
 import victor.training.ddd.repo.SiteRepo;
+import victor.training.ddd.service.QuotingService;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -28,7 +29,7 @@ public class CustomerFacade {
 	private final CustomerSearchRepo searchRepo;
 
 	public List<CustomerSearchResult> search(CustomerSearchCriteria searchCriteria) {
-	    return searchRepo.search(searchCriteria);
+		return searchRepo.search(searchCriteria);
 	}
 
 	public CustomerDto findById(long customerId) {

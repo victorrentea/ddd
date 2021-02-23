@@ -24,9 +24,10 @@ public class Customer extends AbstractAggregateRoot<Customer> {
    @EqualsAndHashCode
    @Embeddable
    public static class CustomerId implements Serializable {
-      private Long value;
-      protected CustomerId() {} // generates Unique from java
-      public CustomerId(Long value) {
+      @Column(name="id")
+      private Long value; // not final (for hibernate)
+      private CustomerId() {} // the death toll for Hibernate // generates Unique from java
+      public CustomerId(long value) {
          this.value = value;
       }
       public Long value() {

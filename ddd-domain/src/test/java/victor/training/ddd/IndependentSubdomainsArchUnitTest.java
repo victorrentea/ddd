@@ -25,6 +25,7 @@ public class IndependentSubdomainsArchUnitTest {
 
       SliceRule sliceRule = SlicesRuleDefinition.slices()
           .matching("..service.(**)")
+          // example: service.order should not depend on service.customer
           .should().notDependOnEachOther()
           .ignoreDependency(alwaysTrue(), resideInAnyPackage("..events", "..infra")); // allow dependencies to .events
 
