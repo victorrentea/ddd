@@ -1,8 +1,6 @@
 package victor.training.ddd.facade;
 
 import lombok.RequiredArgsConstructor;
-import victor.training.ddd.MyException;
-import victor.training.ddd.MyException.ErrorCode;
 import victor.training.ddd.facade.dto.CustomerSearchCriteria;
 import victor.training.ddd.facade.dto.CustomerSearchResult;
 import victor.training.ddd.model.Customer.CustomerId;
@@ -14,9 +12,7 @@ import victor.training.ddd.model.Customer;
 import victor.training.ddd.repo.CustomerRepo;
 import victor.training.ddd.repo.EmailRepo;
 import victor.training.ddd.repo.SiteRepo;
-import victor.training.ddd.service.QuotingService;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 @Facade
@@ -34,25 +30,16 @@ public class CustomerFacade {
 
 	public CustomerDto findById(long customerId) {
 		Customer customer = customerRepo.findById(new CustomerId(customerId)).get();
-		CustomerDto dto = new CustomerDto();
-		dto.name = customer.name();
-		dto.email = customer.email();
-		dto.creationDateStr = new SimpleDateFormat("yyyy-MM-dd").format(customer.getCreationDate());
-		dto.id = customer.id().value();
-		return dto;
+
+		return new CustomerDto(customer);
 	}
 
 	public void registerCustomer(CustomerDto dto) {
 		CustomerId id = customerRepo.newId();
-		Customer customer = new Customer(id, dto.name, null, "a@b.com", dto.siteId);
-//		customer.setEmail(dto.email);
-//		customer.setName(dto.name);
-//		customer.setSite(siteRepo.getReference(dto.countryId)); // JPA link
-//		customer.setSiteId(dto.siteId);
+		Customer customer = new Customer(id, dto.name, "a@b.com", dto.siteId);
+//		customer.setAddress()
 
-		if (customer.name().trim().length() <= 5) {
-			throw new MyException(ErrorCode.CUSTOMER_NAME_TOO_SHORT, customer.name());
-		}
+
 		
 //		if (customerRepo.customerExistsWithEmail(customer.getEmail())) {
 //			throw new IllegalArgumentException("Email already registered");

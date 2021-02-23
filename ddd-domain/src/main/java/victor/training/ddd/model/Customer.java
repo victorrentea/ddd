@@ -6,6 +6,8 @@ import lombok.ToString;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.AbstractAggregateRoot;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import victor.training.ddd.MyException;
+import victor.training.ddd.MyException.ErrorCode;
 import victor.training.ddd.events.CustomerAddressChanged;
 import victor.training.ddd.events.DomainEventsPublisher;
 
@@ -21,20 +23,6 @@ import static java.util.Objects.requireNonNull;
 @Entity
 public class Customer extends AbstractAggregateRoot<Customer> {
 
-   @EqualsAndHashCode
-   @Embeddable
-   public static class CustomerId implements Serializable {
-      @Column(name="id")
-      private Long value; // not final (for hibernate)
-      private CustomerId() {} // the death toll for Hibernate // generates Unique from java
-      public CustomerId(long value) {
-         this.value = value;
-      }
-      public Long value() {
-         return value;
-      }
-   }
-
    @EmbeddedId
    private CustomerId id;
    private String name;
@@ -42,15 +30,22 @@ public class Customer extends AbstractAggregateRoot<Customer> {
    @Embedded
    private CustomerAddress address;
 
-   //@ManyToOne
-//Site site2;
-      private Long siteId;
+//   @ManyToOne
+//   private Site site2;
+   private Long siteId;
 
-   protected Customer() {}
-   public Customer(CustomerId id, String name, CustomerAddress address, String email, long siteId) {
+   @Getter
+   private LocalDate creationDate = LocalDate.now();
+
+   protected Customer() {
+   }
+
+   public Customer(CustomerId id, String name, String email, long siteId) {
       this.id = requireNonNull(id);
+      if (name.trim().length() <= 5) {
+         throw new MyException(ErrorCode.CUSTOMER_NAME_TOO_SHORT, name);
+      }
       this.name = requireNonNull(name);
-      this.address = address;
       this.email = requireNonNull(email);
       this.siteId = siteId;
    }
@@ -69,9 +64,6 @@ public class Customer extends AbstractAggregateRoot<Customer> {
       System.out.println("AFTER");
    }
 
-   @Getter
-   private LocalDate creationDate = LocalDate.now();
-
    public CustomerId id() {
       return id;
    }
@@ -82,5 +74,23 @@ public class Customer extends AbstractAggregateRoot<Customer> {
 
    public String email() {
       return email;
+   }
+
+   @EqualsAndHashCode
+   @Embeddable
+   public static class CustomerId implements Serializable {
+      @Column(name = "id")
+      private Long value; // not final (for hibernate)
+
+      private CustomerId() {
+      } // the death toll for Hibernate // generates Unique from java
+
+      public CustomerId(long value) {
+         this.value = value;
+      }
+
+      public Long value() {
+         return value;
+      }
    }
 }

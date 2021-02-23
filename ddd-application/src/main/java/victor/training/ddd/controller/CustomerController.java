@@ -27,6 +27,7 @@ public class CustomerController {
 
     @PostMapping
     public void create(@RequestBody CustomerDto customerDto) {
+        //   new Customer()...<<< customerDto
         customerFacade.registerCustomer(customerDto);
     }
 }

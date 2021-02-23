@@ -30,6 +30,10 @@ public class CustomerSearchRepo {
          jpql += "  AND UPPER(c.name) LIKE UPPER('%' || :name || '%')   ";
          paramMap.put("name", criteria.name);
       }
+//      if (StringUtils.isNotEmpty(criteria.name)) {
+//         jpql += "  AND EXISTS (SELECT ......) ";
+//         paramMap.put("name", criteria.name);
+//      }
 
       TypedQuery<CustomerSearchResult> query = em.createQuery(jpql, CustomerSearchResult.class);
       for (String paramName : paramMap.keySet()) {
