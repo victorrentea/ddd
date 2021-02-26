@@ -19,16 +19,16 @@ public class IndependentSubdomainsArchUnitTest {
    @Test
    public void independentSubdomains() {
       JavaClasses classes = new ClassFileImporter()
-          .importPackages("victor.training.ddd.service");
+          .importPackages("victor.training.ddd");
 
       String names = classes.stream().map(JavaClass::getSimpleName).collect(joining());
       System.out.println("Studying classes: " + names);
 
       SliceRule sliceRule = SlicesRuleDefinition.slices()
-          .matching("..service.(**)")
+          .matching("..ddd.(*).*")
           // example: service.order should not depend on service.customer
           .should().notDependOnEachOther()
-          .ignoreDependency(alwaysTrue(), resideInAnyPackage("..events", "..infra")); // allow dependencies to .events
+          .ignoreDependency(alwaysTrue(), resideInAnyPackage("..common..", "..infra")); // allow dependencies to .events
 
       // progressive strangling the monolith
       EvaluationResult evaluationResult = sliceRule.evaluate(classes);

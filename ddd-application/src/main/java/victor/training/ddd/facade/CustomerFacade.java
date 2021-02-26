@@ -3,15 +3,15 @@ package victor.training.ddd.facade;
 import lombok.RequiredArgsConstructor;
 import victor.training.ddd.facade.dto.CustomerSearchCriteria;
 import victor.training.ddd.facade.dto.CustomerSearchResult;
-import victor.training.ddd.model.Customer.CustomerId;
+import victor.training.ddd.customer.model.Customer.CustomerId;
 import victor.training.ddd.repo.CustomerSearchRepo;
-import victor.training.ddd.service.EmailSender;
-import victor.training.ddd.model.Email;
+import victor.training.ddd.user.service.EmailSender;
+import victor.training.ddd.user.model.Email;
 import victor.training.ddd.facade.dto.CustomerDto;
-import victor.training.ddd.model.Customer;
-import victor.training.ddd.repo.CustomerRepo;
-import victor.training.ddd.repo.EmailRepo;
-import victor.training.ddd.repo.SiteRepo;
+import victor.training.ddd.customer.model.Customer;
+import victor.training.ddd.customer.repo.CustomerRepo;
+import victor.training.ddd.user.repo.EmailRepo;
+import victor.training.ddd.customer.repo.SiteRepo;
 
 import java.util.List;
 

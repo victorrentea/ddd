@@ -5,12 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import victor.training.ddd.model.Customer;
-import victor.training.ddd.model.Customer.CustomerId;
-import victor.training.ddd.model.CustomerAddress;
-import victor.training.ddd.repo.CustomerRepo;
-
-import java.util.Objects;
+import victor.training.ddd.customer.model.Customer;
+import victor.training.ddd.customer.model.Customer.CustomerId;
+import victor.training.ddd.customer.model.CustomerAddress;
+import victor.training.ddd.customer.repo.CustomerRepo;
 
 import static java.util.Objects.*;
 

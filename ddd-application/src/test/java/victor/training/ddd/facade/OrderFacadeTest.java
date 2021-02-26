@@ -5,9 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
-import victor.training.ddd.facade.OrderFacade;
-import victor.training.ddd.model.Order;
-import victor.training.ddd.repo.OrderRepo;
+import victor.training.ddd.order.model.Order;
+import victor.training.ddd.order.repo.OrderRepo;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

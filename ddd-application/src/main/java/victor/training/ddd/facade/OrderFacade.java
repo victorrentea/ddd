@@ -2,14 +2,14 @@ package victor.training.ddd.facade;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import victor.training.ddd.model.Order;
-import victor.training.ddd.repo.OrderRepo;
+import victor.training.ddd.order.model.Order;
+import victor.training.ddd.order.repo.OrderRepo;
 
 import java.util.List;
 
 import static org.springframework.data.jpa.domain.Specification.not;
-import static victor.training.ddd.repo.OrderSpec.payed;
-import static victor.training.ddd.repo.OrderSpec.shipped;
+import static victor.training.ddd.order.repo.OrderSpec.payed;
+import static victor.training.ddd.order.repo.OrderSpec.shipped;
 
 @Slf4j
 @Facade

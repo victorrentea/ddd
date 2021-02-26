@@ -1,18 +1,15 @@
 package victor.training.ddd;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Profile;
-import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-import victor.training.ddd.model.Customer;
-import victor.training.ddd.model.Customer.CustomerId;
-import victor.training.ddd.model.CustomerAddress;
-import victor.training.ddd.model.Site;
-import victor.training.ddd.model.User;
-import victor.training.ddd.repo.CustomerRepo;
-import victor.training.ddd.repo.SiteRepo;
-import victor.training.ddd.repo.UserRepo;
+import victor.training.ddd.customer.model.Customer;
+import victor.training.ddd.customer.model.Customer.CustomerId;
+import victor.training.ddd.customer.model.CustomerAddress;
+import victor.training.ddd.customer.model.Site;
+import victor.training.ddd.user.model.User;
+import victor.training.ddd.customer.repo.CustomerRepo;
+import victor.training.ddd.customer.repo.SiteRepo;
+import victor.training.ddd.user.repo.UserRepo;
 
 import javax.annotation.PostConstruct;
 import java.util.stream.Stream;

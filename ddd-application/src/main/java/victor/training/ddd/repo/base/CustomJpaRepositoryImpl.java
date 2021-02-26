@@ -4,12 +4,12 @@ import lombok.SneakyThrows;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.core.RepositoryInformation;
+import victor.training.ddd.common.repo.CustomJpaRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.Query;
 import java.lang.reflect.ParameterizedType;
-import java.util.Arrays;
 import java.util.stream.Stream;
 
 @SuppressWarnings("unchecked")

@@ -1,7 +1,7 @@
 package victor.training.ddd.adapter;
 
 import org.springframework.stereotype.Service;
-import victor.training.ddd.service.EmailSender;
+import victor.training.ddd.user.service.EmailSender;
 
 // We pretend this talks to an external API
 @Service

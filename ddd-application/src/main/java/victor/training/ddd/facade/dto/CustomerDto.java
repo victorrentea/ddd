@@ -1,6 +1,6 @@
 package victor.training.ddd.facade.dto;
 
-import victor.training.ddd.model.Customer;
+import victor.training.ddd.customer.model.Customer;
 
 import java.text.SimpleDateFormat;
 
