@@ -19,9 +19,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CustomerFacade {
 	private final CustomerRepo customerRepo;
-	private final EmailSender emailSender;
-	private final EmailRepo emailRepo;
-	private final SiteRepo siteRepo;
 	private final CustomerSearchRepo searchRepo;
 
 	public List<CustomerSearchResult> search(CustomerSearchCriteria searchCriteria) {

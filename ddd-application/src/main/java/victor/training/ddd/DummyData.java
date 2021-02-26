@@ -32,9 +32,9 @@ public class DummyData {
       Long siteId = siteRepo.save(new Site("Under the sea")).id();
       CustomerAddress address = new CustomerAddress(1L, "Paris", "Champs Elysees");
       CustomerId id = customerRepo.newId();
-      Customer customer = new Customer(id, "John", address,"a@b.com", siteId);
+//      Customer customer = new Customer(id, "John", address,"a@b.com", siteId);
 
-      customerRepo.save(customer);
+//      customerRepo.save(customer);
 
    }
 }
