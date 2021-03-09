@@ -1,12 +1,16 @@
 package victor.training.ddd.order.model;
 
-import victor.training.ddd.customer.model.Customer;
+
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
+import static java.util.Collections.unmodifiableList;
 
 @Entity
 @Table(name = "ORDERS") // SQL keyword collision
@@ -15,49 +19,37 @@ public class Order {
    @GeneratedValue
    private Long id;
 
-   private BigDecimal totalPrice = BigDecimal.ZERO;
+   @CreatedDate
+   private LocalDateTime createTime;
 
+   private String clientId; // ID of an externally-managed person ?..
 
-//   @ElementCollection
+//   -- if you don't expose the ID of the inner
+//   OrderLines to anyone (and you shouldn't!)
+   // then you are free to model the child OrderLine entity as :
+   // 1) Embeddable + @ElementCollection  in parent -- CONS: every time yo change any of the lines,
+      //    ALL lines of the order are REMOVED and RE-INSERTED
+   // 2) normal @Entity
    @OneToMany
    @JoinColumn // otherwise generates a join table
    private List<OrderLine> orderLines = new ArrayList<>();
 
-   private LocalDateTime paymentTime;
-   private boolean shipped;
-
-   // TODO 1 factory method for OrderLines
-   // TODO 2 hide OrderLine completely
    public void add(OrderLine orderLine) {
       orderLines.add(orderLine);
-      totalPrice = totalPrice.add(orderLine.computePrice());
    }
 
-   // hiding OrderLine child entity
-   public void setItemCount(Long productId, int newCount) {
-      OrderLine orderLine = orderLines.stream().filter(line -> line.productId().equals(productId)).findFirst().get();
-      BigDecimal oldPrice = orderLine.computePrice();
-      orderLine.itemCount(newCount);
-      BigDecimal newPrice = orderLine.computePrice();
-      totalPrice = totalPrice.add(newPrice).subtract(oldPrice);
+   public String clientId() {
+      return clientId;
+   }
 
+   public List<OrderLine> orderLines() {
+      return unmodifiableList(orderLines); // or Guava's ImmutableList
    }
 
    public Long id() {
       return id;
    }
 
-   public Order ship() {
-      this.shipped = true;
-      return this;
-   }
-   public Order pay() {
-      this.paymentTime = LocalDateTime.now();
-      return this;
-   }
-   public boolean payed() {
-      return paymentTime != null;
-   }
 }
 
 
