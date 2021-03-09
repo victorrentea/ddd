@@ -23,6 +23,7 @@ public class OrderService {
    public Map<SupplierId, List<ProductWithCount>> method(Order order) {
        order.orderLines().stream()
            .collect(groupingBy(OrderLine::productId));
+      return null;
    }
 
 }

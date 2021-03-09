@@ -3,6 +3,7 @@ package victor.training.ddd.adapter;
 import victor.training.ddd.order.model.SupplierId;
 import victor.training.ddd.order.service.SupplierService;
 
+@Adapter
 public class SupplierServiceRestClient implements SupplierService {
 
    public SupplierId getSupplierIdForProduct(String productId) {
