@@ -14,6 +14,7 @@ public class OrderLine {
    @GeneratedValue
    private Long id; // no getter!
 
+   private SupplierId supplierId;
    private String productId; // in the DB while you are on the same DB server, recommended to keep the FK between OrderLine -> Product
    private BigDecimal itemQuantity;
 
@@ -21,7 +22,8 @@ public class OrderLine {
 
    protected OrderLine() {} // hibernate
 
-   public OrderLine(String productId, BigDecimal itemPrice, BigDecimal itemQuantity) {
+   public OrderLine(SupplierId supplierId, String productId, BigDecimal itemPrice, BigDecimal itemQuantity) {
+      this.supplierId = supplierId;
       this.productId = requireNonNull(productId);
       this.itemPrice = requireNonNull(itemPrice);
       this.itemQuantity = requireNonNull(itemQuantity);
@@ -37,5 +39,9 @@ public class OrderLine {
 
    public BigDecimal itemQuantity() {
       return itemQuantity;
+   }
+
+   public SupplierId getSupplierId() {
+      return supplierId;
    }
 }
