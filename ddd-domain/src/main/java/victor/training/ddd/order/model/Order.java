@@ -34,6 +34,13 @@ public class Order {
    @JoinColumn // otherwise generates a join table
    private List<OrderLine> orderLines = new ArrayList<>();
 
+   protected Order() {} // for hibernate eyes only
+
+   public Order(String clientId) {
+      this.clientId = clientId;
+   }
+
+
    public void add(OrderLine orderLine) {
       orderLines.add(orderLine);
    }
