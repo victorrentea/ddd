@@ -7,6 +7,8 @@ import victor.training.ddd.order.model.Order;
 import victor.training.ddd.order.model.OrderLine;
 import victor.training.ddd.order.model.ProductWithQuantity;
 import victor.training.ddd.order.model.SupplierId;
+import victor.training.ddd.order.repo.OrderRepo;
+import victor.training.ddd.order.repo.OrderSpec;
 import victor.training.ddd.product.model.Product;
 import victor.training.ddd.product.model.ProductPrice;
 
@@ -23,10 +25,14 @@ import static java.util.stream.Collectors.*;
 @RequiredArgsConstructor
 public class OrderService {
    private final SendOrdersToSuppliers sendOrdersToSuppliers;
-
+private final OrderRepo orderRepo;
 
    public void suppliersOrdersData(Order order) {
       sendOrdersToSuppliers.suppliersOrdersData(order);
+   }
+
+   public List<Order> search(OrderSearchCriteria criteria) {
+      orderRepo.findAll(OrderSpec.clientId(criteria.clientId).and(O`))
    }
 
 
