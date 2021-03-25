@@ -1,5 +1,6 @@
 package victor.training.ddd.order.model;
 
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -14,6 +15,7 @@ public class OrderLine {
    @GeneratedValue
    private Long id; // no getter!
 
+   @Embedded
    private SupplierId supplierId;
    private String productId; // in the DB while you are on the same DB server, recommended to keep the FK between OrderLine -> Product
    private BigDecimal itemQuantity;
@@ -22,11 +24,14 @@ public class OrderLine {
 
    protected OrderLine() {} // hibernate
 
-   public OrderLine(SupplierId supplierId, String productId, BigDecimal itemPrice, BigDecimal itemQuantity) {
-      this.supplierId = supplierId;
+   public OrderLine(String productId, BigDecimal itemPrice, BigDecimal itemQuantity) {
       this.productId = requireNonNull(productId);
       this.itemPrice = requireNonNull(itemPrice);
       this.itemQuantity = requireNonNull(itemQuantity);
+   }
+
+   public void supplierId(SupplierId supplierId) {
+      this.supplierId = supplierId;
    }
 
    public BigDecimal computePrice() {
@@ -41,7 +46,7 @@ public class OrderLine {
       return itemQuantity;
    }
 
-   public SupplierId getSupplierId() {
+   public SupplierId supplierId() {
       return supplierId;
    }
 }

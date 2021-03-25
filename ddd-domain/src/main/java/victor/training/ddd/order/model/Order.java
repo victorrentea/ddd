@@ -30,7 +30,7 @@ public class Order {
    // 1) Embeddable + @ElementCollection  in parent -- CONS: every time yo change any of the lines,
       //    ALL lines of the order are REMOVED and RE-INSERTED
    // 2) normal @Entity
-   @OneToMany
+   @OneToMany(cascade = CascadeType.ALL)
    @JoinColumn // otherwise generates a join table
    private List<OrderLine> orderLines = new ArrayList<>();
 

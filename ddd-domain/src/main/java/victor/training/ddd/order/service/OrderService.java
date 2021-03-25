@@ -28,10 +28,10 @@ public class OrderService {
    public Map<SupplierId, List<ProductWithQuantity>> suppliersOrdersData(Order order) {
        Map<SupplierId,List<ProductWithQuantity>> result = new HashMap<>();
        for (OrderLine orderLine:order.orderLines()) {
-            List<ProductWithQuantity> list= result.get(orderLine.getSupplierId());
+            List<ProductWithQuantity> list= result.get(orderLine.supplierId());
             if(list==null){
                 list = new ArrayList<>();
-                result.put(orderLine.getSupplierId(),list);
+                result.put(orderLine.supplierId(),list);
             }
             //getProduct from somewhere :) ! // now make dummy one
             Product dummy = new Product(orderLine.productId(),"dummmy",new ProductPrice(BigDecimal.ONE,BigDecimal.ONE,BigDecimal.ONE));
