@@ -1,6 +1,7 @@
 package victor.training.ddd.controller;
 
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import victor.training.ddd.facade.OrderFacade;
 import victor.training.ddd.facade.dto.OrderDto;
@@ -11,6 +12,7 @@ import victor.training.ddd.facade.dto.OrderDto;
 public class OrderController {
    private final OrderFacade facade;
 
+   @PreAuthorize("hasRole('ADMIN')")
    @PostMapping
    public void create(@RequestBody OrderDto dto) {
       facade.create(dto);
