@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.client.RestTemplate;
 import victor.training.ddd.order.model.Order;
 import victor.training.ddd.order.repo.OrderRepo;
+import victor.training.ddd.order.service.OrderService;
 import victor.training.ddd.repo.base.EntityRepositoryFactoryBean;
 
 @EnableAsync
@@ -26,11 +27,16 @@ public class Application implements CommandLineRunner {
 
    @Autowired
    private OrderRepo orderRepo;
+   @Autowired
+   private OrderService  orderService;
 
    @Override
    public void run(String... args) throws Exception {
-      orderRepo.save(new Order("clientId"));
-
+      Order order = new Order("clientId");
+      orderRepo.save(order);
       System.out.println(orderRepo.findAll());
+
+      orderService.suppliersOrdersData(order);
+
    }
 }
