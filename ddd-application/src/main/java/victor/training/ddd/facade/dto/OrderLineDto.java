@@ -11,6 +11,13 @@ public class OrderLineDto {
    public BigDecimal itemPrice;
    public BigDecimal itemQuantity;
 
+   public OrderLineDto() {}
+   public OrderLineDto(OrderLine entity) {
+      supplierId = entity.supplierId().value;
+      productId = entity.productId();
+      itemPrice = entity.itemPrice();
+      itemQuantity = entity.itemQuantity();
+   }
    public OrderLine toEntity() {
       OrderLine orderLine = new OrderLine(productId, itemPrice, itemQuantity);
       orderLine.supplierId(new SupplierId(supplierId));

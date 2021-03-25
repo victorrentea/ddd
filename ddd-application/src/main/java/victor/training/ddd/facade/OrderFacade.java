@@ -22,6 +22,11 @@ public class OrderFacade {
       orderRepo.save(order);
    }
 
+   public OrderDto getById(long id) {
+      Order order = orderRepo.findById(id).get();
+      return new OrderDto(order);
+   }
+
    //   public List<Order> findPurpleOrders() { // special DOmain term for shipped but not paied orders
 //      return orderRepo.findAll(shipped().and(not(payed())));
 //   }

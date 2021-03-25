@@ -42,6 +42,10 @@ public class OrderLine {
       return productId;
    }
 
+   public BigDecimal itemPrice() {
+      return itemPrice;
+   }
+
    public BigDecimal itemQuantity() {
       return itemQuantity;
    }
