@@ -24,6 +24,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
       http
           .csrf().disable() // not needed for REST endppoints
           .authorizeRequests()
+//            .mvcMatchers("/api/admin/**").hasRole("ADMIN")
 //            .mvcMatchers(HttpMethod.POST,"/api/orders").hasRole("ADMIN")
 //            .mvcMatchers(HttpMethod.POST,"/api/orders/*").hasRole("USEr")
             .anyRequest().authenticated()
