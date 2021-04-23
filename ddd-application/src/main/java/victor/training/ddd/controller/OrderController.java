@@ -3,8 +3,8 @@ package victor.training.ddd.controller;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import victor.training.ddd.facade.OrderFacade;
-import victor.training.ddd.facade.dto.OrderDto;
+import victor.training.ddd.order.facade.OrderFacade;
+import victor.training.ddd.order.facade.dto.OrderDto;
 
 @AllArgsConstructor
 @RestController

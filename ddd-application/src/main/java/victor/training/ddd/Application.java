@@ -1,6 +1,6 @@
 package victor.training.ddd;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -11,12 +11,18 @@ import org.springframework.web.client.RestTemplate;
 import victor.training.ddd.order.model.Order;
 import victor.training.ddd.order.repo.OrderRepo;
 import victor.training.ddd.order.service.OrderService;
-import victor.training.ddd.repo.base.EntityRepositoryFactoryBean;
+import victor.training.ddd.order.repo.base.EntityRepositoryFactoryBean;
 
 @EnableAsync
 @SpringBootApplication
+@RequiredArgsConstructor
 @EnableJpaRepositories(repositoryFactoryBeanClass= EntityRepositoryFactoryBean.class)
 public class Application implements CommandLineRunner {
+//   public Application(OrderRepo orderRepo, OrderService orderService) {
+//      this.orderRepo = orderRepo;
+//      this.orderService = orderService;
+//   }
+
    @Bean
    public RestTemplate rest() {
       return new RestTemplate();
@@ -25,10 +31,8 @@ public class Application implements CommandLineRunner {
        SpringApplication.run(Application.class, args);
    }
 
-   @Autowired
-   private OrderRepo orderRepo;
-   @Autowired
-   private OrderService  orderService;
+   private final OrderRepo orderRepo;
+   private final OrderService  orderService;
 
    @Override
    public void run(String... args) throws Exception {
@@ -40,6 +44,8 @@ public class Application implements CommandLineRunner {
       System.out.println(orderRepo.findAll());
 
       orderService.suppliersOrdersData(order);
+
+
 
    }
 }
