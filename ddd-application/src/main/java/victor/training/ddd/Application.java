@@ -32,6 +32,9 @@ public class Application implements CommandLineRunner {
 
    @Override
    public void run(String... args) throws Exception {
+
+      X.oldMethod();
+
       Order order = new Order("clientId");
       orderRepo.save(order);
       System.out.println(orderRepo.findAll());

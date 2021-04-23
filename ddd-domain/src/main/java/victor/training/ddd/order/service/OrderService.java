@@ -32,7 +32,8 @@ private final OrderRepo orderRepo;
    }
 
    public List<Order> search(OrderSearchCriteria criteria) {
-      orderRepo.findAll(OrderSpec.clientId(criteria.clientId).and(O`))
+      orderRepo.findAll(OrderSpec.clientId(criteria.clientId));
+      return null;
    }
 
 
