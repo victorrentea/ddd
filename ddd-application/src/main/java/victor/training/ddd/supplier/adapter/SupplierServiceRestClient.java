@@ -3,7 +3,6 @@ package victor.training.ddd.supplier.adapter;
 import lombok.extern.slf4j.Slf4j;
 import victor.training.ddd.order.adapter.Adapter;
 import victor.training.ddd.supplier.model.ProductWithQuantity;
-import victor.training.ddd.order.model.SupplierId;
 import victor.training.ddd.supplier.service.SupplierService;
 
 import java.util.List;
@@ -20,8 +19,8 @@ public class SupplierServiceRestClient implements SupplierService {
    }
 
    @Override
-   public void sendOrders(Map<Long, List<ProductWithQuantity>> result) {
+   public void sendOrders(Map<String, List<ProductWithQuantity>> result) {
       //new RestTemplate().post
-      System.out.println(result);
+      log.info("Sending orders to supplier " + result);
    }
 }

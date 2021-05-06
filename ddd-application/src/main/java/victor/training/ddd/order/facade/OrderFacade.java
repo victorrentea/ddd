@@ -7,12 +7,14 @@ import victor.training.ddd.order.facade.dto.OrderDto;
 import victor.training.ddd.order.facade.dto.OrderLineDto;
 import victor.training.ddd.order.model.Order;
 import victor.training.ddd.order.repo.OrderRepo;
+import victor.training.ddd.order.service.OrderService;
 
 @Slf4j
 @Facade
 @RequiredArgsConstructor
 public class OrderFacade {
    private final OrderRepo orderRepo;
+   private final OrderService orderService;
 
    public void create(OrderDto dto) {
       Order order = new Order(dto.clientId);

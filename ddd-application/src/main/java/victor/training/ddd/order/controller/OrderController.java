@@ -1,4 +1,4 @@
-package victor.training.ddd.controller;
+package victor.training.ddd.order.controller;
 
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;

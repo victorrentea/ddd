@@ -1,13 +1,23 @@
 package victor.training.ddd.supplier.model;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 public class OrderLineVO {
-   public BigDecimal itemQuantity() {
-      return null;
+   private final BigDecimal itemQuantity;
+   private final String supplierId;
+
+   public OrderLineVO(BigDecimal itemQuantity, String supplierId) {
+      this.itemQuantity = Objects.requireNonNull(itemQuantity);
+      // TODO quantity positive/
+      this.supplierId = Objects.requireNonNull(supplierId);
    }
 
-   public Long supplierId() {
-      return null;
+   public BigDecimal itemQuantity() {
+      return itemQuantity;
+   }
+
+   public String supplierId() {
+      return supplierId;
    }
 }

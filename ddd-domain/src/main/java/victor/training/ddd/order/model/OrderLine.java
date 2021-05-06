@@ -30,8 +30,9 @@ public class OrderLine {
       this.itemQuantity = requireNonNull(itemQuantity);
    }
 
-   public void supplierId(SupplierId supplierId) {
+   public OrderLine supplierId(SupplierId supplierId) {
       this.supplierId = supplierId;
+      return this;
    }
 
    public BigDecimal computePrice() {
