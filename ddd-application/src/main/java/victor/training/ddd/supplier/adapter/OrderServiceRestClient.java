@@ -9,7 +9,7 @@ public class OrderServiceRestClient implements OrderServiceClient {
    @Override
    public OrderVO getOrder(long orderId) {
 
-      // TODO REST Teplate
+      // TODO REST Template
       // TODO conversion
       return null;
    }
