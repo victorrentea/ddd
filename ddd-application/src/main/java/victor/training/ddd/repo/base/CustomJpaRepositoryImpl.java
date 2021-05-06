@@ -1,4 +1,4 @@
-package victor.training.ddd.order.repo.base;
+package victor.training.ddd.repo.base;
 
 import lombok.SneakyThrows;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
