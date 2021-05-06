@@ -27,8 +27,8 @@ public class OrderService {
    }
 
    public List<Order> search(OrderSearchCriteria criteria) {
-      orderRepo.findAll(OrderSpec.clientId(criteria.clientId));
-      return null;
+      List<Order> results = orderRepo.findAll(OrderSpec.clientId(criteria.clientId));
+      return results;
    }
 
 
