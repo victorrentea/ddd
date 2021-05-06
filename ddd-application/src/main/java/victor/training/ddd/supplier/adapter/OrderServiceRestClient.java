@@ -2,7 +2,6 @@ package victor.training.ddd.supplier.adapter;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.apache.http.HttpHost;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.http.client.support.BasicAuthenticationInterceptor;
 import org.springframework.stereotype.Service;

@@ -3,12 +3,10 @@ package victor.training.ddd.supplier.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
-import victor.training.ddd.common.events.OrderConfirmedEvent;
-import victor.training.ddd.supplier.model.ProductWithQuantity;
 import victor.training.ddd.supplier.model.OrderLineVO;
 import victor.training.ddd.supplier.model.OrderVO;
+import victor.training.ddd.supplier.model.ProductWithQuantity;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -30,10 +28,9 @@ public class SendOrdersToSuppliersImpl1  implements OrderConfirmedEventHandler {
    }
 
    @Override
-   @EventListener
-   public void suppliersOrdersData(OrderConfirmedEvent orderConfirmedEvent) {
+   public void suppliersOrdersData(Long orderId) {
 
-      OrderVO order = orderServiceClient.getOrder(orderConfirmedEvent.getId());
+      OrderVO order = orderServiceClient.getOrder(orderId);
 
       Map<String, List<ProductWithQuantity>> result = order.orderLines().stream()
           .collect(groupingBy(OrderLineVO::supplierId,

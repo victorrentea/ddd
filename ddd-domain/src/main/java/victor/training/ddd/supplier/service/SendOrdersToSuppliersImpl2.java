@@ -14,8 +14,7 @@ public class SendOrdersToSuppliersImpl2 implements OrderConfirmedEventHandler {
    private final SupplierService supplierService;
 
    @Override
-   @EventListener
-   public void suppliersOrdersData(OrderConfirmedEvent order) {
+   public void suppliersOrdersData(Long orderId) {
 
    }
 }

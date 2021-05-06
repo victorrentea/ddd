@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
-import victor.training.ddd.common.events.OrderConfirmedEvent;
 import victor.training.ddd.order.model.Order;
 import victor.training.ddd.order.repo.OrderRepo;
 import victor.training.ddd.order.repo.OrderSpec;
@@ -17,11 +16,14 @@ import java.util.List;
 public class OrderService {
    private final OrderRepo orderRepo;
    private final ApplicationEventPublisher publisher;
+   private final OrderEventsSender orderEventsSender;
 
    public void suppliersOrdersData(Order order) {
       // TODO : make sure order is COMMIT in your DB before you send the event
 //      sendOrdersToSuppliers.suppliersOrdersData(order);
-      publisher.publishEvent(new OrderConfirmedEvent(order.id()));
+//      publisher.publishEvent(new OrderConfirmedEvent(order.id()));
+
+      orderEventsSender.sendOrderConfirmed(order.id());
    }
 
    public List<Order> search(OrderSearchCriteria criteria) {
