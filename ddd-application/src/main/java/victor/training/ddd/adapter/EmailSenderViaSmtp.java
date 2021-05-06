@@ -1,4 +1,4 @@
-package victor.training.ddd.order.adapter;
+package victor.training.ddd.adapter;
 
 import org.springframework.stereotype.Service;
 import victor.training.ddd.user.service.EmailSender;

@@ -11,7 +11,7 @@ import org.springframework.web.client.RestTemplate;
 import victor.training.ddd.order.model.Order;
 import victor.training.ddd.order.repo.OrderRepo;
 import victor.training.ddd.order.service.OrderService;
-import victor.training.ddd.order.repo.base.EntityRepositoryFactoryBean;
+import victor.training.ddd.repo.base.EntityRepositoryFactoryBean;
 
 @EnableAsync
 @SpringBootApplication

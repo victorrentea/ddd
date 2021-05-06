@@ -2,6 +2,7 @@ package victor.training.ddd.order.facade;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import victor.training.ddd.facade.Facade;
 import victor.training.ddd.order.facade.dto.OrderDto;
 import victor.training.ddd.order.facade.dto.OrderLineDto;
 import victor.training.ddd.order.model.Order;

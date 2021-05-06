@@ -1,6 +1,7 @@
-package victor.training.ddd.order.facade;
+package victor.training.ddd.facade;
 
 import lombok.RequiredArgsConstructor;
+import victor.training.ddd.facade.Facade;
 
 @Facade
 @RequiredArgsConstructor

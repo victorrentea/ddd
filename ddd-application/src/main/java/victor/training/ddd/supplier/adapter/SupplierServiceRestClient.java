@@ -13,15 +13,15 @@ import java.util.Map;
 @Slf4j
 public class SupplierServiceRestClient implements SupplierService {
 
-   public SupplierId getSupplierIdForProduct(String productId) {
+   public String getSupplierIdForProduct(String productId) {
 // TODO rest call
       String dummy = "supplier";
-      return new SupplierId(dummy);
+      return  dummy;
    }
 
    @Override
    public void sendOrders(Map<Long, List<ProductWithQuantity>> result) {
-//      new RestTemplate().post
-      log.info("Sending " + result);
+      //new RestTemplate().post
+      System.out.println(result);
    }
 }

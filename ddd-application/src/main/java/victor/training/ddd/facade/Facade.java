@@ -1,4 +1,4 @@
-package victor.training.ddd.order.facade;
+package victor.training.ddd.facade;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

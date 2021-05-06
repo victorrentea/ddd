@@ -1,4 +1,4 @@
-package victor.training.ddd.order.facade;
+package victor.training.ddd.facade;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -39,7 +39,7 @@ public class FacadeLoggingInterceptor {
 			jackson.enable(SerializationFeature.INDENT_OUTPUT);
 		}
 	}
-	@Around("@within(victor.training.ddd.order.facade.Facade))")
+	@Around("@within(victor.training.ddd.facade.Facade))")
 	public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
 		logBefore(joinPoint);
 		long t0 = System.currentTimeMillis();

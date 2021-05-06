@@ -1,4 +1,4 @@
-package victor.training.ddd.order.repo;
+package victor.training.ddd.repo;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang.StringUtils;
