@@ -1,4 +1,4 @@
-package victor.training.ddd.controller.filter;
+package victor.training.ddd.common.controller.filter;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
