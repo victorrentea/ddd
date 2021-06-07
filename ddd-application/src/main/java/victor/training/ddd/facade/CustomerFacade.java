@@ -7,9 +7,6 @@
 //import victor.training.ddd.repo.CustomerSearchRepo;
 //import victor.training.ddd.user.service.EmailSender;
 //import victor.training.ddd.user.model.Email;
-//import victor.training.ddd.facade.dto.CustomerDto;
-//import victor.training.ddd.customer.model.Customer;
-//import victor.training.ddd.customer.repo.CustomerRepo;
 //import victor.training.ddd.user.repo.EmailRepo;
 //import victor.training.ddd.customer.repo.SiteRepo;
 //

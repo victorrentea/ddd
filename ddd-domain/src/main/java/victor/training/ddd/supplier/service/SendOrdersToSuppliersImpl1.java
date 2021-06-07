@@ -2,7 +2,6 @@ package victor.training.ddd.supplier.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import victor.training.ddd.supplier.model.OrderLineVO;
 import victor.training.ddd.supplier.model.OrderVO;
@@ -16,7 +15,7 @@ import static java.util.stream.Collectors.*;
 
 @Slf4j
 @Service
-@Profile("client1")
+//@Profile("client1")
 @RequiredArgsConstructor
 public class SendOrdersToSuppliersImpl1  implements OrderConfirmedEventHandler {
    private final SupplierService supplierService;

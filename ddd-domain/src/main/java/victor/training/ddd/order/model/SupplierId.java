@@ -6,13 +6,13 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.persistence.EmbeddedId;
+import java.io.Serializable;
 
 @Data
 @Embeddable
 @AllArgsConstructor
 @NoArgsConstructor
-public class SupplierId {
+public class SupplierId implements Serializable {
    @Column(name="SUPPLIER_ID")
    public String value;
 

@@ -26,7 +26,6 @@ public class ProductServiceRestClient implements ExternalProductService {
 
    @Override
    public Optional<Product> loadProduct(String productId) {
-
 //      rest.getForObject(productUrlBaseUrl + "/" + productId);
 //      ExternalProductDto dto = rest.getForObject(getProductUrl, ExternalProductDto.class, productId);
 

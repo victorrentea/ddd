@@ -15,7 +15,6 @@ import victor.training.ddd.order.service.OrderService;
 public class OrderFacade {
    private final OrderRepo orderRepo;
    private final OrderService orderService;
-
    public void create(OrderDto dto) {
       Order order = new Order(dto.clientId);
       for (OrderLineDto lineDto : dto.lines) {

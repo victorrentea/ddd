@@ -9,6 +9,7 @@ import victor.training.ddd.order.repo.OrderRepo;
 import victor.training.ddd.order.repo.OrderSpec;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -19,6 +20,11 @@ public class OrderService {
    private final OrderEventsSender orderEventsSender;
 
    public void suppliersOrdersData(Order order) {
+
+
+      Optional<Order> byId = orderRepo.findById(1L);
+
+
       // TODO : make sure order is COMMIT in your DB before you send the event
 //      sendOrdersToSuppliers.suppliersOrdersData(order);
 //      publisher.publishEvent(new OrderConfirmedEvent(order.id()));

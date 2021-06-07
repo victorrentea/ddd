@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 public class OrderSpec {
 
    public static Specification<Order> createdBetween(Expression<LocalDateTime> fromDate, Expression<LocalDateTime> toDate) {
+
       return (root, query, cb) ->cb.and(
           cb.greaterThanOrEqualTo(fromDate, root.get(Order_.createTime)),
           cb.lessThanOrEqualTo(toDate, root.get(Order_.createTime))
