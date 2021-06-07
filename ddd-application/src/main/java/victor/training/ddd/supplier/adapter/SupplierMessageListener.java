@@ -12,8 +12,8 @@ import victor.training.ddd.supplier.service.OrderConfirmedEventHandler;
 public class SupplierMessageListener {
    private final OrderConfirmedEventHandler orderConfirmedEventHandler;
    @ServiceActivator(inputChannel = "ordersConfirmedIn")
-   public void method(Long orderId) {
+   public void method(String orderId) {
       log.info("Received message on queue + " +orderId);
-      orderConfirmedEventHandler.suppliersOrdersData(orderId);
+      orderConfirmedEventHandler.suppliersOrdersData(Long.parseLong(orderId));
    }
 }

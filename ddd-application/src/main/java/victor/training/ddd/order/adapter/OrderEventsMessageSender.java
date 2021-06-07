@@ -14,6 +14,6 @@ public class OrderEventsMessageSender implements OrderEventsSender {
    private final AllChannels allChannels;
    @Override
    public void sendOrderConfirmed(Long orderId) {
-      allChannels.ordersConfirmedOut().send(MessageBuilder.withPayload(orderId).build());
+      allChannels.ordersConfirmedOut().send(MessageBuilder.withPayload(orderId + "").build());
    }
 }
