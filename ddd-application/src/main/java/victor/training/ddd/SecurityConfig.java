@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 //@EnableWebSecurity
@@ -29,8 +30,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //            .mvcMatchers(HttpMethod.POST,"/api/orders/*").hasRole("USEr")
             .anyRequest().authenticated()
           .and()
+          .addFilterBefore(new MyFilter(), BasicAuthenticationFilter.class)
           .httpBasic().and()
           .formLogin().permitAll()
+
       ;
    }
 

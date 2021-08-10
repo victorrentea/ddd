@@ -5,8 +5,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.math.BigDecimal;
+import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
+import static java.util.Optional.ofNullable;
 
 @Entity
 //@Embeddable
@@ -30,6 +32,10 @@ public class OrderLine {
       this.itemQuantity = requireNonNull(itemQuantity);
    }
 
+//   public victor.training.ddd.order.facade.dto.OrderLineDto toDto() {
+//
+//   }
+
    public OrderLine supplierId(SupplierId supplierId) {
       this.supplierId = supplierId;
       return this;
@@ -51,8 +57,8 @@ public class OrderLine {
       return itemQuantity;
    }
 
-   public SupplierId supplierId() {
-      return supplierId;
+   public Optional<SupplierId> supplierId() {
+      return ofNullable(supplierId);
    }
 
 }

@@ -28,7 +28,6 @@ public class SendOrdersToSuppliersImpl1  implements OrderConfirmedEventHandler {
 
    @Override
    public void suppliersOrdersData(Long orderId) {
-
       OrderVO order = orderServiceClient.getOrder(orderId);
 
       Map<String, List<ProductWithQuantity>> result = order.orderLines().stream()

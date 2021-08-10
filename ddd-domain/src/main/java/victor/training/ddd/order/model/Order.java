@@ -7,6 +7,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static java.util.Collections.unmodifiableList;
 
@@ -35,7 +36,7 @@ public class Order {
    protected Order() {} // for hibernate eyes only
 
    public Order(String clientId) {
-      this.clientId = clientId;
+      this.clientId = Objects.requireNonNull(clientId);
    }
 
 
