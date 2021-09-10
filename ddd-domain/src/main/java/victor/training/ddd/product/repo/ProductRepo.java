@@ -1,8 +1,8 @@
 package victor.training.ddd.product.repo;
 
-import victor.training.ddd.common.repo.CustomJpaRepository;
+import org.springframework.data.mongodb.repository.MongoRepository;
 import victor.training.ddd.product.model.Product;
 
-public interface ProductRepo extends CustomJpaRepository<Product, String> {
+public interface ProductRepo extends MongoRepository<Product, String> {
 
 }

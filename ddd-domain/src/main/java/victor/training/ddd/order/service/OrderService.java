@@ -22,7 +22,7 @@ public class OrderService {
    public void suppliersOrdersData(Order order) {
 
 
-      Optional<Order> byId = orderRepo.findById(1L);
+      Optional<Order> byId = orderRepo.findById("1");
 
 
       // TODO : make sure order is COMMIT in your DB before you send the event

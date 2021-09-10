@@ -7,7 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,7 +18,6 @@ import javax.annotation.PostConstruct;
 @EnableAsync
 @SpringBootApplication
 @RequiredArgsConstructor
-@EnableJpaRepositories(repositoryFactoryBeanClass= victor.training.ddd.repo.base.EntityRepositoryFactoryBean.class)
 public class Application {
 //   public Application(OrderRepo orderRepo, OrderService orderService) {
 //      this.orderRepo = orderRepo;

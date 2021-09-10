@@ -1,13 +1,11 @@
 package victor.training.ddd.product.model;
 
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import java.math.BigDecimal;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import static java.util.Objects.requireNonNull;
 
-@Entity
+@Document
 public class Product {
    @Id
    private String id;
@@ -15,7 +13,6 @@ public class Product {
    private String name;
 
    // if there are more things related to price, I would create a ProductPriceVO with 2-3-4 fields.
-   @Embedded
    private ProductPrice price = new ProductPrice();
 
    private Product() {}

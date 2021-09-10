@@ -1,14 +1,14 @@
 package victor.training.ddd.user.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
+import java.util.UUID;
+
+@Document
 public class Email {
 	@Id
-	@GeneratedValue
-	private Long id;
+	private String id = UUID.randomUUID().toString();
 
 	private String toAddress;
 	private String fromAddress;

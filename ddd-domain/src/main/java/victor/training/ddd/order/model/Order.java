@@ -18,6 +18,7 @@ public class Order {
    private List<OrderLine> orderLines = new ArrayList<>();
    private int totalPrice;
    private LocalDateTime dateShipped;
+   private LocalDateTime createTime;
 
    public Order(List<OrderLine> orderLines) {
       if (orderLines.isEmpty()) {
@@ -30,8 +31,8 @@ public class Order {
 
    
 
-   public Long getId() {
-      return 1L;
+   public String getId() {
+      return "a";
    }
 
    public void setDateShipped(LocalDateTime dateShipped) {

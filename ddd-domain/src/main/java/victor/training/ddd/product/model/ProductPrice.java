@@ -1,11 +1,9 @@
 package victor.training.ddd.product.model;
 
-import javax.persistence.Embeddable;
 import java.math.BigDecimal;
 
 import static java.util.Objects.requireNonNull;
 
-@Embeddable
 public class ProductPrice {
    private BigDecimal romaniaPrice;
    private BigDecimal italyPrice;
