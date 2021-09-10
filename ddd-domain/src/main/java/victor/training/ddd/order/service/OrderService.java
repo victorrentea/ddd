@@ -6,8 +6,8 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import victor.training.ddd.order.model.Order;
 import victor.training.ddd.order.repo.OrderRepo;
-import victor.training.ddd.order.repo.OrderSpec;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,11 +29,11 @@ public class OrderService {
 //      sendOrdersToSuppliers.suppliersOrdersData(order);
 //      publisher.publishEvent(new OrderConfirmedEvent(order.id()));
 
-      orderEventsSender.sendOrderConfirmed(order.id());
+//      orderEventsSender.sendOrderConfirmed(order.id());
    }
 
    public List<Order> search(OrderSearchCriteria criteria) {
-      List<Order> results = orderRepo.findAll(OrderSpec.clientId(criteria.clientId));
+      List<Order> results = Collections.emptyList();
       return results;
    }
 
