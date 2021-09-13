@@ -1,7 +1,6 @@
 package victor.training.ddd.supplier.model;
 
 import lombok.Data;
-import victor.training.ddd.product.model.Product;
 
 import java.math.BigDecimal;
 

@@ -3,7 +3,6 @@ package victor.training.ddd.order.model;
 import org.junit.jupiter.api.Test;
 
 import static java.util.Arrays.asList;
-import static org.junit.jupiter.api.Assertions.*;
 
 class OrderServiceTest {
 
@@ -12,7 +11,7 @@ class OrderServiceTest {
       Order order = DummyData.aValidOrder();
 //      order.setId(12L);
 
-      new OrderService().cancelOrder(order);
+//      new OrderService().applyCoupon(order, "12");
 
 //      verify(ca s-a trimis HTTP/mesaje)
 
@@ -22,7 +21,7 @@ class OrderServiceTest {
 
 class DummyData {
    public static Order aValidOrder() {
-      return new Order(asList(new OrderLine(new Product(12), 2)));
+      return new Order(asList(new OrderLine(null, 2)));
    }
 
 }
