@@ -13,7 +13,7 @@ public class OrderLineDto {
 
    public OrderLineDto() {}
    public OrderLineDto(OrderLine entity) {
-      supplierId = entity.supplierId().value;
+      supplierId = entity.supplierId().map(SupplierId::getValue).orElse(null);
       productId = entity.productId();
       itemPrice = entity.itemPrice();
       itemQuantity = entity.itemQuantity();
