@@ -3,9 +3,8 @@ package victor.training.ddd.common.controller.filter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
-import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import victor.training.ddd.MyException;
@@ -24,6 +23,11 @@ public class GlobalExceptionHandler {
    @ResponseStatus //500
    public String handleMyException(HttpServletRequest request, MyException myException) {
       return translateError(myException, myException.getErrorCode(), myException.getParameters(), request);
+   }
+   @ExceptionHandler(MethodArgumentNotValidException.class)
+   @ResponseStatus //500
+   public String handleMyException(HttpServletRequest request, MethodArgumentNotValidException myException) {
+      return myException.getMessage();
    }
 
    @ExceptionHandler(Exception.class)

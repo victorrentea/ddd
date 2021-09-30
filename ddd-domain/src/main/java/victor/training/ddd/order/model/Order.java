@@ -9,22 +9,17 @@ import java.util.Optional;
 
 import static java.util.Collections.unmodifiableList;
 
+
 // Aggregate si Entitate
 //@Entity
-//@Configurable
 //@Data
 public class Order {
-
-//   @Autowired
-//   private OrderRepo repo;
-
-//   private ImmutableList<OrderLine> orderLines = new ArrayList<>();
-//   @Size(min = 1)
    private String id;
    private List<OrderLine> orderLines = new ArrayList<>();
    private double totalPrice;
    private LocalDateTime dateShipped;
    private LocalDateTime createTime;
+   private CustomerId customerId;
 
 
    public Double getTotalPrice() {
@@ -36,7 +31,9 @@ public class Order {
          throw new IllegalArgumentException("At least one OrderLine is required");
       }
       for (OrderLine orderLine : orderLines) {
-         addProduct(orderLine);
+         addProduct(orderLine.getProductSnapshot().getProductId(),
+             orderLine.getProductSnapshot().getPrice(),
+             orderLine.getCount());
       }
    }
 
@@ -56,18 +53,18 @@ public class Order {
       return unmodifiableList(orderLines);
    }
 
-   public void addProduct(OrderLine orderLine) {
-      // invariant: sum(orderLine.product.price * orderLine.count)=order.totalPrice
+   public void addProduct(String productId, double price, int items) {
       Optional<OrderLine> orderLineOpt = orderLines.stream()
-          .filter(line -> line.getProductSnapshot() == orderLine.getProductSnapshot()).findFirst();
+          .filter(line -> line.getProductSnapshot().getProductId().equals(productId))
+          .findFirst();
 
       if (orderLineOpt.isPresent()) {
-         orderLines.remove(orderLineOpt.get());
-         int oldCount = orderLineOpt.get().getCount();
-         int newCount = oldCount + orderLine.getCount();
-         orderLines.add(new OrderLine(orderLine.getProductSnapshot(), newCount));
+         OrderLine existingLine = orderLineOpt.get();
+         orderLines.remove(existingLine);
+         OrderLine newOrderLine = existingLine.addItems(items);
+         orderLines.add(newOrderLine);
       } else {
-         orderLines.add(orderLine);
+         orderLines.add(new OrderLine(new ProductSnapshot(productId, price), items));
       }
       updateTotalPrice();
    }
@@ -93,13 +90,11 @@ public class Order {
       OrderLine orderLine = orderLines.stream()
           .filter(line -> line.getProductSnapshot().getProductId().equals(productId)).findFirst()
           .get();
-      orderLine.setDiscountRate(discountRate);
+
+      orderLines.remove(orderLine);
+      orderLines.add(orderLine.withDiscountRate(discountRate));
       updateTotalPrice();
 //      publishEvent(new PriceRequestedEvent(productId));
    }
-}
-
-class OrderFactory {
-
 }
 

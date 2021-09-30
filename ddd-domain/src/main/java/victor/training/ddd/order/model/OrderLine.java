@@ -3,26 +3,23 @@ package victor.training.ddd.order.model;
 
 import java.util.Objects;
 
+// Aggregate
 public class OrderLine {
-   // FARA ID
-//   id
-   private ProductSnapshot productSnapshot;
-//   private final String productId;
-//   private final float productPrice;
 
+   private final ProductSnapshot productSnapshot;
    private final int count;
-   private double discountRate = 0;
+   private final double discountRate;
 
-   public OrderLine(ProductSnapshot productSnapshot, int count) {
+   public OrderLine(ProductSnapshot productSnapshot, int count, double discountRate) {
       if (count <= 0) {
          throw new IllegalArgumentException("Invalid count. Must be positive");
       }
       this.productSnapshot = Objects.requireNonNull(productSnapshot);
       this.count = count;
-   }
-
-   void setDiscountRate(double discountRate) {
       this.discountRate = discountRate;
+   }
+   public OrderLine(ProductSnapshot productSnapshot, int count) {
+      this(productSnapshot, count, 0);
    }
 
    public double getDiscountRate() {
@@ -43,6 +40,14 @@ public class OrderLine {
 
    public boolean isSuspect() {
       return getPrice() > 100 && discountRate > .9;
+   }
+
+   public OrderLine addItems(int newItems) {
+      return new OrderLine(productSnapshot, count + newItems, discountRate);
+   }
+
+   public OrderLine withDiscountRate(double discountRate) {
+      return new OrderLine(productSnapshot, count, discountRate);
    }
 
 

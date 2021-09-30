@@ -2,17 +2,14 @@ package victor.training.ddd;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 //@EnableWebSecurity
 
@@ -28,7 +25,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //            .mvcMatchers("/api/admin/**").hasRole("ADMIN")
 //            .mvcMatchers(HttpMethod.POST,"/api/orders").hasRole("ADMIN")
 //            .mvcMatchers(HttpMethod.POST,"/api/orders/*").hasRole("USEr")
-            .anyRequest().authenticated()
+            .anyRequest().permitAll()
           .and()
           .addFilterBefore(new MyFilter(), BasicAuthenticationFilter.class)
           .httpBasic().and()
