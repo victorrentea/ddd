@@ -3,15 +3,14 @@ package victor.training.ddd.order.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import victor.training.ddd.order.model.Customer;
 import victor.training.ddd.order.model.Order;
-import victor.training.ddd.order.repo.CustomerRepo;
 import victor.training.ddd.order.repo.OrderRepo;
 
 @Service
 @RequiredArgsConstructor
 public class OrderService {
    private final OrderRepo orderRepo;
+   private final CustomerService customerService;
 
    @Transactional
    public void applyCoupon(String orderId, String productId) {
@@ -21,16 +20,12 @@ public class OrderService {
       orderRepo.save(order);
    }
 
-   private final CustomerRepo customerRepo;
-
    public void placeOrder(String orderId) {
       Order order = orderRepo.findById(orderId).get();
-      Customer customer = customerRepo.findById(order.getCustomerId().getId()).get();
-      order.place(customer);
-
+      order.place();
       orderRepo.save(order);
-      customerRepo.save(customer);
 
+      customerService.addFidelityPoints(order.getCustomerId().getId(), order.getFidelityPoints());
    }
 
 }
