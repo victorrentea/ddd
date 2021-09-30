@@ -1,9 +1,11 @@
 package victor.training.ddd.order.model;
 
 import lombok.Getter;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.transaction.annotation.Transactional;
+import victor.training.ddd.order.model.events.OrderPlacedEvent;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -75,11 +77,14 @@ public class Order {
       shippedByUser = Objects.requireNonNull(username);
    }
 
-   public void place() {
+
+   public void place(ApplicationEventPublisher eventPublisher) {
       if (status != Status.DRAFT) {
          throw new IllegalStateException("Should have been draft");
       }
       status = Status.PLACED;
+      // cum puii mei o fac pe asta sa mearga ?!
+      eventPublisher.publishEvent(new OrderPlacedEvent(customerId.getId(), getFidelityPoints()));
    }
 
    public void setCustomerId(CustomerId customerId) {

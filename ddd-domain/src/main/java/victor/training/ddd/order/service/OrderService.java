@@ -24,10 +24,10 @@ public class OrderService {
 
    public void placeOrder(String orderId) {
       Order order = orderRepo.findById(orderId).get();
-      order.place();
+      order.place(eventPublisher);
       orderRepo.save(order);
 
-      eventPublisher.publishEvent(new OrderPlacedEvent(order.getCustomerId().getId(), order.getFidelityPoints()));
+
    }
 
 }
