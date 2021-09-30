@@ -1,5 +1,6 @@
 package victor.training.ddd.snack;
 
+import org.assertj.core.api.Assertions;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +19,8 @@ class SnackServiceTest {
    @Autowired
    private Product2Repo productRepo;
    private ObjectId productId;
+   @Autowired
+   private SnackPileService snackPileService;
 
    @BeforeEach
    public final void before() {
@@ -31,13 +34,32 @@ class SnackServiceTest {
       pile.setCount(10);
 //      pile.setProduct("Chio");
       pile.setProduct(product);
-//      pile.rich("13");
       snackPileRepo.save(pile);
    }
-   @AfterEach
-   public void method() {
-      snackPileRepo.deleteAll();
-      productRepo.deleteAll();
+   @Test
+   void checkItem() {
+      SnackPile pile1v1 = snackPileRepo.findAll().get(0); // thread 1
+      SnackPile pile2v1 = snackPileRepo.findAll().get(0); // thread 2
+
+
+      // REST call de 1 sec // t1
+      // REST call de 1 sec // t2
+      System.out.println(pile1v1 == pile2v1);
+
+      pile1v1.setCount(2); // initial era 10
+
+      pile2v1.setSlotId(2); // initial 1
+
+      snackPileRepo.save(pile1v1);
+      snackPileRepo.save(pile2v1);
+
+      System.out.println("Final : " + snackPileRepo.findAll().get(0));
+   }
+
+   @Test
+   public void domainEvents() {
+      snackPileService.rich();
+      Assertions.assertThat(snackPileRepo.count()).isEqualTo(1);
    }
 
    @Test
@@ -45,24 +67,15 @@ class SnackServiceTest {
       assertThat(snackService.checkItem(1)).isTrue();
    }
    @Test
-   void checkItem() {
-      SnackPile pile1 = snackPileRepo.findAll().get(0);
-      SnackPile pile2 = snackPileRepo.findAll().get(0);
-
-      System.out.println(pile1 == pile2);
-
-      pile1.setCount(2);
-
-      pile2.setSlotId(2);
-
-      snackPileRepo.save(pile1);
-      snackPileRepo.save(pile2);
-   }
-
-   @Test
    void deleteReferenced() {
       snackPileRepo.findAll().forEach(System.out::println);
       productRepo.deleteById(productId);
       snackPileRepo.findAll().forEach(System.out::println);
+   }
+
+   @AfterEach
+   public void method() {
+      snackPileRepo.deleteAll();
+      productRepo.deleteAll();
    }
 }
