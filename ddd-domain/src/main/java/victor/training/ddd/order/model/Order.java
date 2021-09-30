@@ -71,12 +71,12 @@ public class Order {
       shippedByUser = Objects.requireNonNull(username);
    }
 
-   public void place() {
+   public void place(Customer customer) {
       if (status != Status.DRAFT) {
          throw new IllegalStateException("Should have been draft");
       }
       status = Status.PLACED;
-
+      customer.addFidelityPoints(getFidelityPoints());
    }
 
 

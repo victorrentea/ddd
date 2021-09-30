@@ -25,10 +25,12 @@ public class OrderService {
 
    public void placeOrder(String orderId) {
       Order order = orderRepo.findById(orderId).get();
-      order.place();
-
       Customer customer = customerRepo.findById(order.getCustomerId().getId()).get();
-      customer.addFidelityPoints(order.getFidelityPoints());
+      order.place(customer);
+
+      orderRepo.save(order);
+      customerRepo.save(customer);
+
    }
 
 }
