@@ -2,8 +2,10 @@ package victor.training.ddd.order.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import victor.training.ddd.order.model.Customer;
+import victor.training.ddd.order.model.events.OrderPlacedEvent;
 import victor.training.ddd.order.repo.CustomerRepo;
 
 @Slf4j
@@ -12,9 +14,10 @@ import victor.training.ddd.order.repo.CustomerRepo;
 public class CustomerService {
    private final CustomerRepo customerRepo;
 
-   public void addFidelityPoints(String customerId, int points) {
-      Customer customer = customerRepo.findById(customerId).get();
-      customer.addFidelityPoints(points);
+   @EventListener
+   public void addFidelityPoints(OrderPlacedEvent event) {
+      Customer customer = customerRepo.findById(event.getCustomerId()).get();
+      customer.addFidelityPoints(event.getFidelityPoints());
       customerRepo.save(customer);
    }
 }

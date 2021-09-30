@@ -1,16 +1,18 @@
 package victor.training.ddd.order.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import victor.training.ddd.order.model.Order;
+import victor.training.ddd.order.model.events.OrderPlacedEvent;
 import victor.training.ddd.order.repo.OrderRepo;
 
 @Service
 @RequiredArgsConstructor
 public class OrderService {
    private final OrderRepo orderRepo;
-   private final CustomerService customerService;
+   private final ApplicationEventPublisher eventPublisher;
 
    @Transactional
    public void applyCoupon(String orderId, String productId) {
@@ -25,7 +27,7 @@ public class OrderService {
       order.place();
       orderRepo.save(order);
 
-      customerService.addFidelityPoints(order.getCustomerId().getId(), order.getFidelityPoints());
+      eventPublisher.publishEvent(new OrderPlacedEvent(order.getCustomerId().getId(), order.getFidelityPoints()));
    }
 
 }
