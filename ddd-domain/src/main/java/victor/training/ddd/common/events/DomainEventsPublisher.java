@@ -1,16 +1,14 @@
 package victor.training.ddd.common.events;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class DomainEventsPublisher {
-   private static final Logger log = LoggerFactory.getLogger(DomainEventsPublisher.class);
-
    private static ApplicationEventPublisher publisher = new NoopPublisher();
 
    private static class NoopPublisher implements ApplicationEventPublisher {
@@ -25,7 +23,7 @@ public class DomainEventsPublisher {
       }
    }
 
-   static void setPublisherFromTests(ApplicationEventPublisher publisher) {
+   public static void setPublisherFromTests(ApplicationEventPublisher publisher) {
       DomainEventsPublisher.publisher = publisher;
    }
 

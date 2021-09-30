@@ -5,7 +5,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import victor.training.ddd.order.model.Order;
-import victor.training.ddd.order.model.events.OrderPlacedEvent;
 import victor.training.ddd.order.repo.OrderRepo;
 
 @Service
@@ -24,10 +23,8 @@ public class OrderService {
 
    public void placeOrder(String orderId) {
       Order order = orderRepo.findById(orderId).get();
-      order.place(eventPublisher);
+      order.place();
       orderRepo.save(order);
-
-
    }
 
 }

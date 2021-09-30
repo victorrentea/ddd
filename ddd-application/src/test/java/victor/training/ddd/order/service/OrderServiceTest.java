@@ -35,6 +35,7 @@ class OrderServiceTest {
 
       assertThat(customer.getFidelityPoints()).isEqualTo(2);
 
+//      DomainEventsPublisher.setPublisherFromTests(mock);
    }
 }
 

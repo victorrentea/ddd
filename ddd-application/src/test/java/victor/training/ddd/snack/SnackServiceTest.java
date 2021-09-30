@@ -27,10 +27,11 @@ class SnackServiceTest {
       productId = product.getId();
 
       SnackPile pile = new SnackPile();
-//      pile.setSlotId(1);
+      pile.setSlotId(1);
       pile.setCount(10);
 //      pile.setProduct("Chio");
       pile.setProduct(product);
+//      pile.rich("13");
       snackPileRepo.save(pile);
    }
    @AfterEach
@@ -40,8 +41,22 @@ class SnackServiceTest {
    }
 
    @Test
-   void checkItem() {
+   void optimisticLocking() {
       assertThat(snackService.checkItem(1)).isTrue();
+   }
+   @Test
+   void checkItem() {
+      SnackPile pile1 = snackPileRepo.findAll().get(0);
+      SnackPile pile2 = snackPileRepo.findAll().get(0);
+
+      System.out.println(pile1 == pile2);
+
+      pile1.setCount(2);
+
+      pile2.setSlotId(2);
+
+      snackPileRepo.save(pile1);
+      snackPileRepo.save(pile2);
    }
 
    @Test

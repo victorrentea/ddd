@@ -18,6 +18,7 @@ public class CustomerService {
    public void addFidelityPoints(OrderPlacedEvent event) {
       Customer customer = customerRepo.findById(event.getCustomerId()).get();
       customer.addFidelityPoints(event.getFidelityPoints());
+      if (true) throw new RuntimeException("BuUU");
       customerRepo.save(customer);
    }
 }
