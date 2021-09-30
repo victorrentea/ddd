@@ -1,6 +1,11 @@
 package victor.training.ddd.order.model;
 
+import lombok.Getter;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 //
+@Document
+@Getter
 public class Product {
    // imagine, shipped by, descr, carac MAP,
    private String id;
@@ -18,7 +23,4 @@ public class Product {
       return price;
    }
 
-   public void reportPriceQueried() {
-//      ++
-   }
 }

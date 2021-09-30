@@ -1,10 +1,10 @@
 package victor.training.ddd.order.model;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.transaction.annotation.Transactional;
 import victor.training.ddd.common.events.DomainEventsPublisher;
 import victor.training.ddd.order.model.events.OrderPlacedEvent;
 
@@ -16,55 +16,36 @@ import java.util.Optional;
 
 import static java.util.Collections.unmodifiableList;
 
-class Cod {
-   {
-//      Order order;
-//
-//      try {
-//         order.ship(null);
-//      } catch (Exception e) {
-//         // shaworma
-//      }
-//      repo.save(order);
-
-//      export toate orderurile cu user.FullName shipped by
-
-      // count(User) < 10k : poti sa-i incarci pe toti in memorie
-      // Map<String, String> usernameToFullname
-
-      // daca count(User) >>> mare  iterezi pe order si tii acelasi map
-      // dar pe care il populezi pe parcurs
-      // alternativa : @Cacheable
-   }
-}
-
-//@Entity
-//@Data
+@Getter
 @Document
 public class Order {
+   enum Status {
+      DRAFT,
+      PLACED,
+      SHIPPED
+   }
+
    @Id
    private ObjectId id;
-   private List<OrderLine> orderLines = new ArrayList<>();
+   private final List<OrderLine> orderLines = new ArrayList<>();
    private double totalPrice;
-   private LocalDateTime dateShipped;
-   private LocalDateTime createTime = LocalDateTime.now();
+   @Setter
    private CustomerId customerId;
-   @Getter
-   private Status status = Status.DRAFT;
-   @Getter
-   private String shippedByUser; // never null if status >= SHIPPED
 
-   public CustomerId getCustomerId() {
-      return customerId;
-   }
+   private Status status = Status.DRAFT;
+
+   private final LocalDateTime createTime = LocalDateTime.now();
+   private LocalDateTime dateShipped;
+
+   private String shippedByUser; // never null if status >= SHIPPED
 
    public Order(List<OrderLine> orderLines) {
       if (orderLines.isEmpty()) {
          throw new IllegalArgumentException("At least one OrderLine is required");
       }
       for (OrderLine orderLine : orderLines) {
-         addProduct(orderLine.getProductSnapshot().getProductId(),
-             orderLine.getProductSnapshot().getPrice(),
+         addProduct(orderLine.getProduct().getProductId(),
+             orderLine.getProduct().getPrice(),
              orderLine.getCount());
       }
    }
@@ -88,40 +69,19 @@ public class Order {
       DomainEventsPublisher.publish(new OrderPlacedEvent(customerId.getId(), getFidelityPoints()));
    }
 
-   public void setCustomerId(CustomerId customerId) {
-      this.customerId = customerId;
-   }
-
-   public Double getTotalPrice() {
-      return totalPrice;
-   }
-
-   public String getId() {
-      return "a";
-   }
-
-   @Transactional
-   public void setDateShipped(LocalDateTime dateShipped) {
-      if (dateShipped.isBefore(LocalDateTime.now().minusMonths(1))) {
-         throw new IllegalArgumentException("Data e prea in trecut");
-      }
-      this.dateShipped = dateShipped;
-   }
-
    public List<OrderLine> getOrderLines() {
       return unmodifiableList(orderLines);
    }
 
    public void addProduct(String productId, double price, int items) {
       Optional<OrderLine> orderLineOpt = orderLines.stream()
-          .filter(line -> line.getProductSnapshot().getProductId().equals(productId))
+          .filter(line -> line.getProduct().getProductId().equals(productId))
           .findFirst();
 
       if (orderLineOpt.isPresent()) {
          OrderLine existingLine = orderLineOpt.get();
          orderLines.remove(existingLine);
-         OrderLine newOrderLine = existingLine.addItems(items);
-         orderLines.add(newOrderLine);
+         orderLines.add(existingLine.addItems(items));
       } else {
          orderLines.add(new OrderLine(new ProductSnapshot(productId, price), items));
       }
@@ -129,7 +89,7 @@ public class Order {
    }
 
    private void updateTotalPrice() {
-      totalPrice += orderLines.stream().mapToDouble(OrderLine::getPrice).sum();
+      totalPrice = orderLines.stream().mapToDouble(OrderLine::getPrice).sum();
    }
 
    public void removeProduct(OrderLine orderLine) {
@@ -141,29 +101,8 @@ public class Order {
       updateTotalPrice();
    }
 
-   public void applyCoupon(String productId, double discountRate) {
-      if (discountRate > 1) {
-         throw new IllegalArgumentException();
-      }
-      // aplica discount pe orderlineUL cu produsul asta
-      OrderLine orderLine = orderLines.stream()
-          .filter(line -> line.getProductSnapshot().getProductId().equals(productId)).findFirst()
-          .get();
-
-      orderLines.remove(orderLine);
-      orderLines.add(orderLine.withDiscountRate(discountRate));
-      updateTotalPrice();
-//      publishEvent(new PriceRequestedEvent(productId));
-   }
-
    public int getFidelityPoints() {
       return (int) (totalPrice / 10);
-   }
-
-   enum Status {
-      DRAFT,
-      PLACED,
-      SHIPPED
    }
 }
 

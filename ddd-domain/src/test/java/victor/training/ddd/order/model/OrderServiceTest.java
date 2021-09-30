@@ -47,7 +47,6 @@ class DummyData {
       // a) MUNCITORESC: Iti faci un validator care aduna intr-o List erorile
       // b) @NotNull/@Email/@Length pe DTO-uri javax.validation
             // >> validarile facute pe DTO-uri trebuie tinute in sync cu validarile de pe MODEL
-      new Address(null, null, null, null);
 
 
       return new Order(asList(new OrderLine(null, 2)));

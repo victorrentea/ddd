@@ -1,4 +1,4 @@
-package victor.training.ddd.order.model;
+package victor.training.ddd.garage;
 
 
 
@@ -14,7 +14,6 @@ package victor.training.ddd.order.model;
 //}
 
 
-import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 

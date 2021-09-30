@@ -1,10 +1,9 @@
 package victor.training.ddd.order.model;
 
-// Aggregate
-
 @interface DDD {
    @interface Aggregate {}
    @interface ValueObject {}
+   @interface Entity {}
 }
 
 @DDD.Aggregate
