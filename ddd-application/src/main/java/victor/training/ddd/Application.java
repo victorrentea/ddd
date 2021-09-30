@@ -7,7 +7,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.mongodb.core.mapping.event.ValidatingMongoEventListener;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
@@ -19,10 +21,11 @@ import javax.annotation.PostConstruct;
 @SpringBootApplication
 @RequiredArgsConstructor
 public class Application {
-//   public Application(OrderRepo orderRepo, OrderService orderService) {
-//      this.orderRepo = orderRepo;
-//      this.orderService = orderService;
-//   }
+
+   @Bean
+   public ValidatingMongoEventListener validatingMongoEventListener(LocalValidatorFactoryBean lfb) {
+      return new ValidatingMongoEventListener(lfb);
+   }
 
    @Bean
    public RestTemplate rest() {
