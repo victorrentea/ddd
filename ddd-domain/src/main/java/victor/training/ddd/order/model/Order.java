@@ -1,14 +1,37 @@
 package victor.training.ddd.order.model;
 
+import lombok.Getter;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static java.util.Collections.unmodifiableList;
 
+class Cod {
+   {
+//      Order order;
+//
+//      try {
+//         order.ship(null);
+//      } catch (Exception e) {
+//         // shaworma
+//      }
+//      repo.save(order);
+
+//      export toate orderurile cu user.FullName shipped by
+
+      // count(User) < 10k : poti sa-i incarci pe toti in memorie
+      // Map<String, String> usernameToFullname
+
+      // daca count(User) >>> mare  iterezi pe order si tii acelasi map
+      // dar pe care il populezi pe parcurs
+      // alternativa : @Cacheable
+   }
+}
 
 // Aggregate si Entitate
 //@Entity
@@ -20,11 +43,10 @@ public class Order {
    private LocalDateTime dateShipped;
    private LocalDateTime createTime;
    private CustomerId customerId;
-
-
-   public Double getTotalPrice() {
-      return totalPrice;
-   }
+   @Getter
+   private Status status;
+   @Getter
+   private String shippedByUser; // never null if status >= SHIPPED
 
    public Order(List<OrderLine> orderLines) {
       if (orderLines.isEmpty()) {
@@ -35,6 +57,27 @@ public class Order {
              orderLine.getProductSnapshot().getPrice(),
              orderLine.getCount());
       }
+   }
+
+   public void ship(String username) {
+      if (status != Status.PLACED) {
+         throw new IllegalStateException("Should have been placed");
+      }
+      status = Status.SHIPPED;
+      shippedByUser = Objects.requireNonNull(username);
+   }
+
+   public void place() {
+      if (status != Status.DRAFT) {
+         throw new IllegalStateException("Should have been draft");
+      }
+      status = Status.PLACED;
+
+   }
+
+
+   public Double getTotalPrice() {
+      return totalPrice;
    }
 
    public String getId() {
@@ -95,6 +138,12 @@ public class Order {
       orderLines.add(orderLine.withDiscountRate(discountRate));
       updateTotalPrice();
 //      publishEvent(new PriceRequestedEvent(productId));
+   }
+
+   enum Status {
+      DRAFT,
+      PLACED,
+      SHIPPED
    }
 }
 

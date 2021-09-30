@@ -14,6 +14,7 @@ package victor.training.ddd.order.model;
 //}
 
 
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 
@@ -80,12 +81,12 @@ public class Person {
 
    public Person(String id, Address address, Long originCountryId) {
       this.id = id;
-      this.address = address;
       this.originCountryId = originCountryId;
+      setAddress(address);
    }
 
    public void setAddress(Address address) {
-      this.address = address;
+      this.address = Objects.requireNonNull(address);
    }
 
    public Address getAddress() {
