@@ -48,6 +48,10 @@ public class Order {
    @Getter
    private String shippedByUser; // never null if status >= SHIPPED
 
+   public CustomerId getCustomerId() {
+      return customerId;
+   }
+
    public Order(List<OrderLine> orderLines) {
       if (orderLines.isEmpty()) {
          throw new IllegalArgumentException("At least one OrderLine is required");
@@ -138,6 +142,10 @@ public class Order {
       orderLines.add(orderLine.withDiscountRate(discountRate));
       updateTotalPrice();
 //      publishEvent(new PriceRequestedEvent(productId));
+   }
+
+   public int getFidelityPoints() {
+      return (int) (totalPrice / 10);
    }
 
    enum Status {
