@@ -1,6 +1,7 @@
 package victor.training.ddd.order.model;
 
 import lombok.Getter;
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,17 +38,16 @@ class Cod {
    }
 }
 
-// Aggregate si Entitate
 //@Entity
 //@Data
 @Document
 public class Order {
    @Id
-   private String id;
+   private ObjectId id;
    private List<OrderLine> orderLines = new ArrayList<>();
    private double totalPrice;
    private LocalDateTime dateShipped;
-   private LocalDateTime createTime;
+   private LocalDateTime createTime = LocalDateTime.now();
    private CustomerId customerId;
    @Getter
    private Status status = Status.DRAFT;
@@ -75,6 +75,7 @@ public class Order {
       }
       status = Status.SHIPPED;
       shippedByUser = Objects.requireNonNull(username);
+      dateShipped = LocalDateTime.now();
    }
 
 

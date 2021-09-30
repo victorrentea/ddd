@@ -6,6 +6,7 @@ import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
 import org.springframework.data.domain.AbstractAggregateRoot;
@@ -14,11 +15,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.event.TransactionalEventListener;
 
 import javax.validation.constraints.NotNull;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Value
@@ -40,36 +40,31 @@ public class SnackService {
 class SnackPile extends AbstractAggregateRoot<SnackPile> {
    @Id
    private ObjectId id = new ObjectId();
-   @NotNull // TODO aspect
+   @NotNull
    private Integer slotId;
    private int count;
 
-   @Version
+   private List<String> tags = new ArrayList<>();
+
+   @Version // optimistic locking
    private Integer version;
 
    @DBRef
-//   @NotNull TODO
-   private Product product;
-//   private String product;
+   private Snack snack;
 
    public void rich(String pa) {
       // mai mereu change-uri pe starea interna
-//      registerEvent(new MyEvent("event " +pa));
+      registerEvent(new MyEvent("event " +pa));
    }
 }
 
-@Retention(RetentionPolicy.RUNTIME)
-@Service
-@interface Ascuns {
-
-}
-
 @Slf4j
-@Ascuns
+@Service
 @RequiredArgsConstructor
 class SnackPileService {
    private final SnackPileRepo snackPileRepo;
    private final ApplicationEventPublisher eventPublisher;
+
    @Transactional
    public void rich() {
       SnackPile pile = snackPileRepo.findAll().get(0);
@@ -85,16 +80,15 @@ class SnackPileService {
 @RequiredArgsConstructor
 class SomeListener {
    private final SnackPileRepo snackPileRepo;
-   @TransactionalEventListener
+   @EventListener
    public void listen(MyEvent event) {
       log.info("Primit event: " + event);
-      snackPileRepo.save(new SnackPile());
-      throw new RuntimeException("BUm tranactie2");
+      snackPileRepo.save(new SnackPile().setSlotId(1));
    }
 }
 @Data
 @Document
-class Product {
+class Snack {
    @Id
    private ObjectId id;
    private String name;
@@ -104,5 +98,5 @@ interface SnackPileRepo extends MongoRepository<SnackPile, ObjectId> {
    SnackPile findBySlotId(int slotId);
 }
 
-interface Product2Repo extends MongoRepository<Product, ObjectId> {
+interface SnackRepo extends MongoRepository<Snack, ObjectId> {
 }
