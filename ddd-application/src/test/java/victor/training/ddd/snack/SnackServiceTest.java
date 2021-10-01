@@ -64,7 +64,7 @@ class SnackServiceTest {
 
    @Test
    void validation() {
-      SnackPile pile = new SnackPile().setCount(10);
+      SnackPile pile = new SnackPile();
       assertThrows(ConstraintViolationException.class,
           () -> snackPileRepo.save(pile));
    }

@@ -13,6 +13,7 @@ public class OrderService {
    public void placeOrder(String orderId) {
       Order order = orderRepo.findById(orderId).get();
       order.place();
+
       orderRepo.save(order);
    }
 
