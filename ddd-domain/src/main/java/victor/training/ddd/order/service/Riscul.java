@@ -15,7 +15,7 @@ public class Riscul {
 
 
       //  order.getLines().add(orderLine); // runtime exception.
-      orderLine.setOrder(order);
+//      orderLine.setOrder(order); // nu compileaza
 
       EntityManager em = null;
       em.persist(order);
