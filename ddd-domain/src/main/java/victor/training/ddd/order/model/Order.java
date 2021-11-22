@@ -71,8 +71,9 @@ public class Order {
       return clientId;
    }
 
-   public void setClientId(String clientId) {
+   public Order setClientId(String clientId) {
       this.clientId = clientId;
+      return this;
    }
 
 }

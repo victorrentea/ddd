@@ -24,12 +24,11 @@ public class DummyData implements CommandLineRunner {
 
       X.oldMethod();
 
-      Order order = new Order("clientId");
-      order.add(new OrderLine("Pfeiser", BigDecimal.TEN, BigDecimal.ONE).supplierId(new SupplierId("eMAG")));
-      orderRepo.save(order);
-      System.out.println(orderRepo.findAll());
-
-      orderService.suppliersOrdersData(order);
+//      Order order = new Order().setClientId("clientId");
+//      order.add(new OrderLine("Pfeiser", BigDecimal.TEN, BigDecimal.ONE).supplierId(new SupplierId("eMAG")));
+//      orderRepo.save(order);
+//      System.out.println(orderRepo.findAll());
+//      orderService.suppliersOrdersData(order);
 
 
 

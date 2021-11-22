@@ -29,7 +29,7 @@ public class OrderService {
 //      sendOrdersToSuppliers.suppliersOrdersData(order);
 //      publisher.publishEvent(new OrderConfirmedEvent(order.id()));
 
-      orderEventsSender.sendOrderConfirmed(order.id());
+      orderEventsSender.sendOrderConfirmed(order.getId());
    }
 
    public List<Order> search(OrderSearchCriteria criteria) {
