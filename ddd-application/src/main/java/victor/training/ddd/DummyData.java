@@ -3,13 +3,8 @@ package victor.training.ddd;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
-import victor.training.ddd.order.model.Order;
-import victor.training.ddd.order.model.OrderLine;
-import victor.training.ddd.order.model.SupplierId;
 import victor.training.ddd.order.repo.OrderRepo;
 import victor.training.ddd.order.service.OrderService;
-
-import java.math.BigDecimal;
 
 //@Profile("insertDummyData") // in real project
 @Component

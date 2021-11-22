@@ -8,7 +8,6 @@ import org.springframework.http.RequestEntity;
 import org.springframework.web.client.RestTemplate;
 import victor.training.ddd.order.adapter.dto.ExternalProductDto;
 import victor.training.ddd.product.model.Product;
-import victor.training.ddd.product.model.ProductPrice;
 import victor.training.ddd.product.service.ExternalProductService;
 
 import java.util.Optional;
@@ -39,7 +38,8 @@ public class ProductServiceRestClient implements ExternalProductService {
    }
 
    private Product toEntity(ExternalProductDto dto) {
-      ProductPrice price = new ProductPrice(dto.priceForRomania, dto.priceForItaly, dto.priceForSerbia);
-      return new Product(dto.id, dto.name, price);
+//      ProductPrice price = new ProductPrice(dto.priceForRomania, dto.priceForItaly, dto.priceForSerbia);
+//      return new Product(dto.id, dto.name, price);
+      return null;
    }
 }
