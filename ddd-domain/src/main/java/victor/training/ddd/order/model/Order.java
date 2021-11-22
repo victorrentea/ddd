@@ -36,12 +36,24 @@ public class Order {
    @JoinColumn
    private List<OrderLine> lines = new ArrayList<>();
 
+   // REQ: sa avem mereu in clar in Order totalul comenzii in bani. mereu up to date.
+
+   private Long totalPrice;
+
+   public Long getTotalPrice() {
+      return totalPrice;
+   }
+
+
    // respo: sa tina cele doua capete ale relatiei bidirect in sync,
    public void addLine(OrderLine orderLine) { // TODO : remove in scenariul asta, lasa get/set pe colectie !
+      totalPrice += orderLine.getTotalPrice().longValue();
       lines.add(orderLine);
    }
+
    // respo: sa tina cele doua capete ale relatiei bidirect in sync,
    public void removeLine(OrderLine orderLine) { // TODO : remove in scenariul asta, lasa get/set pe colectie !
+      totalPrice -= orderLine.getTotalPrice().longValue();
       lines.remove(orderLine);
    }
 

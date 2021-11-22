@@ -2,6 +2,7 @@
 //
 //import lombok.AllArgsConstructor;
 //import org.springframework.security.access.prepost.PreAuthorize;
+//import org.springframework.validation.annotation.Validated;
 //import org.springframework.web.bind.annotation.*;
 //import victor.training.ddd.order.facade.OrderFacade;
 //import victor.training.ddd.order.facade.dto.OrderDto;
@@ -14,7 +15,7 @@
 //
 //   @PreAuthorize("hasRole('ADMIN')")
 //   @PostMapping
-//   public void create(@RequestBody OrderDto dto) {
+//   public void create( @Validated @RequestBody OrderDto dto) {
 //      facade.create(dto);
 //   }
 //

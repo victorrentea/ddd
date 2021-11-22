@@ -4,13 +4,16 @@ import victor.training.ddd.order.model.Order;
 import victor.training.ddd.order.model.OrderLine;
 
 import javax.persistence.EntityManager;
+import java.math.BigDecimal;
 
 public class Riscul {
    {
       Order order = new Order();
-      OrderLine orderLine = new OrderLine();
+      OrderLine orderLine = new OrderLine()
+          .setItemQuantity(BigDecimal.valueOf(6))
+          .setItemPrice(BigDecimal.valueOf(10));
 
-      // grija sa le setez mereu pe amandoua!
+      // grije sa le setez mereu pe amandoua!
       order.addLine(orderLine);
 
 
