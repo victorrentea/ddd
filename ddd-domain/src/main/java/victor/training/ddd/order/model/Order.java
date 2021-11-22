@@ -6,11 +6,20 @@ import org.springframework.data.annotation.CreatedDate;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
-import static java.util.Collections.unmodifiableList;
 
+//@Data // NU!
+// getteri,
+
+// setteri,
+
+// hashCode-equals >> calc hashCode pe toate campurile,inclusiv pe ID. si cand hibernate atribuie ID, hashcode equals i se modifica;
+// Hashcode equals tre implementate doar pe campuri imutabile (fara setteri)
+
+// tostring >> lazy loading invizibil daca lista de lines nu a fost inca incarcata,
+///@Getter de obicei ramane
 @Entity
 @Table(name = "ORDERS") // SQL keyword collision
 public class Order {
@@ -23,40 +32,48 @@ public class Order {
 
    private String clientId; // ID of an externally-managed person ?..
 
-//   -- if you don't expose the ID of the inner
-//   OrderLines to anyone (and you shouldn't!)
-   // then you are free to model the child OrderLine entity as :
-   // 1) Embeddable + @ElementCollection  in parent -- CONS: every time yo change any of the lines,
-      //    ALL lines of the order are REMOVED and RE-INSERTED
-   // 2) normal @Entity
-   @OneToMany(cascade = CascadeType.ALL)
-   @JoinColumn // otherwise generates a join table
-   private List<OrderLine> orderLines = new ArrayList<>();
+   @OneToMany(mappedBy = "order")
+   private List<OrderLine> lines = new ArrayList<>();
 
-   protected Order() {} // for hibernate eyes only
+   // respo: sa tina cele doua capete ale relatiei bidirect in sync,
+   public void addLine(OrderLine orderLine) {
+      lines.add(orderLine);
+      orderLine.setOrder(this);
+   }
+   // respo: sa tina cele doua capete ale relatiei bidirect in sync,
+   public void removeLine(OrderLine orderLine) {
+      lines.remove(orderLine);
+      orderLine.setOrder(null);
+   }
 
-   public Order(String clientId) {
-      this.clientId = Objects.requireNonNull(clientId);
+   public List<OrderLine> getLines() {
+      return Collections.unmodifiableList(lines);
    }
 
 
-   public void add(OrderLine orderLine) {
-      orderLines.add(orderLine);
-   }
-
-   public String clientId() {
-      return clientId;
-   }
-
-   public List<OrderLine> orderLines() {
-      return unmodifiableList(orderLines); // or Guava's ImmutableList
-   }
-
-   public Long id() {
+   public Long getId() {
       return id;
    }
 
+   public void setId(Long id) {
+      this.id = id;
+   }
+
+   public LocalDateTime getCreateTime() {
+      return createTime;
+   }
+
+   public void setCreateTime(LocalDateTime createTime) {
+      this.createTime = createTime;
+   }
+
+   public String getClientId() {
+      return clientId;
+   }
+
+   public void setClientId(String clientId) {
+      this.clientId = clientId;
+   }
+
 }
-
-
 

@@ -1,64 +1,71 @@
 package victor.training.ddd.order.model;
 
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import java.math.BigDecimal;
-import java.util.Optional;
-
-import static java.util.Objects.requireNonNull;
-import static java.util.Optional.ofNullable;
 
 @Entity
-//@Embeddable
 public class OrderLine {
    @Id
    @GeneratedValue
    private Long id; // no getter!
 
-   @Embedded
-   private SupplierId supplierId;
+   private Long supplier;
    private String productId; // in the DB while you are on the same DB server, recommended to keep the FK between OrderLine -> Product
    private BigDecimal itemQuantity;
 
    private BigDecimal itemPrice;
 
-   protected OrderLine() {} // hibernate
+   @ManyToOne
+   private Order order;
 
-   public OrderLine(String productId, BigDecimal itemPrice, BigDecimal itemQuantity) {
-      this.productId = requireNonNull(productId);
-      this.itemPrice = requireNonNull(itemPrice);
-      this.itemQuantity = requireNonNull(itemQuantity);
+   public Long getId() {
+      return id;
    }
 
-//   public victor.training.ddd.order.facade.dto.OrderLineDto toDto() {
-//
-//   }
-
-   public OrderLine supplierId(SupplierId supplierId) {
-      this.supplierId = supplierId;
-      return this;
+   public void setId(Long id) {
+      this.id = id;
    }
 
-   public BigDecimal computePrice() {
-      return itemPrice.multiply(itemQuantity);
+   public Long getSupplier() {
+      return supplier;
    }
 
-   public String productId() {
+   public void setSupplier(Long supplier) {
+      this.supplier = supplier;
+   }
+
+   public String getProductId() {
       return productId;
    }
 
-   public BigDecimal itemPrice() {
-      return itemPrice;
+   public void setProductId(String productId) {
+      this.productId = productId;
    }
 
-   public BigDecimal itemQuantity() {
+   public BigDecimal getItemQuantity() {
       return itemQuantity;
    }
 
-   public Optional<SupplierId> supplierId() {
-      return ofNullable(supplierId);
+   public void setItemQuantity(BigDecimal itemQuantity) {
+      this.itemQuantity = itemQuantity;
    }
 
+   public BigDecimal getItemPrice() {
+      return itemPrice;
+   }
+
+   public void setItemPrice(BigDecimal itemPrice) {
+      this.itemPrice = itemPrice;
+   }
+
+   public Order getOrder() {
+      return order;
+   }
+
+   void setOrder(Order order) {
+      this.order = order;
+   }
 }
