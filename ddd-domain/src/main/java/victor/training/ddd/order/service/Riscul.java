@@ -9,9 +9,7 @@ import java.math.BigDecimal;
 public class Riscul {
    {
       Order order = new Order();
-      OrderLine orderLine = new OrderLine()
-          .setItemQuantity(BigDecimal.valueOf(6))
-          .setItemPrice(BigDecimal.valueOf(10));
+      OrderLine orderLine = new OrderLine("pid", BigDecimal.valueOf(6), BigDecimal.valueOf(10));
 
       // grije sa le setez mereu pe amandoua!
       order.addLine(orderLine);

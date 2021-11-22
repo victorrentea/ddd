@@ -8,7 +8,8 @@ import victor.training.ddd.order.repo.OrderRepo;
 
 import javax.persistence.EntityManager;
 import javax.validation.Validator;
-import java.math.BigDecimal;
+
+import static java.math.BigDecimal.valueOf;
 
 //@Interceptor   javax.inject.@Interceptor  (CDI)
 
@@ -26,9 +27,9 @@ public class CumValidezi {
 //      ValidatorFactory
 
 
-      OrderLine line = new OrderLine();
-
-      line.setItemQuantity(BigDecimal.valueOf(-1));
+      OrderLine line = new OrderLine("pid", valueOf(-1), valueOf(3))
+          //.setSupplier(14L) // optional
+          ;
 
       order.addLine(line);
 

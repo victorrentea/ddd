@@ -3,25 +3,35 @@ package victor.training.ddd.order.model;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.util.Objects;
+
+import static java.math.BigDecimal.ZERO;
 
 @Entity
 public class OrderLine {
    @Id
    @GeneratedValue
    private Long id; // no setter!
+   private String productId; // required
+   private BigDecimal itemQuantity ;  // required
+   private BigDecimal itemPrice; // required
    private Long supplier;
-   @NotNull // hibernate valideaza orice astfel de adnotare la persist/save
-   // permite sa opresti date invalide sa ajunga in DB.
-   private String productId;
-   @NotNull
-   private String email;
-   @Min(1)
-   private BigDecimal itemQuantity = BigDecimal.ONE;
-   @NotNull
-   private BigDecimal itemPrice;
+
+   protected OrderLine() { // just for hibernate 💘
+   }
+   public OrderLine(String productId, BigDecimal itemQuantity, BigDecimal itemPrice) {
+      this.productId = Objects.requireNonNull(productId);
+      if (itemQuantity.compareTo(ZERO) < 0) {
+         throw new IllegalArgumentException("Quantity must be positive");
+      }
+      this.itemQuantity = Objects.requireNonNull(itemQuantity);
+      if (itemPrice.compareTo(ZERO) < 0) {
+         throw new IllegalArgumentException("Price must be positive");
+      }
+      this.itemPrice = Objects.requireNonNull(itemPrice);
+   }
+
 
    public Long getId() {
       return id;
@@ -41,27 +51,13 @@ public class OrderLine {
       return productId;
    }
 
-   public OrderLine setProductId(String productId) {
-      this.productId = productId;
-      return this;
-   }
 
    public BigDecimal getItemQuantity() {
       return itemQuantity;
    }
 
-   public OrderLine setItemQuantity(BigDecimal itemQuantity) {
-      this.itemQuantity = itemQuantity;
-      return this;
-   }
-
    public BigDecimal getItemPrice() {
       return itemPrice;
-   }
-
-   public OrderLine setItemPrice(BigDecimal itemPrice) {
-      this.itemPrice = itemPrice;
-      return this;
    }
 
    public BigDecimal getTotalPrice() {

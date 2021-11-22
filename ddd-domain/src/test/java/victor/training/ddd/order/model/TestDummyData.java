@@ -6,9 +6,6 @@ public class TestDummyData {
 
 // pentru teste
    public static OrderLine anOrderLine() {
-      return new OrderLine()
-          .setProductId("::productId::")
-          .setItemQuantity(BigDecimal.ONE)
-          .setItemPrice(BigDecimal.TEN);
+      return new OrderLine("::productId::", BigDecimal.ONE, BigDecimal.TEN);
    }
 }
