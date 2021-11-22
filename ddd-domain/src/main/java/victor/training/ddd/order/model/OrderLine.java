@@ -1,5 +1,7 @@
 package victor.training.ddd.order.model;
 
+import org.springframework.stereotype.Service;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -7,6 +9,16 @@ import java.math.BigDecimal;
 import java.util.Objects;
 
 import static java.math.BigDecimal.ZERO;
+
+@Service
+class UndevaIntrunService {
+//   private final SupRepo
+   public void method(OrderLine line) {
+
+//      line.getSupplierId()
+   }
+
+}
 
 @Entity
 public class OrderLine {
@@ -16,7 +28,15 @@ public class OrderLine {
    private String productId; // required
    private BigDecimal itemQuantity ;  // required
    private BigDecimal itemPrice; // required
-   private Long supplier;
+//   @ManyToOne(fetch = FetchType.LAZY)
+//   private Supplier supplier;
+
+   private Long supplierId; // => daca generezi schema cu Hibernate din @Entity ->
+   // nu va mai exista FK intre OrderLIne si Supplier. il pui de mana ! Pastrezi FK aici !
+
+   public Long getSupplierId() {
+      return supplierId;
+   }
 
    protected OrderLine() { // just for hibernate 💘
    }
@@ -38,14 +58,14 @@ public class OrderLine {
    }
 
 
-   public Long getSupplier() {
-      return supplier;
-   }
-
-   public OrderLine setSupplier(Long supplier) {
-      this.supplier = supplier;
-      return this;
-   }
+//   public Long getSupplier() {
+//      return supplier;
+//   }
+//
+//   public OrderLine setSupplier(Long supplier) {
+//      this.supplier = supplier;
+//      return this;
+//   }
 
    public String getProductId() {
       return productId;
