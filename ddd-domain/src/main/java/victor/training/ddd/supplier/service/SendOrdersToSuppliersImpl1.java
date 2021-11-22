@@ -19,7 +19,7 @@ import static java.util.stream.Collectors.*;
 @RequiredArgsConstructor
 public class SendOrdersToSuppliersImpl1  implements OrderConfirmedEventHandler {
    private final SupplierService supplierService;
-   private final OrderServiceClient orderServiceClient;
+//   private final OrderServiceClient orderServiceClient;
 
    @PostConstruct
    public void hello() {
@@ -28,12 +28,12 @@ public class SendOrdersToSuppliersImpl1  implements OrderConfirmedEventHandler {
 
    @Override
    public void suppliersOrdersData(Long orderId) {
-      OrderVO order = orderServiceClient.getOrder(orderId);
-
-      Map<String, List<ProductWithQuantity>> result = order.orderLines().stream()
-          .collect(groupingBy(OrderLineVO::supplierId,
-              mapping(line -> new ProductWithQuantity(getProduct(line), line.itemQuantity()), toList())));
-      supplierService.sendOrders(result);
+//      OrderVO order = orderServiceClient.getOrder(orderId);
+//
+//      Map<String, List<ProductWithQuantity>> result = order.orderLines().stream()
+//          .collect(groupingBy(OrderLineVO::supplierId,
+//              mapping(line -> new ProductWithQuantity(getProduct(line), line.itemQuantity()), toList())));
+//      supplierService.sendOrders(result);
    }
    private String getProduct(OrderLineVO line) {
       return "TODO";

@@ -1,42 +1,36 @@
 package victor.training.ddd.product.model;
 
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import java.math.BigDecimal;
+import lombok.Data;
 
-import static java.util.Objects.requireNonNull;
+import javax.persistence.*;
 
 @Entity
+@Data
 public class Product {
    @Id
-   private String id;
+   @GeneratedValue
+   private Long id;
 
    private String name;
 
-   // if there are more things related to price, I would create a ProductPriceVO with 2-3-4 fields.
-   @Embedded
-   private ProductPrice price = new ProductPrice();
+   @Lob
+   private String description;
 
-   private Product() {}
+   private int shippingDaysEst;
+   private int shippingCost;
+   private boolean shippingToEasyBox;
+   private String shippingProvider;
+   private boolean shippingViaRegularPostOption;
 
-   public Product(String id, String name, ProductPrice price) {
-      this.id = requireNonNull(id);
-      this.name = requireNonNull(name);
-      this.price = requireNonNull(price);
-   }
+   private boolean returnable;
+   private int returnMaxDays;
+   // TODO:
+//   private List<ReturnCategory> returnCategories;
 
-   public String id() {
-      return id;
-   }
+   @Enumerated(EnumType.STRING)
+   private ProductCategory category;
 
-   public String name() {
-      return name;
-   }
+   @ManyToOne
+   private Supplier supplier;
 
-   public ProductPrice price() {
-      return price;
-   }
-
-   // Expect MORE attributes and logic to add here
 }
