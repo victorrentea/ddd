@@ -32,21 +32,20 @@ public class Order {
 
    private String clientId; // ID of an externally-managed person ?..
 
-   @OneToMany(mappedBy = "order")
+   @OneToMany
+   @JoinColumn
    private List<OrderLine> lines = new ArrayList<>();
 
    // respo: sa tina cele doua capete ale relatiei bidirect in sync,
-   public void addLine(OrderLine orderLine) {
+   public void addLine(OrderLine orderLine) { // TODO : remove in scenariul asta, lasa get/set pe colectie !
       lines.add(orderLine);
-      orderLine.setOrder(this);
    }
    // respo: sa tina cele doua capete ale relatiei bidirect in sync,
-   public void removeLine(OrderLine orderLine) {
+   public void removeLine(OrderLine orderLine) { // TODO : remove in scenariul asta, lasa get/set pe colectie !
       lines.remove(orderLine);
-      orderLine.setOrder(null);
    }
 
-   public List<OrderLine> getLines() {
+   public List<OrderLine> getLines() {  // TODO : remove in scenariul asta, lasa get/set pe colectie !
       return Collections.unmodifiableList(lines);
    }
 

@@ -3,7 +3,6 @@ package victor.training.ddd.order.model;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import java.math.BigDecimal;
 
 @Entity
@@ -18,10 +17,7 @@ public class OrderLine {
 
    private BigDecimal itemPrice;
 
-   @ManyToOne
-   private Order order;
-
-   public Long getId() {
+    public Long getId() {
       return id;
    }
 
@@ -61,11 +57,4 @@ public class OrderLine {
       this.itemPrice = itemPrice;
    }
 
-   public Order getOrder() {
-      return order;
-   }
-
-   void setOrder(Order order) {
-      this.order = order;
-   }
 }
