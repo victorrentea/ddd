@@ -25,6 +25,7 @@ class ReleaseController {
    private final ReleaseRepo releaseRepo;
    private final ProductRepo productRepo;
    private final SprintRepo sprintRepo;
+   private final BacklogItemRepo backlogItemRepo;
 
    @PostMapping("product/{productId}/release/{sprintId}")
    public Release createRelease(@PathVariable long productId, @PathVariable long sprintId) {
@@ -37,11 +38,14 @@ class ReleaseController {
           .max().orElse(0);
       int toIteration = sprint.getIteration();
 
-      List<BacklogItem> releasedItems = product.getSprints().stream()
+      List<Long> releasedItemsIds = product.getSprints().stream()
           .sorted(Comparator.comparing(Sprint::getIteration))
           .filter(s -> s.getIteration() >= fromIteration && s.getIteration() <= toIteration)
           .flatMap(s -> s.getItems().stream())
+          .map(SprintBacklogItem::getBacklogItemId)
           .collect(Collectors.toList());
+
+      List<BacklogItem> releasedItems = backlogItemRepo.findAllById(releasedItemsIds);
 
       Release release = new Release()
           .setProduct(product)

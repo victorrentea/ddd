@@ -3,7 +3,7 @@ package victor.training.ddd.agile;
 import org.junit.jupiter.api.Test;
 import victor.training.ddd.agile.BacklogItemController.BacklogItemDto;
 import victor.training.ddd.agile.ProductController.ProductDto;
-import victor.training.ddd.agile.SprintController.AddBacklogItemRequest;
+import victor.training.ddd.agile.SprintController.AddSprintBacklogItemRequest;
 import victor.training.ddd.agile.SprintController.LogHoursRequest;
 import victor.training.ddd.agile.SprintController.SprintDto;
 
@@ -43,7 +43,7 @@ public class LargeFlowTest extends SystemTestBase {
           .setTitle("::item::")
           .setDescription("::itemDescr::"));
 
-      sprints.addItem(sprintId, new AddBacklogItemRequest()
+      sprints.addItem(sprintId, new AddSprintBacklogItemRequest()
           .setFpEstimation(10)
           .setBacklogId(itemId));
 

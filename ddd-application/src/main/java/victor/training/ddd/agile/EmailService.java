@@ -18,8 +18,8 @@ public class EmailService {
           "You have finished the sprint earlier. You have more time for refactor!");
    }
 
-   public void sendNotDoneItemsDebrief(String ownerEmail, List<BacklogItem> notDoneItems) {
-      String itemsStr = notDoneItems.stream().map(BacklogItem::getTitle).collect(joining("\n"));
+   public void sendNotDoneItemsDebrief(String ownerEmail, List<String> notDoneItems) {
+      String itemsStr = String.join(",", notDoneItems);
       emailSender.sendEmail("unhappy@corp.intra", ownerEmail, "Items not DONE",
           "The team was unable to declare 'DONE' the following items this iteration: " + itemsStr);
    }
