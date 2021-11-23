@@ -1,12 +1,17 @@
 package victor.training.ddd.order.model;
 
-import javax.persistence.EmbeddedId;
+import lombok.Data;
+
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
 @Entity
+@Data
 public class Supplier {
-   @EmbeddedId
-   private SupplierId id;
+   @Id
+   @GeneratedValue
+   private Long id;
    private String name;
 
 }

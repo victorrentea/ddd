@@ -1,4 +1,4 @@
-package victor.training.ddd.repo.base;
+package victor.training.ddd.common.repo.base;
 
 import lombok.SneakyThrows;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
@@ -37,7 +37,7 @@ public class CustomJpaRepositoryImpl<E, ID> extends SimpleJpaRepository<E, ID> i
    }
 
    @Override
-   public E findExactlyOne(ID id) {
+   public E findOneById(ID id) {
       return findById(id).orElseThrow(() -> new EntityNotFoundException("No " + getDomainClass().getSimpleName() + " with id " + id));
    }
 

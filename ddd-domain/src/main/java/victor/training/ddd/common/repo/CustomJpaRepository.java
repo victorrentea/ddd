@@ -5,6 +5,12 @@ import org.springframework.data.repository.NoRepositoryBean;
 
 @NoRepositoryBean
 public interface CustomJpaRepository<E, ID> extends JpaRepository<E, ID> {
-   E findExactlyOne(ID id);
+   /**
+    * @param id the PK to lookup
+    * @return the Entity. Never null.
+    * @throws javax.persistence.EntityNotFoundException when ID not found in DB
+    */
+   E findOneById(ID id);
+
    ID newId();
 }
