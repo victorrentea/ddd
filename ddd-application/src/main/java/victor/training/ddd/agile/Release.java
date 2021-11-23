@@ -49,6 +49,7 @@ class ReleaseController {
           .setReleasedItems(releasedItems)
           .setDate(LocalDate.now())
           .setVersion(product.incrementAndGetVersion() + ".0");
+      product.getReleases().add(release);
 
       releaseRepo.save(release);
       return release;

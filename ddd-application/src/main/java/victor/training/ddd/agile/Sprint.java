@@ -119,6 +119,7 @@ class SprintController {
          throw new IllegalStateException("Can only add items to Sprint before it starts");
       }
       backlogItem.setSprint(sprint);
+      sprint.getItems().add(backlogItem);
       backlogItem.setFpEstimation(request.fpEstimation);
    }
 

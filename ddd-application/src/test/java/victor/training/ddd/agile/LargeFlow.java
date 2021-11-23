@@ -60,7 +60,9 @@ public class LargeFlow {
       sprints.startSprint(sprintId);
       assertThatThrownBy(() -> sprints.startSprint(sprintId));
 
-      sprints.logHours(itemId, new LogHoursRequest()
+      sprints.startItem(sprintId, itemId);
+
+      sprints.logHours(sprintId, new LogHoursRequest()
           .setBacklogId(itemId)
           .setHours(10));
 
@@ -68,6 +70,10 @@ public class LargeFlow {
 
       assertThat(sprints.getSprintMetrics(sprintId).toString()).isEqualTo("idn");
 
-      releases.createRelease(sprintId, itemId);
+      Release release = releases.createRelease(productId, sprintId);
+
+      assertThat(release.getReleaseNotes()).contains("::item::");
+
+
    }
 }
