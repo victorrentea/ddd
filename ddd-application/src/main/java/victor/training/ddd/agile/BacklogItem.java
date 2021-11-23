@@ -1,9 +1,6 @@
 package victor.training.ddd.agile;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import victor.training.ddd.common.repo.CustomJpaRepository;
@@ -18,6 +15,7 @@ class BacklogItemController {
    private final BacklogItemRepo backlogItemRepo;
    private final ProductRepo productRepo;
 
+   @Data
    static class BacklogItemDto {
       public Long id;
       public Long productId;
@@ -28,14 +26,14 @@ class BacklogItemController {
 
    @PostMapping("backlog")
    @Transactional
-   public void createBacklogItem(@RequestBody BacklogItemDto dto) {
+   public Long createBacklogItem(@RequestBody BacklogItemDto dto) {
       Product product = productRepo.findOneById(dto.productId);
       BacklogItem backlogItem = new BacklogItem()
           .setProduct(product)
           .setDescription(dto.description)
           .setTitle(dto.title);
       product.getBacklogItems().add(backlogItem);
-      backlogItemRepo.save(backlogItem);
+      return backlogItemRepo.save(backlogItem).getId();
    }
 
    @GetMapping("backlog/{id}")

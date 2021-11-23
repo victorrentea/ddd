@@ -1,9 +1,6 @@
 package victor.training.ddd.agile;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import victor.training.ddd.agile.Sprint.Status;
@@ -26,19 +23,25 @@ class SprintController {
    private final BacklogItemRepo backlogItemRepo;
    private final EmailService emailService;
 
+   @Data
    static class SprintDto {
       public Long productId;
       public LocalDate plannedEnd;
    }
 
    @PostMapping("sprint")
-   public void createSprint(@RequestBody SprintDto dto) {
+   public Long createSprint(@RequestBody SprintDto dto) {
       Product product = productRepo.findOneById(dto.productId);
       Sprint sprint = new Sprint()
           .setIteration(product.incrementAndGetIteration())
           .setProduct(product)
           .setPlannedEnd(dto.plannedEnd);
-      sprintRepo.save(sprint);
+      return sprintRepo.save(sprint).getId();
+   }
+
+   @GetMapping("sprint/{id}")
+   public Sprint getSprint(@PathVariable long id) {
+      return sprintRepo.findOneById(id);
    }
 
    @PostMapping("sprint/{id}/start")
@@ -69,6 +72,7 @@ class SprintController {
       }
    }
 
+   @Data
    static class SprintMetrics {
       public int consumedHours;
       public int doneFP;
@@ -101,15 +105,16 @@ class SprintController {
       return dto;
    }
 
+   @Data
    static class AddBacklogItemRequest {
       public long backlogId;
       public int fpEstimation;
    }
 
-   @PostMapping("sprint/{id}/add-item")
-   public void addItem(@PathVariable long id, @RequestBody AddBacklogItemRequest request) {
+   @PostMapping("sprint/{sprintId}/add-item")
+   public void addItem(@PathVariable long sprintId, @RequestBody AddBacklogItemRequest request) {
       BacklogItem backlogItem = backlogItemRepo.findOneById(request.backlogId);
-      Sprint sprint = sprintRepo.findOneById(id);
+      Sprint sprint = sprintRepo.findOneById(sprintId);
       if (sprint.getStatus() != Status.CREATED) {
          throw new IllegalStateException("Can only add items to Sprint before it starts");
       }
@@ -152,6 +157,7 @@ class SprintController {
       }
    }
 
+   @Data
    static class LogHoursRequest {
       public long backlogId;
       public int hours;
@@ -192,7 +198,7 @@ class Sprint {
    }
 
    @Enumerated(STRING)
-   private Status status;
+   private Status status = Status.CREATED;
 
    @OneToMany(mappedBy = "sprint")
    private List<BacklogItem> items = new ArrayList<>();
