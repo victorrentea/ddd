@@ -134,6 +134,8 @@ class SprintController {
       backlogItem.setStatus(BacklogItem.Status.STARTED);
    }
 
+   private final MailingListService mailingListService;
+
    @PostMapping("sprint/{id}/complete-item/{backlogId}")
    public void completeItem(@PathVariable long id, @PathVariable long backlogId) {
       BacklogItem backlogItem = backlogItemRepo.findOneById(backlogId);
@@ -144,7 +146,9 @@ class SprintController {
       backlogItem.setStatus(BacklogItem.Status.DONE);
       Sprint sprint = sprintRepo.findOneById(id);
       if (sprint.getItems().stream().allMatch(item -> item.getStatus() == BacklogItem.Status.DONE)) {
-         emailService.sendCongratsEmail(sprint.getProduct());
+         System.out.println("Sending CONGRATS email to team of product " + sprint.getProduct().getCode() + ": They finished the items earlier. They have time to refactor! (OMG!)");
+         List<String> emails = mailingListService.retrieveEmails(sprint.getProduct().getTeamMailingList());
+         emailService.sendCongratsEmail(emails);
       }
    }
 

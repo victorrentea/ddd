@@ -3,6 +3,7 @@ package victor.training.ddd.agile;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import victor.training.ddd.agile.BacklogItemController.BacklogItemDto;
 import victor.training.ddd.agile.ProductController.ProductDto;
 import victor.training.ddd.agile.SprintController.AddBacklogItemRequest;
@@ -16,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
-public class LargeFlow {
+public class LargeFlowTest {
    @Autowired
    ProductController products;
    @Autowired
@@ -25,6 +26,9 @@ public class LargeFlow {
    SprintController sprints;
    @Autowired
    ReleaseController releases;
+
+   @MockBean
+   MailingListService mailingListService;
 
    @Test
    void largeFlow() {
@@ -67,6 +71,8 @@ public class LargeFlow {
           .setHours(10));
 
       sprints.completeItem(sprintId, itemId);
+
+      sprints.endSprint(sprintId);
 
       assertThat(sprints.getSprintMetrics(sprintId).toString()).isEqualTo("idn");
 

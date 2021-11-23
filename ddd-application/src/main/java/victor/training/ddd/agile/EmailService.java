@@ -12,12 +12,8 @@ import static java.util.stream.Collectors.joining;
 @RequiredArgsConstructor
 public class EmailService {
    private final EmailSender emailSender;
-   private final RestTemplate rest;
 
-   public void sendCongratsEmail(Product product) {
-      String[] emails = rest.getForObject("http://localhost:8989/mailing-list/" + product.getTeamMailingList(), String[].class);
-
-      System.out.println("Sending CONGRATS email to team of product " + product.getId() + ": They finished the items earlier. They have time to refactor! (OMG!)");
+   public void sendCongratsEmail(List<String> emails) {
       emailSender.sendEmail("happy@corp.intra", String.join(",", emails), "Congrats!",
           "You have finished the sprint earlier. You have more time for refactor!");
    }
