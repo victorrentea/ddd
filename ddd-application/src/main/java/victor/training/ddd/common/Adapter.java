@@ -1,4 +1,4 @@
-package victor.training.ddd.order.adapter;
+package victor.training.ddd.common;
 
 import org.springframework.stereotype.Component;
 

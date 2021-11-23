@@ -33,13 +33,13 @@ public class CustomJpaRepositoryFactoryBean<R extends JpaRepository<T, ID>, T, I
 
         @Override
         protected JpaRepositoryImplementation<E, ID> getTargetRepository(RepositoryInformation information, EntityManager entityManager) {
-            return new victor.training.ddd.repo.base.CustomJpaRepositoryImpl<E, ID>(information, entityManager);
+            return new CustomJpaRepositoryImpl<E, ID>(information, entityManager);
         }
 
 
         @Override
         protected Class<?> getRepositoryBaseClass(RepositoryMetadata metadata) {
-            return victor.training.ddd.repo.base.CustomJpaRepositoryImpl.class;
+            return CustomJpaRepositoryImpl.class;
         }
         
     }

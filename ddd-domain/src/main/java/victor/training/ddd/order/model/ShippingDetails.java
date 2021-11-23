@@ -1,12 +1,10 @@
-package victor.training.ddd.product.model;
+package victor.training.ddd.order.model;
 
-import lombok.Data;
 import lombok.Getter;
 
-import javax.persistence.Embeddable;
 import java.util.Objects;
 
-@Embeddable
+//@Embeddable
 @Getter
 public class ShippingDetails {
    private Integer shippingDaysEst; // REQUIRED

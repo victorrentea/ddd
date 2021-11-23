@@ -1,15 +1,15 @@
-package victor.training.ddd.product.model;
+package victor.training.ddd.order.model;
 
 import lombok.Getter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Entity
+//@Entity
 @Getter
 public class Product {
-   @Id
-   @GeneratedValue
+//   @Id
+//   @GeneratedValue
    private Long id;
 
    private String name; // required

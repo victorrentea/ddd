@@ -6,8 +6,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.cloud.stream.annotation.EnableBinding;
+import org.springframework.cloud.stream.annotation.Input;
+import org.springframework.cloud.stream.annotation.Output;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.SubscribableChannel;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,11 +19,21 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
 
+
+interface AllChannels {
+   @Output("ordersConfirmedOut")
+   MessageChannel ordersConfirmedOut();
+
+   @Input("ordersConfirmedIn")
+   SubscribableChannel ordersConfirmedIn();
+}
+
+
 @EnableBinding(AllChannels.class)
 @EnableAsync
 @SpringBootApplication
 @RequiredArgsConstructor
-@EnableJpaRepositories(repositoryFactoryBeanClass= victor.training.ddd.repo.base.EntityRepositoryFactoryBean.class)
+@EnableJpaRepositories(repositoryFactoryBeanClass= victor.training.ddd.common.repo.base.CustomJpaRepositoryFactoryBean.class)
 public class Application {
 //   public Application(OrderRepo orderRepo, OrderService orderService) {
 //      this.orderRepo = orderRepo;

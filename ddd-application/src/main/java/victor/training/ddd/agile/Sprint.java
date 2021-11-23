@@ -14,7 +14,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static javax.persistence.EnumType.STRING;
 
@@ -66,7 +65,7 @@ class SprintController {
           .collect(Collectors.toList());
 
       if (notDone.size() >= 1) {
-         emailService.sendNotDoneItemsDebrief(notDone);
+         emailService.sendNotDoneItemsDebrief(sprint.getProduct().getOwnerEmail(), notDone);
       }
    }
 

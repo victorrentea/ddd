@@ -1,15 +1,12 @@
-package victor.training.ddd.common.controller.filter;
+package victor.training.ddd.common;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import victor.training.ddd.MyException;
-import victor.training.ddd.MyException.ErrorCode;
+import victor.training.ddd.common.MyException.ErrorCode;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Locale;
@@ -29,7 +26,7 @@ public class GlobalExceptionHandler {
    @ExceptionHandler(Exception.class)
    @ResponseStatus // 500
    public String handleException(HttpServletRequest request, Exception exception) throws Exception {
-      return translateError(exception, ErrorCode.GENERAL, null, request);
+      return translateError(exception, ErrorCode.GENERAL, new String[]{exception.getMessage()}, request);
    }
 
    private String translateError(Throwable throwable, ErrorCode errorCode, String[] parameters, HttpServletRequest request) {

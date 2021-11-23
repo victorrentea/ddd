@@ -1,4 +1,4 @@
-package victor.training.ddd.product.model;
+package victor.training.ddd.order.model;
 
 import lombok.Data;
 

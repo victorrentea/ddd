@@ -35,7 +35,7 @@ class ProductController {
       Product product = new Product()
           .setCode(dto.code)
           .setName(dto.name)
-          .setMailingList(dto.mailingList)
+          .setTeamMailingList(dto.mailingList)
           ;
       return productRepo.save(product).getId();
    }
@@ -47,7 +47,7 @@ class ProductController {
       dto.id = product.getId();
       dto.name = product.getName();
       dto.code = product.getCode();
-      dto.mailingList = product.getMailingList();
+      dto.mailingList = product.getTeamMailingList();
       return dto;
    }
 
@@ -66,7 +66,13 @@ class Product {
    private int currentVersion = 0;
    private String code;
    private String name;
-   private String mailingList;
+
+   private String ownerEmail;
+   private String ownerName;
+   private String ownerPhone;
+   private String teamMailingList;
+
+
    @OneToMany(mappedBy = "product")
    private List<BacklogItem> backlogItems = new ArrayList<>();
    @OneToMany(mappedBy = "product")
