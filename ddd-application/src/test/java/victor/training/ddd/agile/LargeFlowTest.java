@@ -1,9 +1,6 @@
 package victor.training.ddd.agile;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import victor.training.ddd.agile.BacklogItemController.BacklogItemDto;
 import victor.training.ddd.agile.ProductController.ProductDto;
 import victor.training.ddd.agile.SprintController.AddBacklogItemRequest;
@@ -16,19 +13,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@SpringBootTest
-public class LargeFlowTest {
-   @Autowired
-   ProductController products;
-   @Autowired
-   BacklogItemController backlogItems;
-   @Autowired
-   SprintController sprints;
-   @Autowired
-   ReleaseController releases;
-
-   @MockBean
-   MailingListService mailingListService;
+public class LargeFlowTest extends SystemTestBase {
 
    @Test
    void largeFlow() {
