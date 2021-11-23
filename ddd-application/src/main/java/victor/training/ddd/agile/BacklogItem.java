@@ -29,7 +29,7 @@ class BacklogItemController {
    public Long createBacklogItem(@RequestBody BacklogItemDto dto) {
       Product product = productRepo.findOneById(dto.productId);
       BacklogItem backlogItem = new BacklogItem()
-          .setProduct(product)
+          .setProductId(product.getId())
           .setDescription(dto.description)
           .setTitle(dto.title);
 
@@ -41,7 +41,7 @@ class BacklogItemController {
       BacklogItem backlogItem = backlogItemRepo.findOneById(id);
       BacklogItemDto dto = new BacklogItemDto();
       dto.id = backlogItem.getId();
-      dto.productId = backlogItem.getProduct().getId();
+      dto.productId = backlogItem.getProductId();
       dto.description = backlogItem.getDescription();
       dto.title = backlogItem.getTitle();
       dto.version = backlogItem.getVersion();
@@ -53,11 +53,10 @@ class BacklogItemController {
    public void updateBacklogItem(@RequestBody BacklogItemDto dto) {
       BacklogItem backlogItem = new BacklogItem()
           .setId(dto.id)
-          .setProduct(productRepo.findOneById(dto.productId))
+          .setProductId(dto.productId)
           .setDescription(dto.description)
           .setTitle(dto.title)
           .setVersion(dto.version);
-      backlogItem.getProduct().markAsDirty();
       backlogItemRepo.save(backlogItem);
    }
 
@@ -71,12 +70,12 @@ class BacklogItemController {
 @Setter
 @NoArgsConstructor
 @Entity
+@DDD.Aggregate
 class BacklogItem {
    @Id
    @GeneratedValue
    private Long id;
-   @ManyToOne
-   private Product product;
+   private Long productId;
    private String title;
    private String description;
 
@@ -92,7 +91,7 @@ class BacklogItem {
 
    @Enumerated(STRING)
    private Status status = Status.CREATED;
-//   @Version
+   @Version
    private Long version;
 
    private int hoursConsumed;
@@ -100,7 +99,6 @@ class BacklogItem {
    public void addHours(int hours) {
       hoursConsumed += hours;
    }
-
 }
 
 interface BacklogItemRepo extends CustomJpaRepository<BacklogItem, Long> {

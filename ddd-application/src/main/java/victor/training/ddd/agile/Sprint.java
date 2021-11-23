@@ -70,6 +70,9 @@ class SprintController {
 
       if (notDone.size() >= 1) {
          emailService.sendNotDoneItemsDebrief(sprint.getProduct().getOwnerEmail(), notDone);
+         for (BacklogItem backlogItem : notDone) {
+            backlogItem.setSprint(null);
+         }
       }
    }
 
@@ -128,7 +131,13 @@ class SprintController {
    @PostMapping("sprint/{id}/start-item/{backlogId}")
    public void startItem(@PathVariable long id, @PathVariable long backlogId) {
       BacklogItem backlogItem = backlogItemRepo.findOneById(backlogId);
-      checkSprintMatchesAndStarted(id, backlogItem);
+      if (!backlogItem.getSprint().getId().equals(id)) {
+         throw new IllegalArgumentException("item not in sprint");
+      }
+      Sprint sprint = sprintRepo.findOneById(id);
+      if (sprint.getStatus() != Status.STARTED) {
+         throw new IllegalStateException("Sprint not started");
+      }
       if (backlogItem.getStatus() != BacklogItem.Status.CREATED) {
          throw new IllegalStateException("Item already started");
       }
