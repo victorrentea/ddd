@@ -32,7 +32,7 @@ class BacklogItemController {
           .setProduct(product)
           .setDescription(dto.description)
           .setTitle(dto.title);
-      product.getBacklogItems().add(backlogItem);
+
       return backlogItemRepo.save(backlogItem).getId();
    }
 

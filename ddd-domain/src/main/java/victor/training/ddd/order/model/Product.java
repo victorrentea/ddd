@@ -37,7 +37,7 @@ public class Product {
    @ManyToOne
    private Supplier supplier;
 
-   protected Product() {}
+   Product() {}
 
    public Product(String name, ShippingDetails shippingDetails, int returnMaxDays, ProductCategory category) {
       this.name = name;

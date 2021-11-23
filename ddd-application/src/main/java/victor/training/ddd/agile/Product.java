@@ -71,7 +71,7 @@ class Product {
    @NotNull
    private String name;
    @NotNull
-   private final String mailingList;
+   private String mailingList;
 
    // TODO extract @Embeddable
    private String ownerEmail;
@@ -81,12 +81,12 @@ class Product {
 
 
    @OneToMany(mappedBy = "product")
-   private List<BacklogItem> backlogItems = new ArrayList<>();
-   @OneToMany(mappedBy = "product")
    private List<Sprint> sprints = new ArrayList<>();
    @OneToMany(mappedBy = "product")
    private List<Release> releases = new ArrayList<>();
 
+   protected Product() { // doar pt hibernate
+   }
    public Product(String code, String name, String mailingList) {
 //      if (Objects.requireNonNull(code,"code is required").length() != 3) {
 //         throw new IllegalArgumentException("code size should be 3");
