@@ -39,6 +39,7 @@ public class LargeFlowTest {
 
       assertThatThrownBy(() -> products.createProduct(new ProductDto().setCode("::PNM::"))).isInstanceOf(IllegalArgumentException.class);
 
+
       assertThat(products.getProduct(productId))
           .extracting(ProductDto::getCode, ProductDto::getName, ProductDto::getMailingList)
           .isEqualTo(List.of("::PNM::", "::ProductName::", "::MailList::"));
