@@ -1,4 +1,4 @@
-package victor.training.ddd.repo.base;
+package victor.training.ddd.common.repo.base;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
@@ -11,10 +11,10 @@ import org.springframework.data.repository.core.support.RepositoryFactorySupport
 import javax.persistence.EntityManager;
 import java.io.Serializable;
 
-public class EntityRepositoryFactoryBean<R extends JpaRepository<T, ID>, T, ID extends Serializable>
+public class CustomJpaRepositoryFactoryBean<R extends JpaRepository<T, ID>, T, ID extends Serializable>
     extends JpaRepositoryFactoryBean<R, T, ID> {
 	
-    public EntityRepositoryFactoryBean(Class<? extends R> repositoryInterface) {
+    public CustomJpaRepositoryFactoryBean(Class<? extends R> repositoryInterface) {
 		super(repositoryInterface);
 	}
 
