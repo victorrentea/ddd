@@ -45,7 +45,7 @@ class ProductController {
       dto.id = product.getId();
       dto.name = product.getName();
       dto.code = product.getCode();
-      dto.mailingList = product.getTeamMailingList();
+      dto.mailingList = product.getMailingList();
       return dto;
    }
 
