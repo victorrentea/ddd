@@ -2,9 +2,13 @@ package victor.training.ddd.agile;
 
 import lombok.*;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.EventListener;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import victor.training.ddd.agile.Sprint.Status;
+import victor.training.ddd.common.events.DomainEvent;
+import victor.training.ddd.common.events.DomainEventsPublisher;
 import victor.training.ddd.common.repo.CustomJpaRepository;
 import victor.training.ddd.varie.Email;
 
@@ -97,6 +101,7 @@ class SprintController {
    private final SprintMetricsCalculator sprintMetricsCalculator;
 
    private final SprintBacklogItemRepo sprintBacklogItemRepo;
+
    @Data
    static class AddSprintBacklogItemRequest {
       public long backlogId;
@@ -118,16 +123,26 @@ class SprintController {
    }
 
    private final MailingListService mailingListService;
+   private final ApplicationEventPublisher eventPublisher;
 
+   @Transactional
    @PostMapping("sprint/{id}/complete-item/{backlogId}")
    public void completeItem(@PathVariable long id, @PathVariable long backlogId) {
       Sprint sprint = sprintRepo.findOneById(id);
       sprint.completeItem(backlogId);
       // tot asa si daca aveai de modificat 2 agregate: Product = productRepo.findOneById()product.mutatii();
 
-      if (sprint.finishedEarlier()) {
-         sendEarlyFinishEmail(sprint);
-      }
+//      if (sprint.finishedEarlier()) {
+//         sendEarlyFinishEmail(sprint);
+//      }
+   }
+
+   @EventListener
+//   @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+   public void method(SprintFinishedEarlierEvent earlierEvent) {
+      Sprint sprint = sprintRepo.findOneById(earlierEvent.getSprintId());
+      sendEarlyFinishEmail(sprint);
+
    }
 
    private void sendEarlyFinishEmail(Sprint sprint) {
@@ -205,7 +220,9 @@ class SprintBacklogItem {
       hoursConsumed += hours;
    }
 
-   protected SprintBacklogItem() {}
+   protected SprintBacklogItem() {
+   }
+
    public SprintBacklogItem(Long backlogItemId, Integer fpEstimation) {
       this.backlogItemId = backlogItemId;
       this.fpEstimation = fpEstimation;
@@ -245,7 +262,7 @@ class Sprint {
    @Enumerated(STRING)
    private Status status = Status.CREATED;
 
-   @OneToMany(cascade = CascadeType.ALL, fetch =  FetchType.EAGER)
+   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
    @JoinColumn
    private List<SprintBacklogItem> items = new ArrayList<>();
 
@@ -299,11 +316,18 @@ class Sprint {
       }
       itemById(backlogId).finish();
 
-     
+      if (finishedEarlier()) {
+         DomainEventsPublisher.publish(new SprintFinishedEarlierEvent(id));
+//         eventPublisher.publishEvent(new SprintFinishedEarlierEvent(id));
+      }
    }
-
-
 }
+
+@Value
+class SprintFinishedEarlierEvent implements DomainEvent {
+   long sprintId;
+}
+
 
 interface SprintRepo extends CustomJpaRepository<Sprint, Long> {
 }
