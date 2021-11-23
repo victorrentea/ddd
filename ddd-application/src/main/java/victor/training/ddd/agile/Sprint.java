@@ -123,6 +123,18 @@ class SprintController {
    public void completeItem(@PathVariable long id, @PathVariable long backlogId) {
       Sprint sprint = sprintRepo.findOneById(id);
       sprint.completeItem(backlogId);
+
+      if (sprint.finishedEarlier()) {
+         sendEarlyFinishEmail(sprint);
+      }
+   }
+
+   private void sendEarlyFinishEmail(Sprint sprint) {
+      String productCode = null; // sprint.getProduct().getCode()
+      System.out.println("Sending CONGRATS email to team of product " + productCode +
+                         ": They finished the items earlier. They have time to mob refactor! (OMG!)");
+      List<Email> emails = mailingListService.retrieveEmails(sprint.getProduct().getTeamMailingList());
+      emailService.sendCongratsEmail(emails);
    }
 
    private void checkSprintMatchesAndStarted(long id, SprintBacklogItem backlogItem) {
@@ -218,6 +230,11 @@ class Sprint {
    private LocalDate plannedEnd;
    private LocalDate end;
 
+   public boolean finishedEarlier() {
+      return getItems().stream().allMatch(SprintBacklogItem::isDone)
+             && LocalDate.now().isBefore(getPlannedEnd());
+   }
+
    public enum Status {
       CREATED,
       STARTED,
@@ -281,13 +298,7 @@ class Sprint {
       }
       itemById(backlogId).finish();
 
-      if (items.stream().allMatch(SprintBacklogItem::isDone)) {
-         String productCode = null; // sprint.getProduct().getCode()
-         System.out.println("Sending CONGRATS email to team of product " + productCode +
-                            ": They finished the items earlier. They have time to mob refactor! (OMG!)");
-         List<Email> emails = mailingListService.retrieveEmails(sprint.getProduct().getTeamMailingList());
-         emailService.sendCongratsEmail(emails);
-      }
+     
    }
 
 
