@@ -41,4 +41,29 @@ public class ImpreunaTDD extends SystemTestBase {
       backlogItems.updateBacklogItem(dataSentToBrowser1);
    }
 
+   // TODO sa pice
+   @Test
+   void doiPeDouaItemuri() {
+      Long productId = products.createProduct(new ProductDto()
+          .setName("Ceva")
+          .setCode("PNM")
+          .setMailingList("a"));
+
+      Long itemId1 = backlogItems.createBacklogItem(new BacklogItemDto()
+          .setProductId(productId)
+          .setTitle("Vreau ceva da nu stiu ce"));
+      Long itemId2 = backlogItems.createBacklogItem(new BacklogItemDto()
+          .setProductId(productId)
+          .setTitle("Vreau ceva da nu stiu ce eu"));
+
+      BacklogItemDto dataSentToBrowser1 = backlogItems.getBacklogItem(itemId1);
+      // italian fiind, pleaca la pizza lasand ecranu deschis
+      BacklogItemDto dataSentToBrowser2 = backlogItems.getBacklogItem(itemId2);
+      dataSentToBrowser2.description="rachete!";
+      backlogItems.updateBacklogItem(dataSentToBrowser2);
+      // se intoarce de la pizzqa user 1
+      dataSentToBrowser1.description ="sa faca inghetata";
+      backlogItems.updateBacklogItem(dataSentToBrowser1);
+   }
+
 }

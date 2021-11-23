@@ -49,6 +49,7 @@ class BacklogItemController {
    }
 
    @PutMapping("backlog")
+   @Transactional
    public void updateBacklogItem(@RequestBody BacklogItemDto dto) {
       BacklogItem backlogItem = new BacklogItem()
           .setId(dto.id)
@@ -56,6 +57,7 @@ class BacklogItemController {
           .setDescription(dto.description)
           .setTitle(dto.title)
           .setVersion(dto.version);
+      backlogItem.getProduct().markAsDirty();
       backlogItemRepo.save(backlogItem);
    }
 
@@ -90,7 +92,7 @@ class BacklogItem {
 
    @Enumerated(STRING)
    private Status status = Status.CREATED;
-   @Version
+//   @Version
    private Long version;
 
    private int hoursConsumed;

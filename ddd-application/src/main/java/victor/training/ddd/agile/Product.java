@@ -7,10 +7,7 @@ import org.hibernate.validator.constraints.Length;
 import org.springframework.web.bind.annotation.*;
 import victor.training.ddd.common.repo.CustomJpaRepository;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.constraints.NotNull;
@@ -78,6 +75,14 @@ class Product {
    private String ownerName;
    private String ownerPhone;
    private String teamMailingList;
+
+
+//   @Version
+//   private Long version;
+//
+//   public void markAsDirty() {
+//      version ++;
+//   }
 
 
    @OneToMany(mappedBy = "product")
