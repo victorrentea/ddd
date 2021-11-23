@@ -5,6 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import victor.training.ddd.agile.Sprint.Status;
 import victor.training.ddd.common.repo.CustomJpaRepository;
+import victor.training.ddd.varie.Email;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -147,7 +148,7 @@ class SprintController {
       Sprint sprint = sprintRepo.findOneById(id);
       if (sprint.getItems().stream().allMatch(item -> item.getStatus() == BacklogItem.Status.DONE)) {
          System.out.println("Sending CONGRATS email to team of product " + sprint.getProduct().getCode() + ": They finished the items earlier. They have time to refactor! (OMG!)");
-         List<String> emails = mailingListService.retrieveEmails(sprint.getProduct().getTeamMailingList());
+         List<Email> emails = mailingListService.retrieveEmails(sprint.getProduct().getTeamMailingList());
          emailService.sendCongratsEmail(emails);
       }
    }
