@@ -123,6 +123,7 @@ class SprintController {
    public void completeItem(@PathVariable long id, @PathVariable long backlogId) {
       Sprint sprint = sprintRepo.findOneById(id);
       sprint.completeItem(backlogId);
+      // tot asa si daca aveai de modificat 2 agregate: Product = productRepo.findOneById()product.mutatii();
 
       if (sprint.finishedEarlier()) {
          sendEarlyFinishEmail(sprint);
