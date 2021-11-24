@@ -13,6 +13,7 @@ import victor.training.ddd.common.repo.CustomJpaRepository;
 import victor.training.ddd.varie.Email;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;

@@ -1,5 +1,7 @@
 package victor.training.ddd.varie;
 
+import org.hibernate.validator.constraints.Length;
+
 import java.util.Objects;
 
 public class Customer {
@@ -7,15 +9,22 @@ public class Customer {
 //   private String middleName;
 //   private String lastName;
    private FullName fullName;
-   private String a;
+   @Length(min = 3)
+   private String etnie;
    private String b;
    private String c;
 
-   public Customer(FullName fullName, String a, String b, String c) {
+   public Customer(FullName fullName, String etnie, String b, String c) {
       this.fullName = Objects.requireNonNull(fullName);
-      this.a = a;
+      this.etnie = etnie;
       this.b = b;
       this.c = c;
+   }
+
+   public Customer setEtnie(String etnie) {
+      this.etnie = etnie;
+//      validate(this);
+      return this;
    }
 }
 
