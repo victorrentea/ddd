@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.web.bind.annotation.*;
+import victor.training.ddd.agile.Sprint.Status;
 import victor.training.ddd.common.repo.CustomJpaRepository;
 
 import javax.persistence.*;
@@ -116,17 +117,21 @@ class Product {
       return ( ++ currentVersion) + ".0";
    }
 
-   public Release createRelease(int iteration, BacklogItemRepo backlogItemRepo) {
+   public Release createRelease(Sprint sprint, BacklogItemRepo backlogItemRepo) {
+      if (sprint.getStatus() != Status.FINISHED) {
+         throw new IllegalArgumentException();
+      }
+
       int lastReleasedIteration = releases.stream()
           .mapToInt(Release::getSprintIteration)
           .max()
           .orElse(0);
 
-      List<BacklogItem> releasedItems = backlogItemRepo.findDoneItemsBetweenIterations(lastReleasedIteration + 1, iteration);
+      List<BacklogItem> releasedItems = backlogItemRepo.findDoneItemsBetweenIterations(lastReleasedIteration + 1, sprint.getIteration());
 
       String releaseNotes = releasedItems.stream().map(BacklogItem::getTitle).collect(joining("\n"));
 
-      Release release = new Release(nextReleaseVersion() ,iteration, releaseNotes );
+      Release release = new Release(nextReleaseVersion() , sprint.getIteration(), releaseNotes );
       releases.add(release);
       return release;
    }

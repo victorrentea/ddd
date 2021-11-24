@@ -18,15 +18,6 @@ class BacklogItemController {
    private final BacklogItemRepo backlogItemRepo;
    private final ProductRepo productRepo;
 
-   @Data
-   static class BacklogItemDto {
-      public Long id;
-      public Long productId;
-      public String title;
-      public String description;
-      public Long version;
-   }
-
    @PostMapping("backlog")
    @Transactional
    public Long createBacklogItem(@RequestBody BacklogItemDto dto) {
@@ -67,25 +58,39 @@ class BacklogItemController {
    public void deleteBacklogItem(@PathVariable long id) {
       backlogItemRepo.deleteById(id);
    }
+
+   @Data
+   static class BacklogItemDto {
+      public Long id;
+      public Long productId;
+      public String title;
+      public String description;
+      public Long version;
+   }
 }
 
 @Getter
-@Setter
 @NoArgsConstructor
 @Entity
 @DDD.Aggregate
 class BacklogItem {
    @Id
    @GeneratedValue
+   @Setter
    private Long id;
+   @Setter
    private Long productId;
+   @Setter
    private String title;
+   @Setter
    private String description;
-
-
-
    @Version
+   @Setter
    private Long version;
+
+   public BacklogItem(Long productId) {
+      this.productId = productId;
+   }
 }
 
 interface BacklogItemRepo extends CustomJpaRepository<BacklogItem, Long> {

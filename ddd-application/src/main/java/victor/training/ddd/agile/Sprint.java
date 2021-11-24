@@ -132,11 +132,7 @@ class SprintController {
       public LocalDate plannedEnd;
    }
 
-   @Value
-   public static class BlackSprintEvent implements DomainEvent {
-      String productCode;
-      List<Long> notDoneItemIds;
-   }
+
 
    @Data
    static class SprintMetrics {
@@ -175,6 +171,12 @@ class SprintBacklogItem {
    @Enumerated(STRING)
    private Status status = Status.CREATED;
 
+   public enum Status {
+      CREATED,
+      STARTED,
+      DONE
+   }
+
    protected SprintBacklogItem() {
    }
 
@@ -202,14 +204,13 @@ class SprintBacklogItem {
    }
 
    void addHours(int hours) {
+      if (hours < 0) {
+         throw new IllegalArgumentException("ce faci frate, trisezi ?!");
+      }
       hoursConsumed += hours;
    }
 
-   public enum Status {
-      CREATED,
-      STARTED,
-      DONE
-   }
+
 }
 
 @Embeddable
@@ -260,7 +261,6 @@ class Sprint {
    private LocalDate start;
    @Setter
    private LocalDate end;
-   @Setter
    @Enumerated(STRING)
    private Status status = Status.CREATED;
    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -367,6 +367,12 @@ class SprintFinishedEarlierEvent implements DomainEvent {
 }
 
 interface SprintBacklogItemRepo extends CustomJpaRepository<SprintBacklogItem, Long> {
+}
+
+@Value
+class BlackSprintEvent implements DomainEvent {
+   String productCode;
+   List<Long> notDoneItemIds;
 }
 
 
