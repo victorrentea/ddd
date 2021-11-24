@@ -6,12 +6,12 @@ import victor.training.ddd.agile.ProductController.ProductDto;
 import victor.training.ddd.agile.SprintController.AddBacklogItemRequest;
 import victor.training.ddd.agile.SprintController.LogHoursRequest;
 import victor.training.ddd.agile.SprintController.SprintDto;
+import victor.training.ddd.agile.SprintController.SprintMetrics;
 
 import java.time.LocalDate;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 
 public class LargeFlowTest extends SystemTestBase {
 
@@ -37,12 +37,12 @@ public class LargeFlowTest extends SystemTestBase {
           .matches(s -> s.getPlannedEnd().isAfter(LocalDate.now().plusDays(13)));
 
 
-      Long itemId = backlogItems.createBacklogItem(new BacklogItemDto()
+      Long backlogItemId = backlogItems.createBacklogItem(new BacklogItemDto()
           .setProductId(productId).setTitle("::item1::").setDescription("::descr::"));
 
-      sprints.addItem(sprintId, new AddBacklogItemRequest()
+      Long itemId = sprints.addItem(sprintId, new AddBacklogItemRequest()
           .setFpEstimation(2)
-          .setBacklogId(itemId));
+          .setBacklogId(backlogItemId));
 
       sprints.startSprint(sprintId);
       assertThatThrownBy(() -> sprints.startSprint(sprintId)).describedAs("cannot start again");
@@ -58,16 +58,15 @@ public class LargeFlowTest extends SystemTestBase {
 
       sprints.endSprint(sprintId);
 
+      System.out.println("Metrics: " + sprints.getSprintMetrics(sprintId));
+
       assertThat(sprints.getSprintMetrics(sprintId))
-          .matches(m -> m.consumedHours == 10)
-          .matches(m -> m.doneFP == 2)
-          .matches(m -> m.hoursConsumedForNotDone == 0);
+          .extracting(SprintMetrics::getConsumedHours, SprintMetrics::getDoneFP, SprintMetrics::getHoursConsumedForNotDone)
+          .containsExactly(10, 2, 0);
 
       Release release = releases.createRelease(productId, sprintId);
 
       assertThat(release.getReleaseNotes()).contains("::item1::");
       assertThat(release.getVersion()).isEqualTo("1.0");
-
-
    }
 }

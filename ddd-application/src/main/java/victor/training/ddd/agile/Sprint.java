@@ -112,7 +112,7 @@ class SprintController {
    }
 
    @PostMapping("sprint/{sprintId}/add-item")
-   public void addItem(@PathVariable long sprintId, @RequestBody AddBacklogItemRequest request) {
+   public Long addItem(@PathVariable long sprintId, @RequestBody AddBacklogItemRequest request) {
       BacklogItem backlogItem = backlogItemRepo.findOneById(request.backlogId);
       Sprint sprint = sprintRepo.findOneById(sprintId);
       if (sprint.getStatus() != Status.CREATED) {
@@ -121,6 +121,7 @@ class SprintController {
       backlogItem.setSprint(sprint);
       sprint.getItems().add(backlogItem);
       backlogItem.setFpEstimation(request.fpEstimation);
+      return backlogItem.getId();
    }
 
 
