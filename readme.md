@@ -25,7 +25,7 @@ Tip for accidental reader: see the branches for how the code evolves.
 - If all Backlog Items of a Sprint are DONE before the planned end date, the team celebrates by a day of Mob Refactoring :)
 - The sprint can be ended at any actual date
 - Sprints of a Product are assigned consecutive IDs
-!- If there are Backlog Items NOT DONE at the end of the sprint, the items return to the product backlog and the PO is emailed automatically (to shield devs from misplaced shame)
+!- If there are Backlog Items NOT DONE at the end of the sprint, the items return to the product backlog so that future sprints can continue it again later. In addition the PO is emailed automatically (to shield devs from misplaced shame)
 - After a Sprint ended, the system can generate metrics about it like velocity, consumed hours, done FP
 - The user-visible ID of a sprint is <projectCode>-<iterationNumber>. Examples: PNM-3, KRI-12 
 
