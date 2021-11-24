@@ -108,7 +108,7 @@ class Product {
       return Validation.buildDefaultValidatorFactory().getValidator();
    }
 
-   public int nextIteration() {
+   public int nextIterationNumber() {
       return ++ currentIteration;
    }
 
@@ -134,4 +134,6 @@ class Product {
 
 interface ProductRepo extends CustomJpaRepository<Product, Long> {
    boolean existsByCode(String code);
+
+   Product findByCode(String code);
 }

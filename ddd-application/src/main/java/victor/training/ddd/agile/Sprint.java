@@ -6,17 +6,19 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import victor.training.ddd.agile.Sprint.Status;
+import victor.training.ddd.agile.SprintController.BlackSprintEvent;
 import victor.training.ddd.common.events.DomainEvent;
 import victor.training.ddd.common.events.DomainEventsPublisher;
 import victor.training.ddd.common.repo.CustomJpaRepository;
 import victor.training.ddd.varie.Email;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toList;
 import static javax.persistence.EnumType.STRING;
 
@@ -28,69 +30,48 @@ class SprintController {
    private final ProductRepo productRepo;
    private final BacklogItemRepo backlogItemRepo;
    private final EmailService emailService;
-
-   @Data
-   static class SprintDto {
-      public Long productId;
-      public LocalDate plannedEnd;
-   }
+   private final SprintMetricsCalculator sprintMetricsCalculator;
+   private final SprintBacklogItemRepo sprintBacklogItemRepo;
+   private final MailingListService mailingListService;
+   private final ApplicationEventPublisher eventPublisher;
 
    @PostMapping("sprint")
-   public Long createSprint(@RequestBody SprintDto dto) {
+   public SprintId createSprint(@RequestBody SprintDto dto) {
       Product product = productRepo.findOneById(dto.productId);
-      Sprint sprint = new Sprint() // TODO constr arg
-          .setIteration(product.nextIteration())
-          .setProduct(product)
-          .setPlannedEnd(dto.plannedEnd);
+
+      int iteration = product.nextIterationNumber();
+      SprintId sprintId = new SprintId(product.getCode(), iteration);
+      Sprint sprint = new Sprint(sprintId, dto.plannedEnd);
       return sprintRepo.save(sprint).getId();
    }
 
    @GetMapping("sprint/{id}")
-   public Sprint getSprint(@PathVariable long id) { // TODO return SprintDto nu entity in afara ca ii cuplezi pe dushmani (FE/clientI) la modelul tau intern
+   public Sprint getSprint(@PathVariable SprintId id) { // TODO return SprintDto nu entity in afara ca ii cuplezi pe dushmani (FE/clientI) la modelul tau intern
       return sprintRepo.findOneById(id);
    }
 
    @PostMapping("sprint/{id}/start")
-   public void startSprint(@PathVariable long id) {
+   public void startSprint(@PathVariable SprintId id) {
       Sprint sprint = sprintRepo.findOneById(id);
       sprint.start();
    }
 
-   @PostMapping("sprint/{id}/end")
-   public void endSprint(@PathVariable long id) {
+   @PostMapping("sprint/{id}/finish")
+   public void finishSprint(@PathVariable SprintId id) {
       Sprint sprint = sprintRepo.findOneById(id);
-      // BAGAM EVENTURI1
-      if (sprint.getStatus() != Status.STARTED) {
-         throw new IllegalStateException();
-      }
-      sprint.setEnd(LocalDate.now());
-      sprint.setStatus(Status.FINISHED);
-
-      List<SprintBacklogItem> notDone = sprint.getItems().stream()
-          .filter(item -> item.getStatus() != SprintBacklogItem.Status.DONE)
-          .collect(toList());
-
-      if (notDone.size() >= 1) {
-         List<BacklogItem> productBacklogItems = backlogItemRepo.findAllById(notDone.stream()
-             .map(SprintBacklogItem::getBacklogItemId)
-             .collect(toList()));
-         List<String> notDoneTitles = productBacklogItems.stream().map(BacklogItem::getTitle).collect(toList());
-         emailService.sendNotDoneItemsDebrief(sprint.getProduct().getOwnerEmail(), notDoneTitles);
-      }
+      sprint.finishSprint(id);
    }
 
-   @Data
-   static class SprintMetrics {
-      public int consumedHours;
-      public int doneFP;
-      public double fpVelocity;
-      public int hoursConsumedForNotDone;
-      public int calendarDays;
-      public int delayDays;
+   @EventListener
+   public void onSprint(BlackSprintEvent event) {
+      List<BacklogItem> productBacklogItems = backlogItemRepo.findAllById(event.getNotDoneItemIds());
+      List<String> notDoneTitles = productBacklogItems.stream().map(BacklogItem::getTitle).collect(toList());
+      Product product = productRepo.findByCode(event.getProductCode());
+      emailService.sendNotDoneItemsDebrief(product.getOwnerEmail(), notDoneTitles);
    }
 
    @GetMapping("sprint/{id}/metrics")
-   public SprintMetrics getSprintMetrics(@PathVariable long id) {
+   public SprintMetrics getSprintMetrics(@PathVariable SprintId id) {
       Sprint sprint = sprintRepo.findOneById(id);
       if (sprint.isFinished()) {
          throw new IllegalStateException();
@@ -98,36 +79,22 @@ class SprintController {
       return sprintMetricsCalculator.computeMetrics(sprint);
    }
 
-   private final SprintMetricsCalculator sprintMetricsCalculator;
-
-   private final SprintBacklogItemRepo sprintBacklogItemRepo;
-
-   @Data
-   static class AddSprintBacklogItemRequest {
-      public long backlogId;
-      public int fpEstimation;
-   }
-
    @PostMapping("sprint/{sprintId}/add-item")
-   public void addItem(@PathVariable long sprintId, @RequestBody AddSprintBacklogItemRequest request) {
+   public void addItem(@PathVariable SprintId sprintId, @RequestBody AddSprintBacklogItemRequest request) {
       Sprint sprint = sprintRepo.findOneById(sprintId);
       SprintBacklogItem item = sprint.addItem(request.backlogId, request.fpEstimation);
       sprintBacklogItemRepo.save(item); // auto-flush de modificari facute pe entitati in cadrul unei tranzactii
    }
 
-
    @PostMapping("sprint/{id}/start-item/{backlogId}")
-   public void startItem(@PathVariable long id, @PathVariable long backlogId) {
+   public void startItem(@PathVariable SprintId id, @PathVariable long backlogId) {
       Sprint sprint = sprintRepo.findOneById(id);
       sprint.startItem(backlogId);
    }
 
-   private final MailingListService mailingListService;
-   private final ApplicationEventPublisher eventPublisher;
-
    @Transactional
    @PostMapping("sprint/{id}/complete-item/{backlogId}")
-   public void completeItem(@PathVariable long id, @PathVariable long backlogId) {
+   public void completeItem(@PathVariable SprintId id, @PathVariable long backlogId) {
       Sprint sprint = sprintRepo.findOneById(id);
       sprint.completeItem(backlogId);
       // tot asa si daca aveai de modificat 2 agregate: Product = productRepo.findOneById()product.mutatii();
@@ -140,40 +107,57 @@ class SprintController {
    @EventListener
 //   @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
    public void method(SprintFinishedEarlierEvent earlierEvent) {
-      Sprint sprint = sprintRepo.findOneById(earlierEvent.getSprintId());
-      sendEarlyFinishEmail(sprint);
+      Product product = productRepo.findByCode(earlierEvent.getSprintId().productCode());
+      sendEarlyFinishEmail(product);
 
    }
 
-   private void sendEarlyFinishEmail(Sprint sprint) {
+   private void sendEarlyFinishEmail(Product product) {
       String productCode = null; // sprint.getProduct().getCode()
       System.out.println("Sending CONGRATS email to team of product " + productCode +
                          ": They finished the items earlier. They have time to mob refactor! (OMG!)");
-      List<Email> emails = mailingListService.retrieveEmails(sprint.getProduct().getTeamMailingList());
+      List<Email> emails = mailingListService.retrieveEmails(product.getTeamMailingList());
       emailService.sendCongratsEmail(emails);
    }
 
-   private void checkSprintMatchesAndStarted(long id, SprintBacklogItem backlogItem) {
-      // TODO
-//      if (!backlogItem.getSprint().getId().equals(id)) {
-//         throw new IllegalArgumentException("item not in sprint");
-//      }
+   @PostMapping("sprint/{id}/log-hours")
+   public void logHours(@PathVariable SprintId id, @RequestBody LogHoursRequest request) {
       Sprint sprint = sprintRepo.findOneById(id);
-      if (sprint.getStatus() != Status.STARTED) {
-         throw new IllegalStateException("Sprint not started");
-      }
+      sprint.logHours(request.backlogId, request.hours);
+   }
+
+   @Data
+   static class SprintDto {
+      public Long productId;
+      public LocalDate plannedEnd;
+   }
+
+   @Value
+   public static class BlackSprintEvent implements DomainEvent {
+      String productCode;
+      List<Long> notDoneItemIds;
+   }
+
+   @Data
+   static class SprintMetrics {
+      public int consumedHours;
+      public int doneFP;
+      public double fpVelocity;
+      public int hoursConsumedForNotDone;
+      public int calendarDays;
+      public int delayDays;
+   }
+
+   @Data
+   static class AddSprintBacklogItemRequest {
+      public long backlogId;
+      public int fpEstimation;
    }
 
    @Data
    static class LogHoursRequest {
       public long backlogId;
       public int hours;
-   }
-
-   @PostMapping("sprint/{id}/log-hours")
-   public void logHours(@PathVariable long id, @RequestBody LogHoursRequest request) {
-      Sprint sprint = sprintRepo.findOneById(id);
-      sprint.logHours(request.backlogId, request.hours);
    }
 
 }
@@ -188,6 +172,16 @@ class SprintBacklogItem {
 
    private Integer fpEstimation;
    private int hoursConsumed;
+   @Enumerated(STRING)
+   private Status status = Status.CREATED;
+
+   protected SprintBacklogItem() {
+   }
+
+   public SprintBacklogItem(Long backlogItemId, Integer fpEstimation) {
+      this.backlogItemId = backlogItemId;
+      this.fpEstimation = fpEstimation;
+   }
 
    public void start() {
       if (status != Status.CREATED) {
@@ -207,65 +201,103 @@ class SprintBacklogItem {
       return getStatus() == Status.DONE;
    }
 
+   void addHours(int hours) {
+      hoursConsumed += hours;
+   }
+
    public enum Status {
       CREATED,
       STARTED,
       DONE
    }
-
-   @Enumerated(STRING)
-   private Status status = Status.CREATED;
-
-   void addHours(int hours) {
-      hoursConsumed += hours;
-   }
-
-   protected SprintBacklogItem() {
-   }
-
-   public SprintBacklogItem(Long backlogItemId, Integer fpEstimation) {
-      this.backlogItemId = backlogItemId;
-      this.fpEstimation = fpEstimation;
-   }
 }
 
-interface SprintBacklogItemRepo extends CustomJpaRepository<SprintBacklogItem, Long> {
+@Embeddable
+@Data
+class SprintId implements Serializable {
+   private String id;
+
+   protected SprintId() {
+   }
+
+   public SprintId(String productCode, int iteration) {
+      if (productCode.length() != 3) {
+         throw new IllegalArgumentException();
+      }
+      if (iteration < 0) {
+         throw new IllegalArgumentException();
+      }
+      id = productCode + "-" + iteration;
+   }
+
+   public SprintId(String id) {
+      if (!id.matches("\\w{3}-\\d+")) {
+         throw new IllegalArgumentException("Invalid format");
+      }
+      this.id = id;
+   }
+
+   public String productCode() {
+      return id.split("-")[0];
+   }
+
+   public int iteration() {
+      return Integer.parseInt(id.split("-")[1]);
+   }
 }
 
 @Getter
-@Setter
 @NoArgsConstructor
 @Entity
 @Configurable
 class Sprint {
-   @Id
-   @GeneratedValue
-   private Long id;
-   private int iteration;
-   @ManyToOne
-   private Product product;
-   private LocalDate start;
+   @EmbeddedId
+   private SprintId id;
+   private Integer iteration;
    private LocalDate plannedEnd;
+
+   @Setter
+   private LocalDate start;
+   @Setter
    private LocalDate end;
+   @Setter
+   @Enumerated(STRING)
+   private Status status = Status.CREATED;
+   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+   @JoinColumn
+   private List<SprintBacklogItem> items = new ArrayList<>();
+
+   public Sprint(SprintId id, LocalDate plannedEnd) {
+      this.id = id;
+      this.plannedEnd = plannedEnd;
+      this.iteration = id.iteration();
+   }
+
+   public void finishSprint(SprintId id) {
+      if (status != Status.STARTED) {
+         throw new IllegalStateException();
+      }
+      end = LocalDate.now();
+      status = Status.FINISHED;
+
+      List<Long> notDoneItemIds = getItems().stream()
+          .filter(not(SprintBacklogItem::isDone))
+          .map(SprintBacklogItem::getBacklogItemId)
+          .collect(toList());
+
+      if (notDoneItemIds.size() >= 1) {
+         DomainEventsPublisher.publish(new BlackSprintEvent(id.productCode(), notDoneItemIds));
+      }
+   }
 
    public boolean finishedEarlier() {
       return getItems().stream().allMatch(SprintBacklogItem::isDone)
              && LocalDate.now().isBefore(getPlannedEnd());
    }
 
-   public enum Status {
-      CREATED,
-      STARTED,
-      FINISHED
+   public int getIteration() {
+      return iteration;
    }
-
-   @Enumerated(STRING)
-   private Status status = Status.CREATED;
-
-   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-   @JoinColumn
-   private List<SprintBacklogItem> items = new ArrayList<>();
-
 
    public SprintBacklogItem addItem(long backlogId, int fpEstimation) {
       if (status != Status.CREATED) {
@@ -293,7 +325,7 @@ class Sprint {
          throw new IllegalStateException();
       }
       setStart(LocalDate.now());
-      setStatus(Status.STARTED);
+      this.status = Status.STARTED;
    }
 
    public boolean isFinished() {
@@ -321,14 +353,22 @@ class Sprint {
 //         eventPublisher.publishEvent(new SprintFinishedEarlierEvent(id));
       }
    }
+
+   public enum Status {
+      CREATED,
+      STARTED,
+      FINISHED
+   }
 }
 
 @Value
 class SprintFinishedEarlierEvent implements DomainEvent {
-   long sprintId;
+   SprintId sprintId;
+}
+
+interface SprintBacklogItemRepo extends CustomJpaRepository<SprintBacklogItem, Long> {
 }
 
 
-interface SprintRepo extends CustomJpaRepository<Sprint, Long> {
-   List<Sprint> findAllByProductId(Long productId);
+interface SprintRepo extends CustomJpaRepository<Sprint, SprintId> {
 }

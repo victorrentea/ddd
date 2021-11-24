@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
+import victor.training.ddd.agile.Sprint.Status;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -23,13 +24,15 @@ class ReleaseController {
    private final SprintRepo sprintRepo;
    private final BacklogItemRepo backlogItemRepo;
 
-   @PostMapping("product/{productId}/release/{sprintId}")
-   public Release createRelease(@PathVariable long productId, @PathVariable long sprintId) {
-      Product product = productRepo.findOneById(productId);
+   @PostMapping("sprint/{sprintId}")
+   public Release createRelease(@PathVariable SprintId sprintId) {
+      Product product = productRepo.findByCode(sprintId.productCode());
       Sprint sprint = sprintRepo.findOneById(sprintId);
-      int iteration = sprint.getIteration();
+      if (sprint.getStatus() != Status.FINISHED) {
+         throw new IllegalArgumentException();
+      }
 
-      Release release = product.createRelease(iteration, backlogItemRepo);
+      Release release = product.createRelease(sprintId.iteration(), backlogItemRepo);
 
       releaseRepo.save(release);
       return release;

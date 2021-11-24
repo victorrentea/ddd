@@ -27,7 +27,7 @@ Tip for accidental reader: see the branches for how the code evolves.
 - Sprints of a Product are assigned consecutive IDs
 !- If there are Backlog Items NOT DONE at the end of the sprint, the items return to the product backlog and the PO is emailed automatically (to shield devs from misplaced shame)
 - After a Sprint ended, the system can generate metrics about it like velocity, consumed hours, done FP
-- The human-visible ID of a sprint is <projectCode>-<iterationNumber>. Examples: PNM-3, KRI-12 
+- The user-visible ID of a sprint is <projectCode>-<iterationNumber>. Examples: PNM-3, KRI-12 
 
 ## Release
 - A user can plan a release of any finished Sprint, for a certain date

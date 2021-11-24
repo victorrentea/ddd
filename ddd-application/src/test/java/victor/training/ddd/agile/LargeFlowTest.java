@@ -28,7 +28,7 @@ public class LargeFlowTest extends SystemTestBase {
           .extracting(ProductDto::getCode, ProductDto::getName, ProductDto::getMailingList)
           .isEqualTo(List.of("PNM", "::ProductName::", "::MailList::"));
 
-      Long sprintId = sprints.createSprint(new SprintDto()
+      SprintId sprintId = sprints.createSprint(new SprintDto()
           .setProductId(productId)
           .setPlannedEnd(LocalDate.now().plusDays(14)));
 
@@ -57,11 +57,11 @@ public class LargeFlowTest extends SystemTestBase {
 
       sprints.completeItem(sprintId, itemId);
 
-      sprints.endSprint(sprintId);
+      sprints.finishSprint(sprintId);
 
       assertThat(sprints.getSprintMetrics(sprintId).toString()).isEqualTo("idn");
 
-      Release release = releases.createRelease(productId, sprintId);
+      Release release = releases.createRelease(sprintId);
 
       assertThat(release.getReleaseNotes()).contains("::item::");
 
