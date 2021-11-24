@@ -152,7 +152,6 @@ class SprintController {
 
 }
 
-@Getter
 @Entity
 class SprintBacklogItem {
    @Id
@@ -169,6 +168,26 @@ class SprintBacklogItem {
       CREATED,
       STARTED,
       DONE
+   }
+
+   public Long id() {
+      return id;
+   }
+
+   public Long backlogItemId() {
+      return backlogItemId;
+   }
+
+   public int hoursConsumed() {
+      return hoursConsumed;
+   }
+
+   public Status status() {
+      return status;
+   }
+
+   public Integer fpEstimation() {
+      return fpEstimation;
    }
 
    protected SprintBacklogItem() {
@@ -194,7 +213,7 @@ class SprintBacklogItem {
    }
 
    public boolean isDone() {
-      return getStatus() == Status.DONE;
+      return status() == Status.DONE;
    }
 
    void addHours(int hours) {
@@ -276,7 +295,7 @@ class Sprint {
 
       List<Long> notDoneItemIds = getItems().stream()
           .filter(not(SprintBacklogItem::isDone))
-          .map(SprintBacklogItem::getBacklogItemId)
+          .map(SprintBacklogItem::backlogItemId)
           .collect(toList());
 
       if (notDoneItemIds.size() >= 1) {
@@ -311,7 +330,7 @@ class Sprint {
    }
 
    private SprintBacklogItem itemById(long backlogId) {
-      return items.stream().filter(i -> i.getId().equals(backlogId)).findFirst().get();
+      return items.stream().filter(i -> i.id().equals(backlogId)).findFirst().get();
    }
 
    public void start() {
@@ -330,7 +349,7 @@ class Sprint {
       if (status != Status.STARTED) {
          throw new IllegalStateException("Sprint not started");
       }
-      if (itemById(backlogId).getStatus() != SprintBacklogItem.Status.STARTED) {
+      if (itemById(backlogId).status() != SprintBacklogItem.Status.STARTED) {
          throw new IllegalStateException("Item not started");
       }
       itemById(backlogId).addHours(hours);
@@ -343,7 +362,7 @@ class Sprint {
       SprintBacklogItem sprintBacklogItem = itemById(backlogId);
       sprintBacklogItem.finish();
 
-      DomainEventsPublisher.publish(new BacklogItemCompletedEvent(sprintBacklogItem.getBacklogItemId()));
+      DomainEventsPublisher.publish(new BacklogItemCompletedEvent(sprintBacklogItem.backlogItemId()));
       if (finishedEarlier()) {
          DomainEventsPublisher.publish(new SprintFinishedEarlierEvent(id));
 //         eventPublisher.publishEvent(new SprintFinishedEarlierEvent(id));

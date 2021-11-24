@@ -12,15 +12,15 @@ public class SprintMetricsCalculator {
    public SprintMetrics computeMetrics(Sprint sprint) {
       SprintMetrics dto = new SprintMetrics();
       List<SprintBacklogItem> doneItems = sprint.getItems().stream()
-          .filter(item -> item.getStatus() == SprintBacklogItem.Status.DONE)
+          .filter(item -> item.status() == SprintBacklogItem.Status.DONE)
           .collect(toList());
-      dto.consumedHours = sprint.getItems().stream().mapToInt(SprintBacklogItem::getHoursConsumed).sum();
+      dto.consumedHours = sprint.getItems().stream().mapToInt(SprintBacklogItem::hoursConsumed).sum();
       dto.calendarDays = sprint.getStart().until(sprint.getEnd()).getDays();
-      dto.doneFP = doneItems.stream().mapToInt(SprintBacklogItem::getFpEstimation).sum();
+      dto.doneFP = doneItems.stream().mapToInt(SprintBacklogItem::fpEstimation).sum();
       dto.fpVelocity = 1.0 * dto.doneFP / dto.consumedHours;
       dto.hoursConsumedForNotDone = sprint.getItems().stream()
-          .filter(item -> item.getStatus() != SprintBacklogItem.Status.DONE)
-          .mapToInt(SprintBacklogItem::getHoursConsumed).sum();
+          .filter(item -> item.status() != SprintBacklogItem.Status.DONE)
+          .mapToInt(SprintBacklogItem::hoursConsumed).sum();
       if (sprint.getEnd().isAfter(sprint.getPlannedEnd())) {
          dto.delayDays = sprint.getPlannedEnd().until(sprint.getEnd()).getDays();
       }
