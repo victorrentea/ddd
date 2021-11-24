@@ -6,12 +6,12 @@ import victor.training.ddd.agile.ProductController.ProductDto;
 import victor.training.ddd.agile.SprintController.AddSprintBacklogItemRequest;
 import victor.training.ddd.agile.SprintController.LogHoursRequest;
 import victor.training.ddd.agile.SprintController.SprintDto;
+import victor.training.ddd.agile.SprintController.SprintMetrics;
 
 import java.time.LocalDate;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 
 public class LargeFlowTest extends SystemTestBase {
 
@@ -40,29 +40,34 @@ public class LargeFlowTest extends SystemTestBase {
       Long itemId = backlogItems.createBacklogItem(new BacklogItemDto()
           .setProductId(productId)
           .setTitle("::item::")
-          .setDescription("::itemDescr::"));
+          .setDescription("::itemDescription::"));
 
-      sprints.addItem(sprintId, new AddSprintBacklogItemRequest()
-          .setFpEstimation(10)
+      Long sprintItemId = sprints.addItem(sprintId, new AddSprintBacklogItemRequest()
+          .setFpEstimation(2)
           .setBacklogId(itemId));
 
       sprints.startSprint(sprintId);
       assertThatThrownBy(() -> sprints.startSprint(sprintId));
 
-      sprints.startItem(sprintId, itemId);
+      sprints.startItem(sprintId, sprintItemId);
 
       sprints.logHours(sprintId, new LogHoursRequest()
-          .setBacklogId(itemId)
+          .setBacklogId(sprintItemId)
           .setHours(10));
 
-      sprints.completeItem(sprintId, itemId);
+      sprints.completeItem(sprintId, sprintItemId);
 
       sprints.finishSprint(sprintId);
 
-      assertThat(sprints.getSprintMetrics(sprintId).toString()).isEqualTo("idn");
+      System.out.println("Metrics: " + sprints.getSprintMetrics(sprintId));
+      assertThat(sprints.getSprintMetrics(sprintId))
+          .extracting(SprintMetrics::getConsumedHours, SprintMetrics::getDoneFP, SprintMetrics::getHoursConsumedForNotDone)
+          .containsExactly(10, 2, 0);
 
       Release release = releases.createRelease(sprintId);
 
+      assertThat(release.getVersion()).isEqualTo("1.0");
+      assertThat(release.getSprintIteration()).isEqualTo(1);
       assertThat(release.getReleaseNotes()).contains("::item::");
 
 

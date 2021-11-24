@@ -77,10 +77,10 @@ class SprintController {
    }
 
    @PostMapping("sprint/{sprintId}/add-item")
-   public void addItem(@PathVariable SprintId sprintId, @RequestBody AddSprintBacklogItemRequest request) {
+   public Long addItem(@PathVariable SprintId sprintId, @RequestBody AddSprintBacklogItemRequest request) {
       Sprint sprint = sprintRepo.findOneById(sprintId);
       SprintBacklogItem item = sprint.addItem(request.backlogId, request.fpEstimation);
-      sprintBacklogItemRepo.save(item); // auto-flush de modificari facute pe entitati in cadrul unei tranzactii
+      return sprintBacklogItemRepo.save(item).id(); // auto-flush de modificari facute pe entitati in cadrul unei tranzactii
    }
 
    @PostMapping("sprint/{id}/start-item/{backlogId}")
