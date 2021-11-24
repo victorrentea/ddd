@@ -121,7 +121,6 @@ class Product {
       if (sprint.getStatus() != Status.FINISHED) {
          throw new IllegalArgumentException();
       }
-
       int lastReleasedIteration = releases.stream()
           .mapToInt(Release::getSprintIteration)
           .max()

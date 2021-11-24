@@ -33,6 +33,7 @@ Tip for accidental reader: see the branches for how the code evolves.
 - A user can plan a release of any finished Sprint, for a certain date
 - You can only release a *later* sprint than the one previously released
 - The changelog of a release is automatically composed from the backlog items shipped since the last release
+- On release, the sprint is marked accordingly
 - A release can be Major or Minor. In both cases, versions must be consecutive. Examples: 
   - 1.0 -(major)-> 2.0
   - 1.2 -(major)-> 2.0

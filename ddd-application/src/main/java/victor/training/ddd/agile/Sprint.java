@@ -6,7 +6,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import victor.training.ddd.agile.SprintController.BlackSprintEvent;
 import victor.training.ddd.common.events.DomainEvent;
 import victor.training.ddd.common.events.DomainEventsPublisher;
 import victor.training.ddd.common.repo.CustomJpaRepository;
@@ -97,11 +96,6 @@ class SprintController {
    public void completeItem(@PathVariable SprintId id, @PathVariable long backlogId) {
       Sprint sprint = sprintRepo.findOneById(id);
       sprint.completeItem(backlogId);
-      // tot asa si daca aveai de modificat 2 agregate: Product = productRepo.findOneById()product.mutatii();
-
-//      if (sprint.finishedEarlier()) {
-//         sendEarlyFinishEmail(sprint);
-//      }
    }
 
    @EventListener
@@ -346,8 +340,10 @@ class Sprint {
       if (status != Status.STARTED) {
          throw new IllegalStateException("Sprint not started");
       }
-      itemById(backlogId).finish();
+      SprintBacklogItem sprintBacklogItem = itemById(backlogId);
+      sprintBacklogItem.finish();
 
+      DomainEventsPublisher.publish(new BacklogItemCompletedEvent(sprintBacklogItem.getBacklogItemId()));
       if (finishedEarlier()) {
          DomainEventsPublisher.publish(new SprintFinishedEarlierEvent(id));
 //         eventPublisher.publishEvent(new SprintFinishedEarlierEvent(id));
@@ -364,6 +360,10 @@ class Sprint {
 @Value
 class SprintFinishedEarlierEvent implements DomainEvent {
    SprintId sprintId;
+}
+@Value
+class BacklogItemCompletedEvent implements DomainEvent {
+   Long backlogItemId;
 }
 
 interface SprintBacklogItemRepo extends CustomJpaRepository<SprintBacklogItem, Long> {

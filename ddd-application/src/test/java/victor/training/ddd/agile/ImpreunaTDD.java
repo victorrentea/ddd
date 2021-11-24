@@ -51,18 +51,18 @@ public class ImpreunaTDD extends SystemTestBase {
 
       Long itemId1 = backlogItems.createBacklogItem(new BacklogItemDto()
           .setProductId(productId)
-          .setTitle("Vreau ceva da nu stiu ce"));
-      Long itemId2 = backlogItems.createBacklogItem(new BacklogItemDto()
-          .setProductId(productId)
-          .setTitle("Vreau ceva da nu stiu ce eu"));
-
+          .setTitle("Vreau ceva da nu stiu ce")
+          .setDescription("RECE")
+      );
       BacklogItemDto dataSentToBrowser1 = backlogItems.getBacklogItem(itemId1);
-      // italian fiind, pleaca la pizza lasand ecranu deschis
-      BacklogItemDto dataSentToBrowser2 = backlogItems.getBacklogItem(itemId2);
-      dataSentToBrowser2.description="rachete!";
-      backlogItems.updateBacklogItem(dataSentToBrowser2);
-      // se intoarce de la pizzqa user 1
       dataSentToBrowser1.description ="sa faca inghetata";
+      // italian fiind, pleaca la pizza lasand ecranu deschis 2h la masa
+
+         BacklogItemDto dataSentToBrowser2 = backlogItems.getBacklogItem(itemId1);
+         dataSentToBrowser2.description="rachete!";
+         backlogItems.updateBacklogItem(dataSentToBrowser2);
+
+      // se intoarce de la pizzqa user 1
       backlogItems.updateBacklogItem(dataSentToBrowser1);
    }
 
