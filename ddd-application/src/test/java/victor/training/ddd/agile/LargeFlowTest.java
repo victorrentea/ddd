@@ -16,18 +16,17 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public class LargeFlowTest extends SystemTestBase {
 
    @Test
-   void largeFlow() {
-      Long productId = products.createProduct(new ProductDto()
-          .setCode("::PNM::")
+   void longAndHappy() {
+      ProductDto productDto = new ProductDto()
+          .setCode("PNM")
           .setName("::ProductName::")
-          .setMailingList("::MailList::"));
-
-      assertThatThrownBy(() -> products.createProduct(new ProductDto().setCode("::PNM::"))).isInstanceOf(IllegalArgumentException.class);
-
+          .setMailingList("::MailList::");
+      Long productId = products.createProduct(productDto);
+      assertThatThrownBy(() -> products.createProduct(productDto)).describedAs("cannot create with same code");
 
       assertThat(products.getProduct(productId))
           .extracting(ProductDto::getCode, ProductDto::getName, ProductDto::getMailingList)
-          .isEqualTo(List.of("::PNM::", "::ProductName::", "::MailList::"));
+          .isEqualTo(List.of("PNM", "::ProductName::", "::MailList::"));
 
       Long sprintId = sprints.createSprint(new SprintDto()
           .setProductId(productId)
@@ -39,18 +38,17 @@ public class LargeFlowTest extends SystemTestBase {
 
 
       Long itemId = backlogItems.createBacklogItem(new BacklogItemDto()
-          .setProductId(productId)
-          .setTitle("::item::")
-          .setDescription("::itemDescr::"));
+          .setProductId(productId).setTitle("::item1::").setDescription("::descr::"));
 
       sprints.addItem(sprintId, new AddBacklogItemRequest()
-          .setFpEstimation(10)
+          .setFpEstimation(2)
           .setBacklogId(itemId));
 
       sprints.startSprint(sprintId);
-      assertThatThrownBy(() -> sprints.startSprint(sprintId));
+      assertThatThrownBy(() -> sprints.startSprint(sprintId)).describedAs("cannot start again");
 
       sprints.startItem(sprintId, itemId);
+      assertThatThrownBy(() -> sprints.startItem(sprintId, itemId)).describedAs("cannot start again");
 
       sprints.logHours(sprintId, new LogHoursRequest()
           .setBacklogId(itemId)
@@ -60,11 +58,15 @@ public class LargeFlowTest extends SystemTestBase {
 
       sprints.endSprint(sprintId);
 
-      assertThat(sprints.getSprintMetrics(sprintId).toString()).isEqualTo("idn");
+      assertThat(sprints.getSprintMetrics(sprintId))
+          .matches(m -> m.consumedHours == 10)
+          .matches(m -> m.doneFP == 2)
+          .matches(m -> m.hoursConsumedForNotDone == 0);
 
       Release release = releases.createRelease(productId, sprintId);
 
-      assertThat(release.getReleaseNotes()).contains("::item::");
+      assertThat(release.getReleaseNotes()).contains("::item1::");
+      assertThat(release.getVersion()).isEqualTo("1.0");
 
 
    }

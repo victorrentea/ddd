@@ -2,7 +2,6 @@ package victor.training.ddd.agile;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import victor.training.ddd.varie.Email;
 
 import java.util.List;
 
@@ -13,8 +12,8 @@ import static java.util.stream.Collectors.joining;
 public class EmailService {
    private final EmailSender emailSender;
 
-   public void sendCongratsEmail(List<Email> emails) {
-      emailSender.sendEmail("happy@corp.intra", emails.stream().map(Email::getValue).collect(joining(";")), "Congrats!",
+   public void sendCongratsEmail(List<String> emails) {
+      emailSender.sendEmail("happy@corp.intra", String.join(";", emails), "Congrats!",
           "You have finished the sprint earlier. You have more time for refactor!");
    }
 
