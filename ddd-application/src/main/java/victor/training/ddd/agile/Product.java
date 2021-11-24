@@ -12,6 +12,7 @@ import javax.persistence.*;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -109,7 +110,7 @@ class Product {
       return Validation.buildDefaultValidatorFactory().getValidator();
    }
 
-   public int nextIterationNumber() {
+   private int nextIterationNumber() {
       return ++ currentIteration;
    }
 
@@ -133,6 +134,12 @@ class Product {
       Release release = new Release(nextReleaseVersion() , sprint.getIteration(), releaseNotes );
       releases.add(release);
       return release;
+   }
+
+   public Sprint createSprint(LocalDate plannedEnd) {
+      int iteration = nextIterationNumber();
+      SprintId sprintId = new SprintId(getCode(), iteration);
+      return new Sprint(sprintId, plannedEnd);
    }
 }
 

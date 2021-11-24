@@ -3,6 +3,7 @@ package victor.training.ddd.agile;
 import lombok.*;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import victor.training.ddd.common.repo.CustomJpaRepository;
@@ -23,6 +24,8 @@ class BacklogItemController {
    @Transactional
    public Long createBacklogItem(@RequestBody BacklogItemDto dto) {
       Product product = productRepo.findOneById(dto.productId);
+//      BacklogItem backlogItem = product.createItem()
+//          .update(dto.title, dto.description);
       BacklogItem backlogItem = new BacklogItem(product.getId())
           .update(dto.title, dto.description);
       return backlogItemRepo.save(backlogItem).getId();
@@ -51,9 +54,22 @@ class BacklogItemController {
 
    @EventListener
    public void handleItemCompleted(BacklogItemCompletedEvent event) {
-      BacklogItem item = backlogItemRepo.findOneById(event.getBacklogItemId());
-      item.setDone();
+//      eventDispatcher.registerListener(BacklogItemCompletedEvent.class, event  -> { // java EE
+//     messageSender.send(new BacklogItemCompletedMessage(event.getBacklogItemId()));
+      // TODO mesaj pe coada.
+     // send pe queue si apoi procesarea continua ...
    }
+   // vreau sa decuplez asa de adanc intre Sprint Agg si BacklogItem Agg incat in 2 luni sa
+   // mut BacklogItem in propriul microserviciu (e in buget deja aprobat)
+   // receive pe queue esti in alta tranzactie
+   @ServiceActivator()
+   public void handleItemCompleted(BacklogItemCompletedMessage message) {
+      BacklogItem item = backlogItemRepo.findOneById(message.getBacklogItemId());
+      item.setDone();
+      backlogItemRepo.save(item);
+   }
+
+
 
    @DeleteMapping("backlog/{id}")
    public void deleteBacklogItem(@PathVariable long id) {

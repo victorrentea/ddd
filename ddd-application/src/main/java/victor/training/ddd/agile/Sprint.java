@@ -38,9 +38,7 @@ class SprintController {
    public SprintId createSprint(@RequestBody SprintDto dto) {
       Product product = productRepo.findOneById(dto.productId);
 
-      int iteration = product.nextIterationNumber();
-      SprintId sprintId = new SprintId(product.getCode(), iteration);
-      Sprint sprint = new Sprint(sprintId, dto.plannedEnd);
+      Sprint sprint = product.createSprint(dto.plannedEnd);
       return sprintRepo.save(sprint).getId();
    }
 
@@ -210,6 +208,7 @@ class SprintBacklogItem {
          throw new IllegalStateException("Cannot complete an Item before starting it");
       }
       status = Status.DONE;
+      DomainEventsPublisher.publish(new BacklogItemCompletedEvent(backlogItemId));
    }
 
    public boolean isDone() {
@@ -362,7 +361,6 @@ class Sprint {
       SprintBacklogItem sprintBacklogItem = itemById(backlogId);
       sprintBacklogItem.finish();
 
-      DomainEventsPublisher.publish(new BacklogItemCompletedEvent(sprintBacklogItem.backlogItemId()));
       if (finishedEarlier()) {
          DomainEventsPublisher.publish(new SprintFinishedEarlierEvent(id));
 //         eventPublisher.publishEvent(new SprintFinishedEarlierEvent(id));
@@ -382,6 +380,10 @@ class SprintFinishedEarlierEvent implements DomainEvent {
 }
 @Value
 class BacklogItemCompletedEvent implements DomainEvent {
+   Long backlogItemId;
+}
+@Value
+class BacklogItemCompletedMessage implements DomainEvent {
    Long backlogItemId;
 }
 
