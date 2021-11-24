@@ -13,7 +13,6 @@ import victor.training.ddd.common.repo.CustomJpaRepository;
 import victor.training.ddd.varie.Email;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +39,7 @@ class SprintController {
    public Long createSprint(@RequestBody SprintDto dto) {
       Product product = productRepo.findOneById(dto.productId);
       Sprint sprint = new Sprint() // TODO constr arg
-          .setIteration(product.incrementAndGetIteration())
+          .setIteration(product.nextIteration())
           .setProduct(product)
           .setPlannedEnd(dto.plannedEnd);
       return sprintRepo.save(sprint).getId();
@@ -331,4 +330,5 @@ class SprintFinishedEarlierEvent implements DomainEvent {
 
 
 interface SprintRepo extends CustomJpaRepository<Sprint, Long> {
+   List<Sprint> findAllByProductId(Long productId);
 }

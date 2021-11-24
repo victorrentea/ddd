@@ -27,10 +27,14 @@ Tip for accidental reader: see the branches for how the code evolves.
 - Sprints of a Product are assigned consecutive IDs
 !- If there are Backlog Items NOT DONE at the end of the sprint, the items return to the product backlog and the PO is emailed automatically (to shield devs from misplaced shame)
 - After a Sprint ended, the system can generate metrics about it like velocity, consumed hours, done FP
+- The human-visible ID of a sprint is <projectCode>-<iterationNumber>. Examples: PNM-3, KRI-12 
 
 ## Release
 - A user can plan a release of any finished Sprint, for a certain date
 - You can only release a *later* sprint than the one previously released
 - The changelog of a release is automatically composed from the backlog items shipped since the last release
-- The releases have consecutive major IDs by default eg 1.0, 2.0 ... or minor 1.1, 1.2 ...
+- A release can be Major or Minor. In both cases, versions must be consecutive. Examples: 
+  - 1.0 -(major)-> 2.0
+  - 1.2 -(major)-> 2.0
+  - 2.0 -(minor)-> 2.1
 

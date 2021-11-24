@@ -1,13 +1,16 @@
 package victor.training.ddd.agile;
 
 import lombok.*;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import victor.training.ddd.common.repo.CustomJpaRepository;
 
-import javax.persistence.*;
-
-import static javax.persistence.EnumType.STRING;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Version;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -86,4 +89,11 @@ class BacklogItem {
 }
 
 interface BacklogItemRepo extends CustomJpaRepository<BacklogItem, Long> {
+   @Query("SELECT bi " +
+          "FROM Sprint s " +
+          "JOIN s.items sbi " +
+          "JOIN BacklogItem bi  ON sbi.backlogItemId = bi.id " +
+          "WHERE s.iteration between ?1 and ?2 " +
+          "AND sbi.status = 'DONE'")
+   List<BacklogItem> findDoneItemsBetweenIterations(int firstIteration, int lastIteration);
 }

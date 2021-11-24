@@ -14,6 +14,8 @@ import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.util.stream.Collectors.joining;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -85,9 +87,8 @@ class Product {
 //   }
 
 
-   @OneToMany(mappedBy = "product")
-   private List<Sprint> sprints = new ArrayList<>();
-   @OneToMany(mappedBy = "product")
+   @OneToMany
+   @JoinColumn
    private List<Release> releases = new ArrayList<>();
 
    protected Product() { // doar pt hibernate
@@ -100,19 +101,34 @@ class Product {
       this.name = name;
       this.mailingList = mailingList;
 
-      hocusPocus().validate(this);
+      getValidator().validate(this);
    }
 
-   private Validator hocusPocus() {
+   private Validator getValidator() {
       return Validation.buildDefaultValidatorFactory().getValidator();
    }
 
-   public int incrementAndGetIteration() {
+   public int nextIteration() {
       return ++ currentIteration;
    }
 
-   public int incrementAndGetVersion() {
-      return ++ currentVersion;
+   private String nextReleaseVersion() {
+      return ( ++ currentVersion) + ".0";
+   }
+
+   public Release createRelease(int iteration, BacklogItemRepo backlogItemRepo) {
+      int lastReleasedIteration = releases.stream()
+          .mapToInt(Release::getSprintIteration)
+          .max()
+          .orElse(0);
+
+      List<BacklogItem> releasedItems = backlogItemRepo.findDoneItemsBetweenIterations(lastReleasedIteration + 1, iteration);
+
+      String releaseNotes = releasedItems.stream().map(BacklogItem::getTitle).collect(joining("\n"));
+
+      Release release = new Release(nextReleaseVersion() ,iteration, releaseNotes );
+      releases.add(release);
+      return release;
    }
 }
 
