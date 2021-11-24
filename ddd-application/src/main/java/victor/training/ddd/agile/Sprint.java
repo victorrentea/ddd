@@ -106,6 +106,8 @@ class SprintController {
    }
 
    @Data
+   @AllArgsConstructor
+   @NoArgsConstructor
    static class AddBacklogItemRequest {
       public long backlogId;
       public int fpEstimation;
@@ -164,6 +166,8 @@ class SprintController {
    }
 
    @Data
+   @NoArgsConstructor
+   @AllArgsConstructor
    static class LogHoursRequest {
       public long backlogId;
       public int hours;

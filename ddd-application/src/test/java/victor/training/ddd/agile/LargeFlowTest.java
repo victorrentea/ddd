@@ -46,13 +46,12 @@ public class LargeFlowTest extends SystemTestBase {
 
       sprints.startSprint(sprintId);
       assertThatThrownBy(() -> sprints.startSprint(sprintId)).describedAs("cannot start again");
+      assertThatThrownBy(() -> sprints.completeItem(sprintId, itemId)).describedAs("must first start item");
 
       sprints.startItem(sprintId, itemId);
       assertThatThrownBy(() -> sprints.startItem(sprintId, itemId)).describedAs("cannot start again");
 
-      sprints.logHours(sprintId, new LogHoursRequest()
-          .setBacklogId(itemId)
-          .setHours(10));
+      sprints.logHours(sprintId, new LogHoursRequest(itemId, 10));
 
       sprints.completeItem(sprintId, itemId);
 
