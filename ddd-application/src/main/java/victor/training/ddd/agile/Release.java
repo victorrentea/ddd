@@ -14,35 +14,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.time.LocalDate;
 
-@Transactional
-@RestController
-@RequiredArgsConstructor
-class ReleaseController {
-   private final ReleaseRepo releaseRepo;
-   private final ProductRepo productRepo;
-   private final SprintRepo sprintRepo;
-   private final BacklogItemRepo backlogItemRepo;
-
-   @PostMapping("sprint/{sprintId}")
-   public Release createRelease(@PathVariable SprintId sprintId) {
-      Product product = productRepo.findByCode(sprintId.productCode());
-      Sprint sprint = sprintRepo.findOneById(sprintId);
-
-
-      Release release = product.createRelease(sprint, backlogItemRepo);
-
-      releaseRepo.save(release);
-      return release;
-   }
-
-}
-
-
 
 @Getter
 @Setter
 @Entity
-class Release {
+public class Release {
    @Id
    @GeneratedValue
    private Long id;
@@ -62,5 +38,3 @@ class Release {
    }
 }
 
-interface ReleaseRepo extends JpaRepository<Release, Long> {
-}

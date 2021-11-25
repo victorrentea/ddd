@@ -18,49 +18,10 @@ import java.util.List;
 
 import static java.util.stream.Collectors.joining;
 
-@Slf4j
-@RestController
-@RequiredArgsConstructor
-class ProductController {
-   private final ProductRepo productRepo;
-
-
-   @Data
-   static class ProductDto {
-      public Long id;
-      public String code;
-      public String name;
-      public String mailingList;
-   }
-
-   @PostMapping("products")
-   public Long createProduct(@RequestBody ProductDto dto) {
-      if (productRepo.existsByCode(dto.code)) {
-         throw new IllegalArgumentException("Code already defined");
-      }
-      Product product = new Product(dto.code, dto.name, dto.mailingList);
-      return productRepo.save(product).getId();
-   }
-
-   @GetMapping("products/{id}")
-   public ProductDto getProduct(@PathVariable long id) {
-      Product product = productRepo.findOneById(id);
-      ProductDto dto = new ProductDto();
-      dto.id = product.getId();
-      dto.name = product.getName();
-      dto.code = product.getCode();
-      dto.mailingList = product.getMailingList();
-      return dto;
-   }
-
-}
-
-
-
 
 @Data
 @Entity
-class Product {
+public class Product {
    @Id
    @GeneratedValue
    private Long id;
@@ -143,8 +104,3 @@ class Product {
    }
 }
 
-interface ProductRepo extends CustomJpaRepository<Product, Long> {
-   boolean existsByCode(String code);
-
-   Product findByCode(String code);
-}

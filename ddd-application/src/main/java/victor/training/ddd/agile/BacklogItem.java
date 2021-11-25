@@ -1,96 +1,19 @@
 package victor.training.ddd.agile;
 
-import lombok.*;
-import org.springframework.context.event.EventListener;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.integration.annotation.ServiceActivator;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
-import victor.training.ddd.common.repo.CustomJpaRepository;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Version;
-import java.util.List;
-
-@RestController
-@RequiredArgsConstructor
-class BacklogItemController {
-   private final BacklogItemRepo backlogItemRepo;
-   private final ProductRepo productRepo;
-
-   @PostMapping("backlog")
-   @Transactional
-   public Long createBacklogItem(@RequestBody BacklogItemDto dto) {
-      Product product = productRepo.findOneById(dto.productId);
-//      BacklogItem backlogItem = product.createItem()
-//          .update(dto.title, dto.description);
-      BacklogItem backlogItem = new BacklogItem(product.getId())
-          .update(dto.title, dto.description);
-      return backlogItemRepo.save(backlogItem).getId();
-   }
-
-   @GetMapping("backlog/{id}")
-   public BacklogItemDto getBacklogItem(@PathVariable long id) {
-      BacklogItem backlogItem = backlogItemRepo.findOneById(id);
-      BacklogItemDto dto = new BacklogItemDto();
-      dto.id = backlogItem.getId();
-      dto.productId = backlogItem.getProductId();
-      dto.description = backlogItem.getDescription();
-      dto.title = backlogItem.getTitle();
-      dto.version = backlogItem.getVersion();
-      return dto;
-   }
-
-   @PutMapping("backlog")
-   public void updateBacklogItem(@RequestBody BacklogItemDto dto) {
-      BacklogItem backlogItem = backlogItemRepo.findOneById(dto.id)
-          .update(dto.title, dto.description) // arunce exceptie daca item e deja DONE in vreun sprint
-          .setVersion(dto.version);
-
-      backlogItemRepo.save(backlogItem);
-   }
-
-   @EventListener
-   public void handleItemCompleted(BacklogItemCompletedEvent event) {
-//      eventDispatcher.registerListener(BacklogItemCompletedEvent.class, event  -> { // java EE
-//     messageSender.send(new BacklogItemCompletedMessage(event.getBacklogItemId()));
-      // TODO mesaj pe coada.
-     // send pe queue si apoi procesarea continua ...
-   }
-   // vreau sa decuplez asa de adanc intre Sprint Agg si BacklogItem Agg incat in 2 luni sa
-   // mut BacklogItem in propriul microserviciu (e in buget deja aprobat)
-   // receive pe queue esti in alta tranzactie
-   @ServiceActivator()
-   public void handleItemCompleted(BacklogItemCompletedMessage message) {
-      BacklogItem item = backlogItemRepo.findOneById(message.getBacklogItemId());
-      item.setDone();
-      backlogItemRepo.save(item);
-   }
-
-
-
-   @DeleteMapping("backlog/{id}")
-   public void deleteBacklogItem(@PathVariable long id) {
-      backlogItemRepo.deleteById(id);
-   }
-
-   @Data
-   static class BacklogItemDto {
-      public Long id;
-      public Long productId;
-      public String title;
-      public String description;
-      public Long version;
-   }
-}
 
 @Getter
 @NoArgsConstructor
 @Entity
 @DDD.Aggregate
-class BacklogItem {
+public class BacklogItem {
    @Id
    @GeneratedValue
    @Setter
@@ -121,12 +44,3 @@ class BacklogItem {
    }
 }
 
-interface BacklogItemRepo extends CustomJpaRepository<BacklogItem, Long> {
-   @Query("SELECT bi " +
-          "FROM Sprint s " +
-          "JOIN s.items sbi " +
-          "JOIN BacklogItem bi  ON sbi.backlogItemId = bi.id " +
-          "WHERE s.iteration between ?1 and ?2 " +
-          "AND sbi.status = 'DONE'")
-   List<BacklogItem> findDoneItemsBetweenIterations(int firstIteration, int lastIteration);
-}
