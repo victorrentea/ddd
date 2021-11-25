@@ -39,7 +39,7 @@ public class FacadeLoggingInterceptor {
 			jackson.enable(SerializationFeature.INDENT_OUTPUT);
 		}
 	}
-	@Around("@within(victor.training.ddd.common.Facade))")
+	@Around("@within(victor.training.ddd.common.DDD.ApplicationService))")
 	public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
 		logBefore(joinPoint);
 		long t0 = System.currentTimeMillis();

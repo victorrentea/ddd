@@ -40,6 +40,10 @@ public class LargeFlowTest extends SystemTestBase {
       Long backlogItemId = backlogItems.createBacklogItem(new BacklogItemDto()
           .setProductId(productId).setTitle("::item1::").setDescription("::descr::"));
 
+      BacklogItemDto backlogDto = backlogItems.getBacklogItem(backlogItemId);
+      backlogDto.description += "More Text";
+      backlogItems.updateBacklogItem(backlogDto);
+
       Long itemId = sprints.addItem(sprintId, new AddBacklogItemRequest()
           .setFpEstimation(2)
           .setBacklogId(backlogItemId));
@@ -67,5 +71,10 @@ public class LargeFlowTest extends SystemTestBase {
 
       assertThat(release.getReleaseNotes()).contains("::item1::");
       assertThat(release.getVersion()).isEqualTo("1.0");
+
+      // try to update a done backlog item
+      BacklogItemDto backlogDto2 = backlogItems.getBacklogItem(backlogItemId);
+      backlogDto2.description += "IllegalChange";
+      assertThatThrownBy(() -> backlogItems.updateBacklogItem(backlogDto2)).describedAs("cannot edit done item");
    }
 }
