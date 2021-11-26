@@ -1,8 +1,8 @@
 package victor.training.ddd.agile;
 
 import org.junit.jupiter.api.Test;
-import victor.training.ddd.agile.BacklogItemController.BacklogItemDto;
-import victor.training.ddd.agile.ProductController.ProductDto;
+import victor.training.ddd.agile.web.BacklogItemController.BacklogItemDto;
+import victor.training.ddd.agile.web.ProductController.ProductDto;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
