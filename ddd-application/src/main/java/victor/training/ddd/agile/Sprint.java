@@ -114,17 +114,13 @@ class SprintController {
    }
 
    @PostMapping("sprint/{sprintId}/add-item")
-   @Transactional(propagation = Propagation.NOT_SUPPORTED)
+   @Transactional
    public void addItem(@PathVariable long sprintId, @RequestBody AddBacklogItemRequest request) {
       BacklogItem backlogItem = backlogItemRepo.findOneById(request.backlogId);
 
       Sprint sprint = sprintRepo.findOneById(sprintId);
 
       sprint.addItem(backlogItem, request.fpEstimation);
-
-
-      sprintRepo.save(sprint);
-      backlogItemRepo.save(backlogItem);
    }
 
 
