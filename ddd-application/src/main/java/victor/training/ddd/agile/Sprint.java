@@ -120,15 +120,14 @@ class SprintController {
 
       Sprint sprint = sprintRepo.findOneById(sprintId);
 
-
-      sprint.addItem(backlogItem);
+      sprint.addItem(backlogItem, request.fpEstimation);
 
 //      sprint.getItems().add(backlogItem);
 //      backlogItem.setSprint(sprint);
 
 //      backlogItem.setSprint(sprint); // not be visible from service package
 
-      backlogItem.setFpEstimation(request.fpEstimation);
+//      backlogItem.setFpEstimation();
    }
 
 
@@ -280,10 +279,11 @@ class Sprint {
       return this;
    }
 
-   public void addItem(BacklogItem backlogItem) {
+   public void addItem(BacklogItem backlogItem, int fpEstimation) {
       if (status != Status.CREATED) {
          throw new IllegalStateException("Can only add items to Sprint before it starts");
       }
+      backlogItem.setFpEstimation(fpEstimation);
       items.add(backlogItem);
       backlogItem.setSprint(this); // you will see the setter from here
    }
