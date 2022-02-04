@@ -133,9 +133,8 @@ class BacklogItem {
       return this;
    }
 
-   public BacklogItem setSprint(Sprint sprint) {
+   void setSprint(Sprint sprint) {
       this.sprint = sprint;
-      return this;
    }
 
    public BacklogItem setFpEstimation(Integer fpEstimation) {

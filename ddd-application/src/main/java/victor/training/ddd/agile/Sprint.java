@@ -1,6 +1,7 @@
 package victor.training.ddd.agile;
 
-import lombok.*;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import victor.training.ddd.agile.Sprint.Status;
@@ -9,6 +10,7 @@ import victor.training.ddd.common.repo.CustomJpaRepository;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -113,13 +115,19 @@ class SprintController {
 
    @PostMapping("sprint/{sprintId}/add-item")
    public void addItem(@PathVariable long sprintId, @RequestBody AddBacklogItemRequest request) {
+
       BacklogItem backlogItem = backlogItemRepo.findOneById(request.backlogId);
+
       Sprint sprint = sprintRepo.findOneById(sprintId);
-      if (sprint.getStatus() != Status.CREATED) {
-         throw new IllegalStateException("Can only add items to Sprint before it starts");
-      }
-      backlogItem.setSprint(sprint);
-      sprint.getItems().add(backlogItem);
+
+
+      sprint.addItem(backlogItem);
+
+//      sprint.getItems().add(backlogItem);
+//      backlogItem.setSprint(sprint);
+
+//      backlogItem.setSprint(sprint); // not be visible from service package
+
       backlogItem.setFpEstimation(request.fpEstimation);
    }
 
@@ -134,6 +142,12 @@ class SprintController {
 
       backlogItem.start();
    }
+
+
+
+
+
+
 
 
    private final MailingListService mailingListService;
@@ -175,9 +189,6 @@ class SprintController {
 }
 
 
-@Getter
-@Setter
-@NoArgsConstructor
 @Entity
 class Sprint {
    @Id
@@ -190,6 +201,9 @@ class Sprint {
    private LocalDate plannedEnd;
    private LocalDate end;
 
+   public Sprint() {
+   }
+
    public void checkSprintMatchesAndStarted(BacklogItem backlogItem) {
       if (!backlogItem.getSprint().getId().equals(getId())) {
          throw new IllegalArgumentException("item not in sprint");
@@ -197,6 +211,81 @@ class Sprint {
       if (getStatus() != Status.STARTED) {
          throw new IllegalStateException("Sprint not started");
       }
+   }
+
+   public Long getId() {
+      return this.id;
+   }
+
+   public int getIteration() {
+      return this.iteration;
+   }
+
+   public Product getProduct() {
+      return this.product;
+   }
+
+   public LocalDate getStart() {
+      return this.start;
+   }
+
+   public LocalDate getPlannedEnd() {
+      return this.plannedEnd;
+   }
+
+   public LocalDate getEnd() {
+      return this.end;
+   }
+
+   public Status getStatus() {
+      return this.status;
+   }
+
+   public List<BacklogItem> getItems() {
+      return Collections.unmodifiableList(this.items);
+   }
+
+   public Sprint setId(Long id) {
+      this.id = id;
+      return this;
+   }
+
+   public Sprint setIteration(int iteration) {
+      this.iteration = iteration;
+      return this;
+   }
+
+   public Sprint setProduct(Product product) {
+      this.product = product;
+      return this;
+   }
+
+   public Sprint setStart(LocalDate start) {
+      this.start = start;
+      return this;
+   }
+
+   public Sprint setPlannedEnd(LocalDate plannedEnd) {
+      this.plannedEnd = plannedEnd;
+      return this;
+   }
+
+   public Sprint setEnd(LocalDate end) {
+      this.end = end;
+      return this;
+   }
+
+   public Sprint setStatus(Status status) {
+      this.status = status;
+      return this;
+   }
+
+   public void addItem(BacklogItem backlogItem) {
+      if (status != Status.CREATED) {
+         throw new IllegalStateException("Can only add items to Sprint before it starts");
+      }
+      items.add(backlogItem);
+      backlogItem.setSprint(this); // you will see the setter from here
    }
 
    public enum Status {
