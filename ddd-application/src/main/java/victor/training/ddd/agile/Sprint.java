@@ -124,41 +124,33 @@ class SprintController {
    }
 
 
-   @PostMapping("sprint/{id}/start-item/{backlogId}")
-   public void startItem(@PathVariable long id, @PathVariable long backlogId) {
+   @PostMapping("sprint/{sprintId}/item/{backlogId}/start")
+   public void startItem(@PathVariable long sprintId, @PathVariable long backlogId) {
       BacklogItem backlogItem = backlogItemRepo.findOneById(backlogId);
-      checkSprintMatchesAndStarted(id, backlogItem);
-      if (backlogItem.getStatus() != BacklogItem.Status.CREATED) {
-         throw new IllegalStateException("Item already started");
-      }
-      backlogItem.setStatus(BacklogItem.Status.STARTED);
+
+      Sprint sprint = sprintRepo.findOneById(sprintId);
+
+      sprint.checkSprintMatchesAndStarted(backlogItem);
+
+      backlogItem.start();
    }
+
 
    private final MailingListService mailingListService;
 
    @PostMapping("sprint/{id}/complete-item/{backlogId}")
    public void completeItem(@PathVariable long id, @PathVariable long backlogId) {
       BacklogItem backlogItem = backlogItemRepo.findOneById(backlogId);
-      checkSprintMatchesAndStarted(id, backlogItem);
-      if (backlogItem.getStatus() != BacklogItem.Status.STARTED) {
-         throw new IllegalStateException("Cannot complete an Item before starting it");
-      }
-      backlogItem.setStatus(BacklogItem.Status.DONE);
       Sprint sprint = sprintRepo.findOneById(id);
+
+      sprint.checkSprintMatchesAndStarted(backlogItem);
+
+      backlogItem.complete();
+
       if (sprint.getItems().stream().allMatch(item -> item.getStatus() == BacklogItem.Status.DONE)) {
          System.out.println("Sending CONGRATS email to team of product " + sprint.getProduct().getCode() + ": They finished the items earlier. They have time to refactor! (OMG!)");
          List<String> emails = mailingListService.retrieveEmails(sprint.getProduct().getTeamMailingList());
          emailService.sendCongratsEmail(emails);
-      }
-   }
-
-   private void checkSprintMatchesAndStarted(long id, BacklogItem backlogItem) {
-      if (!backlogItem.getSprint().getId().equals(id)) {
-         throw new IllegalArgumentException("item not in sprint");
-      }
-      Sprint sprint = sprintRepo.findOneById(id);
-      if (sprint.getStatus() != Status.STARTED) {
-         throw new IllegalStateException("Sprint not started");
       }
    }
 
@@ -171,7 +163,9 @@ class SprintController {
    @PostMapping("sprint/{id}/log-hours")
    public void logHours(@PathVariable long id, @RequestBody LogHoursRequest request) {
       BacklogItem backlogItem = backlogItemRepo.findOneById(request.backlogId);
-      checkSprintMatchesAndStarted(id, backlogItem);
+      Sprint sprint = sprintRepo.findOneById(id);
+
+      sprint.checkSprintMatchesAndStarted(backlogItem);
       if (backlogItem.getStatus() != BacklogItem.Status.STARTED) {
          throw new IllegalStateException("Item not started");
       }
@@ -195,6 +189,15 @@ class Sprint {
    private LocalDate start;
    private LocalDate plannedEnd;
    private LocalDate end;
+
+   public void checkSprintMatchesAndStarted(BacklogItem backlogItem) {
+      if (!backlogItem.getSprint().getId().equals(getId())) {
+         throw new IllegalArgumentException("item not in sprint");
+      }
+      if (getStatus() != Status.STARTED) {
+         throw new IllegalStateException("Sprint not started");
+      }
+   }
 
    public enum Status {
       CREATED,

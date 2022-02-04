@@ -66,7 +66,6 @@ class BacklogItemController {
 }
 
 @Getter
-@Setter
 @NoArgsConstructor
 @Entity
 class BacklogItem {
@@ -95,10 +94,64 @@ class BacklogItem {
 
    private int hoursConsumed;
 
+   public void start() {
+      if (this.status != Status.CREATED) {
+         throw new IllegalStateException("Item already started");
+      }
+      this.status = Status.STARTED;
+   }
+
+   public void complete() {
+      if (this.status != Status.STARTED) {
+         throw new IllegalStateException("Cannot complete an Item before starting it");
+      }
+      this.status = Status.DONE;
+   }
+
+
    public void addHours(int hours) {
       hoursConsumed += hours;
    }
 
+   public BacklogItem setId(Long id) {
+      this.id = id;
+      return this;
+   }
+
+   public BacklogItem setProduct(Product product) {
+      this.product = product;
+      return this;
+   }
+
+   public BacklogItem setTitle(String title) {
+      this.title = title;
+      return this;
+   }
+
+   public BacklogItem setDescription(String description) {
+      this.description = description;
+      return this;
+   }
+
+   public BacklogItem setSprint(Sprint sprint) {
+      this.sprint = sprint;
+      return this;
+   }
+
+   public BacklogItem setFpEstimation(Integer fpEstimation) {
+      this.fpEstimation = fpEstimation;
+      return this;
+   }
+
+   public BacklogItem setVersion(Long version) {
+      this.version = version;
+      return this;
+   }
+
+   public BacklogItem setHoursConsumed(int hoursConsumed) {
+      this.hoursConsumed = hoursConsumed;
+      return this;
+   }
 }
 
 interface BacklogItemRepo extends CustomJpaRepository<BacklogItem, Long> {
