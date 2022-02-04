@@ -115,19 +115,12 @@ class SprintController {
 
    @PostMapping("sprint/{sprintId}/add-item")
    public void addItem(@PathVariable long sprintId, @RequestBody AddBacklogItemRequest request) {
-
       BacklogItem backlogItem = backlogItemRepo.findOneById(request.backlogId);
 
       Sprint sprint = sprintRepo.findOneById(sprintId);
 
       sprint.addItem(backlogItem, request.fpEstimation);
 
-//      sprint.getItems().add(backlogItem);
-//      backlogItem.setSprint(sprint);
-
-//      backlogItem.setSprint(sprint); // not be visible from service package
-
-//      backlogItem.setFpEstimation();
    }
 
 
