@@ -137,11 +137,12 @@ class Product {
       return ++ currentVersion;
    }
 
-   public void addRelease(Sprint sprint, String releaseNotes) {
+   public Release addRelease(Sprint sprint, String releaseNotes) {
       Release release = new Release(sprint.getId(),
           releaseNotes,
           incrementAndGetVersion() + ".0");
       getReleases().add(release);
+      return release;
    }
 }
 

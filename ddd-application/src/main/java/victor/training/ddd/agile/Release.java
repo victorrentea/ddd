@@ -24,14 +24,17 @@ class ReleaseController {
    private final SprintRepo sprintRepo;
 
    @PostMapping("product/{productId}/release/{sprintId}")
-   public void createRelease(@PathVariable long productId, @PathVariable long sprintId) {
+   public Long createRelease(@PathVariable long productId, @PathVariable long sprintId) {
       Product product = productRepo.findOneById(productId);
       Sprint sprint = sprintRepo.findOneById(sprintId);
 
 
       String releasedNotes = computeReleaseNotes(sprint);
 
-      product.addRelease(sprint, releasedNotes);
+      productRepo.save(product);
+
+      Release release = product.addRelease(sprint, releasedNotes);
+      return release.getId();
    }
 
 
