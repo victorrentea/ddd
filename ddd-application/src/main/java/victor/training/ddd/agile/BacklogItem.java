@@ -1,8 +1,15 @@
 package victor.training.ddd.agile;
 
-import lombok.*;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.AbstractAggregateRoot;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import victor.training.ddd.agile.events2.DomainEventsPublisher;
 import victor.training.ddd.common.repo.CustomJpaRepository;
 
 import javax.persistence.*;
@@ -48,14 +55,34 @@ class BacklogItemController {
       return dto;
    }
 
+
+   @Autowired
+   private ApplicationEventPublisher publisher;
+
+
    @PutMapping("backlog")
+   @Transactional
    public void updateBacklogItem(@RequestBody BacklogItemDto dto) {
+
+      BacklogItem oldItem = backlogItemRepo.findOneById(dto.id);
+      if (!oldItem.getTitle().equals(dto.title)) {
+         publisher.publishEvent(new BacklogItemTitleChangedEvent(dto.id));
+//         Product product = productRepo.findOneById(dto.productId);
+//
+////         Optional<Release> release = product.findReleaseForIteration(oldItem.getSprint().getId());
+//         // TODO homework
+//         Release release;
+//         release.setReleaseNotes(????)
+      }
+
       BacklogItem backlogItem = new BacklogItem()
           .setId(dto.id)
           .setProduct(productRepo.findOneById(dto.productId))
           .setDescription(dto.description)
           .setTitle(dto.title)
           .setVersion(dto.version);
+
+
       backlogItemRepo.save(backlogItem);
    }
 
@@ -68,14 +95,21 @@ class BacklogItemController {
 @Getter
 @NoArgsConstructor
 @Entity
-class BacklogItem {
+
+class BacklogItem /*extends AbstractAggregateRoot*/ {
+
+//   public void method() {
+//      regE
+//   }
    @Id
    @GeneratedValue
    private Long id;
    @ManyToOne
    private Product product;
+//   private Long productId;
    private String title;
    private String description;
+
 
    @ManyToOne
    private Sprint sprint; // ⚠ not NULL when assigned to a sprint
@@ -101,12 +135,18 @@ class BacklogItem {
       this.status = Status.STARTED;
    }
 
-   public void complete() {
+   public void complete(IReleaseServicePortForBacklogItem releaseService) {
       if (this.status != Status.STARTED) {
          throw new IllegalStateException("Cannot complete an Item before starting it");
       }
       this.status = Status.DONE;
+//      releaseService.updatereleaseNotes(id)
+      DomainEventsPublisher.publish(new MyEvent());
+//      publisher.publishEvent();
    }
+
+//   @Autowired ?/ NEVER DO THIS
+//   private ApplicationEventPublisher publisher;
 
 
    public void addHours(int hours) {

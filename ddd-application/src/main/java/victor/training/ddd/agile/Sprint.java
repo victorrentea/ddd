@@ -133,6 +133,8 @@ class SprintController {
       sprint.checkSprintMatchesAndStarted(backlogItem);
 
       backlogItem.start();
+
+
    }
 
 
@@ -158,6 +160,7 @@ class SprintController {
          List<String> emails = mailingListService.retrieveEmails(sprint.getProduct().getTeamMailingList());
          emailService.sendCongratsEmail(emails);
       }
+
    }
 
    @Data

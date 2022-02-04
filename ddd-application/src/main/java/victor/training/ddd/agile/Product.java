@@ -86,8 +86,12 @@ class Contact {
 }
 
 
+// AGGREGATE = a set of objects ENTIT + VO
+// AGGREGATE ROOT = one of those ENTITIES ("the parent") whose
+// repons is to enforce the consistency of the entier AGGREGATE by encapsulating
+// all changes to anything insidee the AGGREGATE THAT can lead to inconsistencies
 @Getter
-@Entity
+@Entity //= aggregate root
 class Product {
    @Id
    @GeneratedValue
@@ -96,20 +100,21 @@ class Product {
    private int currentVersion = 0;
    private String code;
    @NotNull
+//   @Column(nullable = false) or NOT NULL in incrementals (flyway)
    private String name;
 
    @Embedded
    private Contact owner;
-//   private String ownerEmail;
-//   private String ownerName;
-//   private String ownerPhone;
    private String teamMailingList;
 
    @OneToMany(mappedBy = "product")
    private List<BacklogItem> backlogItems = new ArrayList<>();
    @OneToMany(mappedBy = "product")
    private List<Sprint> sprints = new ArrayList<>();
-   @OneToMany(mappedBy = "product")
+
+   //private children
+   @JoinColumn
+   @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
    private List<Release> releases = new ArrayList<>();
 
    private Product() {} // just for hinernate, not needed in playout
@@ -128,8 +133,15 @@ class Product {
       return ++ currentIteration;
    }
 
-   public int incrementAndGetVersion() {
+   private int incrementAndGetVersion() {
       return ++ currentVersion;
+   }
+
+   public void addRelease(Sprint sprint, String releaseNotes) {
+      Release release = new Release(sprint.getId(),
+          releaseNotes,
+          incrementAndGetVersion() + ".0");
+      getReleases().add(release);
    }
 }
 
