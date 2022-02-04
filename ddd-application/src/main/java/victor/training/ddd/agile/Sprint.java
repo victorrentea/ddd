@@ -68,7 +68,7 @@ class SprintController {
           .collect(Collectors.toList());
 
       if (notDone.size() >= 1) {
-         emailService.sendNotDoneItemsDebrief(sprint.getProduct().getOwnerEmail(), notDone);
+         emailService.sendNotDoneItemsDebrief(sprint.getProduct().getOwner().getEmail(), notDone);
       }
    }
 
