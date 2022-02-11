@@ -1,8 +1,10 @@
 package victor.training.ddd.agile.web;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.event.EventListener;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import victor.training.ddd.agile.domain.event.AllItemsInSpringCompletedEvent;
 import victor.training.ddd.agile.domain.model.Product;
 import victor.training.ddd.agile.domain.model.ProductBacklogItem;
 import victor.training.ddd.agile.domain.model.Sprint;
@@ -70,7 +72,7 @@ public class SprintController {
       sprint.setStatus(Status.FINISHED);
 
       List<ProductBacklogItem> notDone = sprint.getItems().stream()
-          .filter(item -> item.getStatus() != ProductBacklogItem.Status.DONE)
+          .filter(item -> item.getStatus() != SprintBacklogItem.Status.DONE)
           .collect(Collectors.toList());
 
       if (notDone.size() >= 1) { // TODO Victor 2022-02-11: events instead
@@ -122,19 +124,20 @@ public class SprintController {
    }
 
 
-   @PostMapping("sprint/{id}/complete-item/{backlogId}")
+   @PostMapping("sprint/{id}/complete-item/{sprintBacklogItemId}")
    public void completeItem(@PathVariable long id, @PathVariable long sprintBacklogItemId) {
       Sprint sprint = sprintRepo.findOneById(id);
 
-      boolean allItemsDone = sprint.completeItem(sprintBacklogItemId);
+      sprint.completeItem(sprintBacklogItemId);
+   }
 
-      if (allItemsDone) {
-         Product product = productRepo.findOneById(sprint.getProductId());
+   @EventListener
+   public void onAllItemsCompleted(AllItemsInSpringCompletedEvent event) {
+      Product product = productRepo.findBySprint(event.getSprintId());
 
-         System.out.println("Sending CONGRATS email to team of product " + product.getCode() + ": They finished the items earlier. They have time to refactor! (OMG!)");
-         List<String> emails = mailingListService.retrieveEmails(product.getTeamMailingList());
-         emailService.sendCongratsEmail(emails);
-      }
+      System.out.println("Sending CONGRATS email to team of product " + product.getCode() + ": They finished the items earlier. They have time to refactor! (OMG!)");
+      List<String> emails = mailingListService.retrieveEmails(product.getTeamMailingList());
+      emailService.sendCongratsEmail(emails);
 
    }
 

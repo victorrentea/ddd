@@ -1,5 +1,7 @@
 package victor.training.ddd.agile.domain.model;
 
+import org.springframework.data.domain.AbstractAggregateRoot;
+import victor.training.ddd.agile.domain.event.AllItemsInSpringCompletedEvent;
 import victor.training.ddd.common.DDD;
 
 import javax.persistence.*;
@@ -13,7 +15,7 @@ import static javax.persistence.EnumType.STRING;
 
 @Entity
 @DDD.AggregateRoot
-public class Sprint {
+public class Sprint extends AbstractAggregateRoot<Sprint> {
    @Id
    @GeneratedValue
    private Long id;
@@ -118,10 +120,12 @@ public class Sprint {
       itemById(sprintBacklogItemId).start();
    }
 
-   public boolean completeItem(long sprintBacklogItemId) {
+   public void completeItem(long sprintBacklogItemId) {
       checkSprintStarted();
       itemById(sprintBacklogItemId).complete();
-      return getItems().stream().allMatch(item -> item.getStatus() == SprintBacklogItem.Status.DONE);
+      if (getItems().stream().allMatch(item -> item.getStatus() == SprintBacklogItem.Status.DONE)) {
+         registerEvent(new AllItemsInSpringCompletedEvent(id));
+      }
    }
 
    public void logHours(long sprintBacklogItemId, int hours) {
