@@ -1,6 +1,5 @@
 package victor.training.ddd.agile.web;
 
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +12,10 @@ import victor.training.ddd.agile.domain.model.Sprint.Status;
 import victor.training.ddd.agile.domain.repo.BacklogItemRepo;
 import victor.training.ddd.agile.domain.repo.ProductRepo;
 import victor.training.ddd.agile.domain.repo.SprintRepo;
+import victor.training.ddd.agile.web.dto.AddBacklogItemRequest;
+import victor.training.ddd.agile.web.dto.LogHoursRequest;
+import victor.training.ddd.agile.web.dto.SprintDto;
+import victor.training.ddd.agile.web.dto.SprintMetrics;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -25,13 +28,9 @@ public class SprintController {
    private final SprintRepo sprintRepo;
    private final ProductRepo productRepo;
    private final BacklogItemRepo backlogItemRepo;
+   private final MailingListService mailingListService;
    private final EmailService emailService;
 
-   @Data
-   static class SprintDto {
-      public Long productId;
-      public LocalDate plannedEnd;
-   }
 
    @PostMapping("sprint")
    public Long createSprint(@RequestBody SprintDto dto) {
@@ -76,16 +75,6 @@ public class SprintController {
       }
    }
 
-   @Data
-   static class SprintMetrics {
-      public int consumedHours;
-      public int doneFP;
-      public double fpVelocity;
-      public int hoursConsumedForNotDone;
-      public int calendarDays;
-      public int delayDays;
-   }
-
    @GetMapping("sprint/{id}/metrics")
    public SprintMetrics getSprintMetrics(@PathVariable long id) {
       Sprint sprint = sprintRepo.findOneById(id);
@@ -108,13 +97,6 @@ public class SprintController {
       }
       return dto;
    }
-
-   @Data
-   static class AddBacklogItemRequest {
-      public long backlogId;
-      public int fpEstimation;
-   }
-
    @PostMapping("sprint/{sprintId}/add-item")
    @Transactional
    public void addItem(@PathVariable long sprintId, @RequestBody AddBacklogItemRequest request) {
@@ -125,7 +107,6 @@ public class SprintController {
       sprint.addItem(backlogItem, request.fpEstimation);
    }
 
-
    @PostMapping("sprint/{sprintId}/item/{backlogId}/start")
    public void startItem(@PathVariable long sprintId, @PathVariable long backlogId) {
       BacklogItem backlogItem = backlogItemRepo.findOneById(backlogId);
@@ -135,12 +116,8 @@ public class SprintController {
       sprint.checkSprintMatchesAndStarted(backlogItem);
 
       backlogItem.start();
-
-
    }
 
-
-   private final MailingListService mailingListService;
 
    @PostMapping("sprint/{id}/complete-item/{backlogId}")
    public void completeItem(@PathVariable long id, @PathVariable long backlogId) {
@@ -157,12 +134,6 @@ public class SprintController {
          emailService.sendCongratsEmail(emails);
       }
 
-   }
-
-   @Data
-   static class LogHoursRequest {
-      public long backlogId;
-      public int hours;
    }
 
    @PostMapping("sprint/{id}/log-hours")

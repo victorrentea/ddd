@@ -22,7 +22,6 @@ import static java.util.stream.Collectors.joining;
 @RestController
 @RequiredArgsConstructor
 public class ReleaseController {
-   //   private final ReleaseRepo releaseRepo;
    private final ProductRepo productRepo;
    private final SprintRepo sprintRepo;
 
@@ -30,7 +29,6 @@ public class ReleaseController {
    public Long createRelease(@PathVariable long productId, @PathVariable long sprintId) {
       Product product = productRepo.findOneById(productId);
       Sprint sprint = sprintRepo.findOneById(sprintId);
-
 
       String releasedNotes = computeReleaseNotes(sprint);
 
@@ -42,7 +40,7 @@ public class ReleaseController {
 
 
    //   @Async
-   @EventListener
+   @EventListener // TODO Victor 2022-02-11: TWO
 //   @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
    public void onBacklogItemTitleChanged(BacklogItemTitleChangedEvent event) {
       Long backlogItemId = event.getBacklogItemId();

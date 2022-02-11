@@ -1,8 +1,8 @@
-package victor.training.ddd.agile.web;
+package victor.training.ddd.agile.web.mapper;
 
-import victor.training.ddd.common.Mapper;
-import victor.training.ddd.agile.web.ProductController.ProductDto;
 import victor.training.ddd.agile.domain.model.Product;
+import victor.training.ddd.agile.web.dto.ProductDto;
+import victor.training.ddd.common.Mapper;
 
 @Mapper
 public class ProductMapper {
@@ -13,6 +13,6 @@ public class ProductMapper {
           dto.name,
           dto.mailingList); // in readlity have 10 params constructor
       // BREAK THE MODEL FURHTER. MORE VALUE OBJECT 10 > 7
-      return product;
+      return product; // TODO vrentea 2022-02-11 TWO
    }
 }

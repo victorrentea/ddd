@@ -1,11 +1,12 @@
 package victor.training.ddd.agile.web;
 
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import victor.training.ddd.agile.domain.model.Product;
 import victor.training.ddd.agile.domain.repo.ProductRepo;
+import victor.training.ddd.agile.web.dto.ProductDto;
+import victor.training.ddd.agile.web.mapper.ProductMapper;
 
 @Slf4j
 @RestController
@@ -13,15 +14,6 @@ import victor.training.ddd.agile.domain.repo.ProductRepo;
 public class ProductController {
    private final ProductRepo productRepo;
    private final ProductMapper productMapper;
-
-
-   @Data
-   static class ProductDto {
-      public Long id;
-      public String code;
-      public String name;
-      public String mailingList;
-   }
 
    @PostMapping("products")
    public Long createProduct(@RequestBody ProductDto dto) {
@@ -35,7 +27,6 @@ public class ProductController {
    @GetMapping("products/{id}")
    public ProductDto getProduct(@PathVariable long id) {
       Product product = productRepo.findOneById(id);
-
       ProductDto dto = new ProductDto();
       dto.id = product.getId();
       dto.name = product.getName();
@@ -43,5 +34,4 @@ public class ProductController {
       dto.mailingList = product.getTeamMailingList();
       return dto;
    }
-
 }
