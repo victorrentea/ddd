@@ -70,7 +70,7 @@ public class SprintController {
           .filter(item -> item.getStatus() != BacklogItem.Status.DONE)
           .collect(Collectors.toList());
 
-      if (notDone.size() >= 1) {
+      if (notDone.size() >= 1) { // TODO Victor 2022-02-11: events instead
          emailService.sendNotDoneItemsDebrief(sprint.getProduct().getOwner().getEmail(), notDone);
       }
    }
