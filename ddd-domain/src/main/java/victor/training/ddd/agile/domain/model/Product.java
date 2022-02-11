@@ -63,7 +63,8 @@ public class Product {
    public Release addRelease(Sprint sprint, String releaseNotes) {
       Release release = new Release(sprint.getId(),
           releaseNotes,
-          incrementAndGetVersion() + ".0");
+          incrementAndGetVersion() + ".0",
+          sprint.getIterationNumber());
       getReleases().add(release);
       return release;
    }

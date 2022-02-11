@@ -16,17 +16,23 @@ public class Release { // a private child of the Product Aggregate.
    private LocalDate date = LocalDate.now();
    private Long sprintId;
    private String releaseNotes;
+   private int iterationNumber;
 
    private Release() {}
-   public Release(Long sprintId, String releaseNotes, String version) {
+   public Release(long sprintId, String releaseNotes, String version, int iterationNumber) {
       this.sprintId = sprintId;
       this.releaseNotes = releaseNotes;
       this.version = version;
+      this.iterationNumber = iterationNumber;
    }
 
    public Release setReleaseNotes(String releaseNotes) {
       this.releaseNotes = releaseNotes;
       return this;
+   }
+
+   public int getIterationNumber() {
+      return iterationNumber;
    }
 
    // changes that can't violate any rule are allowed to child entities

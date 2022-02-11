@@ -2,7 +2,6 @@ package victor.training.ddd.agile.web;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,7 +17,6 @@ import java.util.Comparator;
 
 import static java.util.stream.Collectors.joining;
 
-@Transactional
 @RestController
 @RequiredArgsConstructor
 public class ReleaseController {
@@ -32,9 +30,9 @@ public class ReleaseController {
 
       String releaseNotes = computeReleaseNotes(sprint); // TODO vrentea 2022-02-11 encapsulate
 
-      productRepo.save(product); // TODO vrentea 2022-02-11 TWO
-
       Release release = product.addRelease(sprint, releaseNotes);
+
+      productRepo.save(product);
       return release.getId();
    }
 
@@ -48,18 +46,20 @@ public class ReleaseController {
 //      release.setReleaseNotes(computeReleaseNotes(backlogItem...sprint))
    }
 
+
+   // we want to collect all backlog item titles from all sprints since the last release.
    private String computeReleaseNotes(Sprint sprint) {
       Product product = sprint.getProduct();
+
       int fromIterationNumber = product.getReleases().stream()
-          .map(Release::getSprintId)
-          .map(sprintRepo::findOneById)
-          .mapToInt(Sprint::getIteration)
-          .max().orElse(0);
-      int toIterationNumber = sprint.getIteration();
+          .mapToInt(Release::getIterationNumber)
+          .max()
+          .orElse(0);
+      int toIterationNumber = sprint.getIterationNumber();
 
       return product.getSprints().stream()
-          .sorted(Comparator.comparing(Sprint::getIteration))
-          .filter(s -> s.getIteration() >= fromIterationNumber && s.getIteration() <= toIterationNumber)
+          .sorted(Comparator.comparing(Sprint::getIterationNumber))
+          .filter(s -> s.getIterationNumber() >= fromIterationNumber && s.getIterationNumber() <= toIterationNumber)
           .flatMap(s -> s.getItems().stream())
           .map(BacklogItem::getTitle)
           .collect(joining("\n"));

@@ -36,7 +36,7 @@ public class SprintController {
    public Long createSprint(@RequestBody SprintDto dto) {
       Product product = productRepo.findOneById(dto.productId);
       Sprint sprint = new Sprint()
-          .setIteration(product.incrementAndGetIteration())
+          .setIterationNumber(product.incrementAndGetIteration())
           .setProduct(product)
           .setPlannedEnd(dto.plannedEnd);
       return sprintRepo.save(sprint).getId();

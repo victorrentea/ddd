@@ -14,7 +14,7 @@ public class Sprint {
    @Id
    @GeneratedValue
    private Long id;
-   private int iteration;
+   private int iterationNumber;
    @ManyToOne
    private Product product;
    private LocalDate start;
@@ -37,8 +37,8 @@ public class Sprint {
       return this.id;
    }
 
-   public int getIteration() {
-      return this.iteration;
+   public int getIterationNumber() {
+      return this.iterationNumber;
    }
 
    public Product getProduct() {
@@ -70,8 +70,8 @@ public class Sprint {
       return this;
    }
 
-   public Sprint setIteration(int iteration) {
-      this.iteration = iteration;
+   public Sprint setIterationNumber(int iteration) {
+      this.iterationNumber = iteration;
       return this;
    }
 
