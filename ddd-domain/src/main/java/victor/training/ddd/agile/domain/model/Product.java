@@ -5,8 +5,12 @@ import lombok.Getter;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
 
 
 // AGGREGATE = a set of objects ENTIT + VO
@@ -60,13 +64,35 @@ public class Product {
       return ++ currentVersion;
    }
 
-   public Release addRelease(Sprint sprint, String releaseNotes) {
+   public Long addRelease(Sprint sprint) {
+      String releaseNotes = computeReleaseNotes(sprint.getIterationNumber());
       Release release = new Release(sprint.getId(),
           releaseNotes,
           incrementAndGetVersion() + ".0",
           sprint.getIterationNumber());
       getReleases().add(release);
-      return release;
+      return release.getId();
+   }
+
+   private int getLastReleasedIterationNumber() {
+      return getReleases().stream()
+          .mapToInt(Release::getIterationNumber)
+          .max()
+          .orElse(0);
+   }
+
+   private String computeReleaseNotes(int toIterationNumber) {
+      int fromIterationNumber = getLastReleasedIterationNumber();
+
+      List<Sprint> releasedIterations = getSprints().stream()
+          .sorted(Comparator.comparing(Sprint::getIterationNumber))
+          .filter(s -> s.getIterationNumber() >= fromIterationNumber && s.getIterationNumber() <= toIterationNumber)
+          .collect(toList());
+
+      return releasedIterations.stream()
+          .flatMap(s -> s.getItems().stream())
+          .map(BacklogItem::getTitle)
+          .collect(joining("\n"));
    }
 }
 
