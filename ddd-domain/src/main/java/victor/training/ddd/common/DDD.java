@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface DDD {
    @Retention(RetentionPolicy.RUNTIME)
-   @interface Aggregate {
+   @interface AggregateRoot {
    }
    @Retention(RetentionPolicy.RUNTIME)
    @interface Entity {

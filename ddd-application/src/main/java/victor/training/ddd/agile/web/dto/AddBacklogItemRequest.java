@@ -4,7 +4,9 @@ import lombok.Data;
 
 @Data
 public class AddBacklogItemRequest {
-   public long backlogId;
+   public long productBacklogItemId;
    public int fpEstimation;
-
 }
+
+
+

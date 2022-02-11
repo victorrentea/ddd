@@ -1,14 +1,15 @@
 package victor.training.ddd.agile.domain.model;
 
 import lombok.Getter;
+import victor.training.ddd.common.DDD;
 
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 import static javax.persistence.EnumType.STRING;
 
+@DDD.Entity
 @Entity
 @Getter
 public class SprintBacklogItem {
@@ -17,9 +18,9 @@ public class SprintBacklogItem {
       STARTED,
       DONE
    }
-   @Id
-   @GeneratedValue
-   private Long id;
+   @Id // it's a @OneToOne without an annotation
+   private Long productBacklogItemId;
+//   @Id // UNCOMMENT if you want a composite PK between spring,productitem >>> why? to allow the same productItem to be part of two sprints
    private Long sprintId;
    private Integer fpEstimation; // ⚠ not NULL when assigned to a sprint
 
@@ -27,6 +28,14 @@ public class SprintBacklogItem {
    private Status status = Status.CREATED;
 
    private int hoursConsumed;
+
+   private SprintBacklogItem() {}
+
+   public SprintBacklogItem(Long sprintId, Long productBacklogItemId, Integer fpEstimation) {
+      this.productBacklogItemId = productBacklogItemId;
+      this.sprintId = sprintId;
+      this.fpEstimation = fpEstimation;
+   }
 
    public void start() {
       if (status != Status.CREATED) {
@@ -46,6 +55,9 @@ public class SprintBacklogItem {
 
 
    public void addHours(int hours) {
+      if (status != Status.STARTED) {
+         throw new IllegalStateException("Item not started");
+      }
       hoursConsumed += hours;
    }
 }

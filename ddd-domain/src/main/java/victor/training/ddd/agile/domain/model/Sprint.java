@@ -1,5 +1,7 @@
 package victor.training.ddd.agile.domain.model;
 
+import victor.training.ddd.common.DDD;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -10,6 +12,7 @@ import static javax.persistence.EnumType.STRING;
 
 
 @Entity
+@DDD.AggregateRoot
 public class Sprint {
    @Id
    @GeneratedValue
@@ -21,25 +24,25 @@ public class Sprint {
    private LocalDate start;
    private LocalDate plannedEnd;
    private LocalDate end;
+   @Enumerated(STRING)
+   private Status status = Status.CREATED;
+
+//   @JoinColumn
+   @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+   private List<SprintBacklogItem> items = new ArrayList<>();
+
 
    public Sprint() {
    }
 
-   public void checkSprintMatchesAndStarted(ProductBacklogItem backlogItem) {
-      if (!backlogItem.getSprint().getId().equals(getId())) {
-         throw new IllegalArgumentException("item not in sprint");
-      }
-      if (getStatus() != Status.STARTED) {
-         throw new IllegalStateException("Sprint not started");
-      }
-   }
+
 
    public Long getId() {
-      return this.id;
+      return id;
    }
 
    public int getIterationNumber() {
-      return this.iterationNumber;
+      return iterationNumber;
    }
 
    public Long getProductId() {
@@ -52,23 +55,23 @@ public class Sprint {
    }
 
    public LocalDate getStart() {
-      return this.start;
+      return start;
    }
 
    public LocalDate getPlannedEnd() {
-      return this.plannedEnd;
+      return plannedEnd;
    }
 
    public LocalDate getEnd() {
-      return this.end;
+      return end;
    }
 
    public Status getStatus() {
-      return this.status;
+      return status;
    }
 
-   public List<ProductBacklogItem> getItems() {
-      return Collections.unmodifiableList(this.items);
+   public List<SprintBacklogItem> getItems() {
+      return Collections.unmodifiableList(items);
    }
 
    public Sprint setId(Long id) {
@@ -77,7 +80,7 @@ public class Sprint {
    }
 
    public Sprint setIterationNumber(int iteration) {
-      this.iterationNumber = iteration;
+      iterationNumber = iteration;
       return this;
    }
 
@@ -102,14 +105,43 @@ public class Sprint {
       return this;
    }
 
-   public void addItem(ProductBacklogItem backlogItem, int fpEstimation) {
-      if (status != Status.CREATED) {
+   public void addItem(long productBacklogItemId, int fpEstimation) {
+      if (getStatus() != Status.CREATED) {
          throw new IllegalStateException("Can only add items to Sprint before it starts");
       }
-      backlogItem.setFpEstimation(fpEstimation);
-      items.add(backlogItem);
-      backlogItem.setSprint(this); // you will see the setter from here
+      SprintBacklogItem sprintBacklogItem = new SprintBacklogItem(id, productBacklogItemId, fpEstimation);
+      items.add(sprintBacklogItem);
    }
+
+   public void startItem(long sprintBacklogItemId) {
+      checkSprintStarted();
+      itemById(sprintBacklogItemId).start();
+   }
+
+   public boolean completeItem(long sprintBacklogItemId) {
+      checkSprintStarted();
+      itemById(sprintBacklogItemId).complete();
+      return getItems().stream().allMatch(item -> item.getStatus() == SprintBacklogItem.Status.DONE);
+   }
+
+   public void logHours(long sprintBacklogItemId, int hours) {
+      checkSprintStarted();
+      itemById(sprintBacklogItemId).addHours(hours);
+   }
+
+   private SprintBacklogItem itemById(long sprintBacklogItemId) {
+      return items.stream()
+          .filter(item -> item.getProductBacklogItemId().equals(sprintBacklogItemId))
+          .findFirst()
+          .get();
+   }
+
+   public void checkSprintStarted() {
+      if (getStatus() != Status.STARTED) {
+         throw new IllegalStateException("Sprint not started");
+      }
+   }
+
 
    public enum Status {
       CREATED,
@@ -117,11 +149,6 @@ public class Sprint {
       FINISHED
    }
 
-   @Enumerated(STRING)
-   private Status status = Status.CREATED;
-
-   @OneToMany(mappedBy = "sprint")
-   private List<ProductBacklogItem> items = new ArrayList<>();
 
 }
 

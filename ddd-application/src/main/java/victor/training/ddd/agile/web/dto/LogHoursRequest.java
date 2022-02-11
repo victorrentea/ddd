@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class LogHoursRequest {
-   public long backlogId;
+   public long sprintBacklogItemId;
    public int hours;
 }

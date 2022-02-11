@@ -1,13 +1,11 @@
 package victor.training.ddd.agile.domain.model;
 
 import lombok.Getter;
+import victor.training.ddd.common.DDD.AggregateRoot;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
@@ -19,10 +17,15 @@ import static java.util.stream.Collectors.toList;
 // all changes to anything insidee the AGGREGATE THAT can lead to inconsistencies
 @Getter
 @Entity //= aggregate root
+@AggregateRoot
 public class Product {
    @Id
    @GeneratedValue
    private Long id;
+
+//   private UUID externalUUID = UUID.randomUUID();
+//   private String externalUUID = UUID.randomUUID().toString();
+//   private String userId; // semantic human readable.
    private int currentIteration = 0;
    private int currentVersion = 0;
    private String code;
