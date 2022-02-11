@@ -49,7 +49,7 @@ public class ReleaseController {
 
    // we want to collect all backlog item titles from all sprints since the last release.
    private String computeReleaseNotes(Sprint sprint) {
-      Product product = sprint.getProduct();
+      Product product = productRepo.findOneById(sprint.getProductId());
 
       int fromIterationNumber = product.getReleases().stream()
           .mapToInt(Release::getIterationNumber)

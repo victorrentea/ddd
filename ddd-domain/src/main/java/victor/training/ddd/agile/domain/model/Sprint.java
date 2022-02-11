@@ -15,8 +15,9 @@ public class Sprint {
    @GeneratedValue
    private Long id;
    private int iterationNumber;
-   @ManyToOne
-   private Product product;
+//   @ManyToOne
+//   private Product product;
+   private Long productId;
    private LocalDate start;
    private LocalDate plannedEnd;
    private LocalDate end;
@@ -41,8 +42,13 @@ public class Sprint {
       return this.iterationNumber;
    }
 
-   public Product getProduct() {
-      return this.product;
+   public Long getProductId() {
+      return productId;
+   }
+
+   public Sprint setProductId(Long productId) {
+      this.productId = productId;
+      return this;
    }
 
    public LocalDate getStart() {
@@ -75,10 +81,6 @@ public class Sprint {
       return this;
    }
 
-   public Sprint setProduct(Product product) {
-      this.product = product;
-      return this;
-   }
 
    public Sprint setStart(LocalDate start) {
       this.start = start;

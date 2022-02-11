@@ -37,8 +37,8 @@ public class SprintController {
       Product product = productRepo.findOneById(dto.productId);
       Sprint sprint = new Sprint()
           .setIterationNumber(product.incrementAndGetIteration())
-          .setProduct(product)
-          .setPlannedEnd(dto.plannedEnd);
+          .setProductId(product.getId())
+           .setPlannedEnd(dto.plannedEnd);
       return sprintRepo.save(sprint).getId();
    }
 
@@ -71,7 +71,8 @@ public class SprintController {
           .collect(Collectors.toList());
 
       if (notDone.size() >= 1) { // TODO Victor 2022-02-11: events instead
-         emailService.sendNotDoneItemsDebrief(sprint.getProduct().getOwner().getEmail(), notDone);
+         Product product = productRepo.findOneById(sprint.getProductId());
+         emailService.sendNotDoneItemsDebrief(product.getOwner().getEmail(), notDone);
       }
    }
 
@@ -130,8 +131,10 @@ public class SprintController {
       backlogItem.complete();
 
       if (sprint.getItems().stream().allMatch(item -> item.getStatus() == BacklogItem.Status.DONE)) {
-         System.out.println("Sending CONGRATS email to team of product " + sprint.getProduct().getCode() + ": They finished the items earlier. They have time to refactor! (OMG!)");
-         List<String> emails = mailingListService.retrieveEmails(sprint.getProduct().getTeamMailingList());
+         Product product = productRepo.findOneById(sprint.getProductId());
+
+         System.out.println("Sending CONGRATS email to team of product " + product.getCode() + ": They finished the items earlier. They have time to refactor! (OMG!)");
+         List<String> emails = mailingListService.retrieveEmails(product.getTeamMailingList());
          emailService.sendCongratsEmail(emails);
       }
 
