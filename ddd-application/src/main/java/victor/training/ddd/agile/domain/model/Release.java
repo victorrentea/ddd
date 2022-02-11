@@ -1,4 +1,4 @@
-package victor.training.ddd.agile;
+package victor.training.ddd.agile.domain.model;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

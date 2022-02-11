@@ -1,4 +1,4 @@
-package victor.training.ddd.agile;
+package victor.training.ddd.agile.web;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -6,6 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import victor.training.ddd.agile.domain.event.BacklogItemTitleChangedEvent;
+import victor.training.ddd.agile.domain.model.BacklogItem;
+import victor.training.ddd.agile.domain.model.Product;
+import victor.training.ddd.agile.domain.repo.BacklogItemRepo;
+import victor.training.ddd.agile.domain.repo.ProductRepo;
 
 @RestController
 @RequiredArgsConstructor

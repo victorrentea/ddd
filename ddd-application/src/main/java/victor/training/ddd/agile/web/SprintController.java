@@ -1,10 +1,18 @@
-package victor.training.ddd.agile;
+package victor.training.ddd.agile.web;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import victor.training.ddd.agile.Sprint.Status;
+import victor.training.ddd.agile.infra.EmailService;
+import victor.training.ddd.agile.infra.MailingListService;
+import victor.training.ddd.agile.domain.model.BacklogItem;
+import victor.training.ddd.agile.domain.model.Product;
+import victor.training.ddd.agile.domain.model.Sprint;
+import victor.training.ddd.agile.domain.model.Sprint.Status;
+import victor.training.ddd.agile.domain.repo.BacklogItemRepo;
+import victor.training.ddd.agile.domain.repo.ProductRepo;
+import victor.training.ddd.agile.domain.repo.SprintRepo;
 
 import java.time.LocalDate;
 import java.util.List;

@@ -1,9 +1,11 @@
-package victor.training.ddd.agile;
+package victor.training.ddd.agile.web;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import victor.training.ddd.agile.domain.model.Product;
+import victor.training.ddd.agile.domain.repo.ProductRepo;
 
 @Slf4j
 @RestController

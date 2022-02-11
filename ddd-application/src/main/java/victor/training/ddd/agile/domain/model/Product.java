@@ -1,7 +1,6 @@
-package victor.training.ddd.agile;
+package victor.training.ddd.agile.domain.model;
 
 import lombok.Getter;
-import victor.training.ddd.common.repo.CustomJpaRepository;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;

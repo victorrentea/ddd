@@ -1,4 +1,4 @@
-package victor.training.ddd.agile;
+package victor.training.ddd.agile.web;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
@@ -6,6 +6,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
+import victor.training.ddd.agile.domain.event.BacklogItemTitleChangedEvent;
+import victor.training.ddd.agile.domain.model.BacklogItem;
+import victor.training.ddd.agile.domain.model.Product;
+import victor.training.ddd.agile.domain.model.Release;
+import victor.training.ddd.agile.domain.model.Sprint;
+import victor.training.ddd.agile.domain.repo.ProductRepo;
+import victor.training.ddd.agile.domain.repo.SprintRepo;
 
 import java.util.Comparator;
 

@@ -1,6 +1,8 @@
-package victor.training.ddd.agile;
+package victor.training.ddd.agile.web;
 
-import victor.training.ddd.agile.ProductController.ProductDto;
+import victor.training.ddd.common.Mapper;
+import victor.training.ddd.agile.web.ProductController.ProductDto;
+import victor.training.ddd.agile.domain.model.Product;
 
 @Mapper
 public class ProductMapper {

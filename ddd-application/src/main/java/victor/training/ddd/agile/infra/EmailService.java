@@ -1,7 +1,8 @@
-package victor.training.ddd.agile;
+package victor.training.ddd.agile.infra;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import victor.training.ddd.agile.domain.model.BacklogItem;
 
 import java.util.List;
 
@@ -10,7 +11,7 @@ import static java.util.stream.Collectors.joining;
 @Service
 @RequiredArgsConstructor
 public class EmailService {
-   private final EmailSender emailSender;
+   private final EmailClientSender emailSender;
 
    public void sendCongratsEmail(List<String> emails) {
       emailSender.sendEmail("happy@corp.intra", String.join(";", emails), "Congrats!",

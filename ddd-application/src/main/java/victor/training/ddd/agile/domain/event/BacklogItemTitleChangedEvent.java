@@ -1,4 +1,4 @@
-package victor.training.ddd.agile;
+package victor.training.ddd.agile.domain.event;
 
 import lombok.Value;
 
