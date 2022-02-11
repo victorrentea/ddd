@@ -1,16 +1,7 @@
 package victor.training.ddd.agile;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.data.domain.AbstractAggregateRoot;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
-import victor.training.ddd.agile.events2.DomainEventsPublisher;
-import victor.training.ddd.common.repo.CustomJpaRepository;
 
 import javax.persistence.*;
 
@@ -49,19 +40,19 @@ public class BacklogItem /*extends AbstractAggregateRoot*/ {
    private int hoursConsumed;
 
    public void start() {
-      if (this.status != Status.CREATED) {
+      if (status != Status.CREATED) {
          throw new IllegalStateException("Item already started");
       }
-      this.status = Status.STARTED;
+      status = Status.STARTED;
    }
 
-   public void complete(IReleaseServicePortForBacklogItem releaseService) {
-      if (this.status != Status.STARTED) {
+   public void complete() {
+      if (status != Status.STARTED) {
          throw new IllegalStateException("Cannot complete an Item before starting it");
       }
-      this.status = Status.DONE;
+      status = Status.DONE;
 //      releaseService.updatereleaseNotes(id)
-      DomainEventsPublisher.publish(new MyEvent());
+//      DomainEventsPublisher.publish(new MyEvent());
 //      publisher.publishEvent();
    }
 
