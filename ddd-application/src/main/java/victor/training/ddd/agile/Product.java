@@ -1,89 +1,13 @@
 package victor.training.ddd.agile;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.*;
-import victor.training.ddd.agile.ProductController.ProductDto;
 import victor.training.ddd.common.repo.CustomJpaRepository;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
-@Retention(RetentionPolicy.RUNTIME)
-@Component
-@interface Mapper {
-
-}
-
-@Mapper
-class ProductMapper {
-//   Repo repo;
-   public Product toEntity(ProductDto dto) { // noble goal to keep mapping static < doable if DDD more aggresively
-      Product product = new Product(
-          dto.code,
-          dto.name,
-          dto.mailingList); // in readlity have 10 params constructor
-      // BREAK THE MODEL FURHTER. MORE VALUE OBJECT 10 > 7
-      return product;
-   }
-}
-@Slf4j
-@RestController
-@RequiredArgsConstructor
-class ProductController {
-   private final ProductRepo productRepo;
-   private final ProductMapper productMapper;
-
-
-   @Data
-   static class ProductDto {
-      public Long id;
-      public String code;
-      public String name;
-      public String mailingList;
-   }
-
-   @PostMapping("products")
-   public Long createProduct(@RequestBody ProductDto dto) {
-      if (productRepo.existsByCode(dto.code)) { // UQ will crash anyway
-         throw new IllegalArgumentException("Code already defined");
-      }
-      Product product = productMapper.toEntity(dto);
-      return productRepo.save(product).getId();
-   }
-
-   @GetMapping("products/{id}")
-   public ProductDto getProduct(@PathVariable long id) {
-      Product product = productRepo.findOneById(id);
-
-      ProductDto dto = new ProductDto();
-      dto.id = product.getId();
-      dto.name = product.getName();
-      dto.code = product.getCode();
-      dto.mailingList = product.getTeamMailingList();
-      return dto;
-   }
-
-}
-
-
-@AllArgsConstructor
-@Getter
-@Embeddable
-class Contact {
-   private String email;
-   private String name;
-   private String phone;
-}
 
 
 // AGGREGATE = a set of objects ENTIT + VO
@@ -92,7 +16,7 @@ class Contact {
 // all changes to anything insidee the AGGREGATE THAT can lead to inconsistencies
 @Getter
 @Entity //= aggregate root
-class Product {
+public class Product {
    @Id
    @GeneratedValue
    private Long id;
@@ -146,6 +70,3 @@ class Product {
    }
 }
 
-interface ProductRepo extends CustomJpaRepository<Product, Long> {
-   boolean existsByCode(String code);
-}
