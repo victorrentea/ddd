@@ -27,11 +27,6 @@ public class ProductController {
    @GetMapping("products/{id}")
    public ProductDto getProduct(@PathVariable long id) {
       Product product = productRepo.findOneById(id);
-      ProductDto dto = new ProductDto();
-      dto.id = product.getId();
-      dto.name = product.getName();
-      dto.code = product.getCode();
-      dto.mailingList = product.getTeamMailingList();
-      return dto;
+      return new ProductDto(product);
    }
 }

@@ -2,6 +2,7 @@ package victor.training.ddd.agile.domain.model;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.AbstractAggregateRoot;
 
 import javax.persistence.*;
 
@@ -10,7 +11,7 @@ import static javax.persistence.EnumType.STRING;
 @Getter
 @NoArgsConstructor
 @Entity
-public class BacklogItem /*extends AbstractAggregateRoot*/ {
+public class BacklogItem extends AbstractAggregateRoot<BacklogItem> {
    @Id
    @GeneratedValue
    private Long id;
@@ -51,9 +52,8 @@ public class BacklogItem /*extends AbstractAggregateRoot*/ {
          throw new IllegalStateException("Cannot complete an Item before starting it");
       }
       status = Status.DONE;
-//      releaseService.updatereleaseNotes(id)
-//      DomainEventsPublisher.publish(new MyEvent());
-//      publisher.publishEvent();
+//      registerEvent(new BacklogItemCompletedEvent())
+      // TODO Victor 2022-02-11: @ END
    }
 
 
@@ -94,7 +94,7 @@ public class BacklogItem /*extends AbstractAggregateRoot*/ {
       return this;
    }
 
-   public BacklogItem setHoursConsumed(int hoursConsumed) {
+   public BacklogItem setHoursConsumed(int hoursConsumed) { // TODO Victor 2022-02-11:
       this.hoursConsumed = hoursConsumed;
       return this;
    }

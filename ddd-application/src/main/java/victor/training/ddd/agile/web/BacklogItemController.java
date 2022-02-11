@@ -33,38 +33,26 @@ public class BacklogItemController {
    @GetMapping("backlog/{id}")
    public BacklogItemDto getBacklogItem(@PathVariable long id) {
       BacklogItem backlogItem = backlogItemRepo.findOneById(id);
-      BacklogItemDto dto = new BacklogItemDto();
-      dto.id = backlogItem.getId();
-      dto.productId = backlogItem.getProduct().getId();
-      dto.description = backlogItem.getDescription();
-      dto.title = backlogItem.getTitle();
-      dto.version = backlogItem.getVersion();
-      return dto;
+      return new BacklogItemDto(backlogItem);
    }
 
 
    @PutMapping("backlog")
    @Transactional
    public void updateBacklogItem(@RequestBody BacklogItemDto dto) {
-
       BacklogItem oldItem = backlogItemRepo.findOneById(dto.id);
-      if (!oldItem.getTitle().equals(dto.title)) {
+
+     if (!oldItem.getTitle().equals(dto.title)) { // TODO vrentea 2022-02-11 ORDER matters
          publisher.publishEvent(new BacklogItemTitleChangedEvent(dto.id));
-//         Product product = productRepo.findOneById(dto.productId);
-//
-////         Optional<Release> release = product.findReleaseForIteration(oldItem.getSprint().getId());
-//         // TODO homework
-//         Release release;
-//         release.setReleaseNotes(????)
       }
 
       BacklogItem backlogItem = new BacklogItem()
           .setId(dto.id)
-          .setProduct(productRepo.findOneById(dto.productId))
+          .setProduct(productRepo.findOneById(dto.productId)) // TODO vrentea 2022-02-11 reasonable?
           .setDescription(dto.description)
           .setTitle(dto.title)
-          .setVersion(dto.version);
-      backlogItemRepo.save(backlogItem);
+          .setVersion(dto.version); // TODO vrentea 2022-02-11 readonly fields in original entity are lost
+      backlogItemRepo.save(backlogItem); // TODO vrentea 2022-02-11 does MERGE now, move to updating attached entity?
    }
 
    @DeleteMapping("backlog/{id}")

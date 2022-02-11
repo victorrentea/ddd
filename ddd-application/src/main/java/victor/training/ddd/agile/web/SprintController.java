@@ -77,6 +77,7 @@ public class SprintController {
 
    @GetMapping("sprint/{id}/metrics")
    public SprintMetrics getSprintMetrics(@PathVariable long id) {
+      // TODO Victor 2022-02-11: declutter
       Sprint sprint = sprintRepo.findOneById(id);
       if (sprint.getStatus() != Status.FINISHED) {
          throw new IllegalStateException();
@@ -126,7 +127,7 @@ public class SprintController {
 
       sprint.checkSprintMatchesAndStarted(backlogItem);
 
-//      backlogItem.complete();
+      backlogItem.complete();
 
       if (sprint.getItems().stream().allMatch(item -> item.getStatus() == BacklogItem.Status.DONE)) {
          System.out.println("Sending CONGRATS email to team of product " + sprint.getProduct().getCode() + ": They finished the items earlier. They have time to refactor! (OMG!)");

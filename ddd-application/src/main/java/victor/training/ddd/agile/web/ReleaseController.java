@@ -30,18 +30,17 @@ public class ReleaseController {
       Product product = productRepo.findOneById(productId);
       Sprint sprint = sprintRepo.findOneById(sprintId);
 
-      String releasedNotes = computeReleaseNotes(sprint);
+      String releaseNotes = computeReleaseNotes(sprint); // TODO vrentea 2022-02-11 encapsulate
 
-      productRepo.save(product);
+      productRepo.save(product); // TODO vrentea 2022-02-11 TWO
 
-      Release release = product.addRelease(sprint, releasedNotes);
+      Release release = product.addRelease(sprint, releaseNotes);
       return release.getId();
    }
 
 
    //   @Async
-   @EventListener // TODO Victor 2022-02-11: TWO
-//   @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+   @EventListener // TODO Victor 2022-02-11: implement (at end)
    public void onBacklogItemTitleChanged(BacklogItemTitleChangedEvent event) {
       Long backlogItemId = event.getBacklogItemId();
       // determine relase to update
@@ -51,19 +50,18 @@ public class ReleaseController {
 
    private String computeReleaseNotes(Sprint sprint) {
       Product product = sprint.getProduct();
-      int fromIteration = product.getReleases().stream()
+      int fromIterationNumber = product.getReleases().stream()
           .map(Release::getSprintId)
           .map(sprintRepo::findOneById)
           .mapToInt(Sprint::getIteration)
           .max().orElse(0);
-      int toIteration = sprint.getIteration();
+      int toIterationNumber = sprint.getIteration();
 
-      String releasedNotes = product.getSprints().stream()
+      return product.getSprints().stream()
           .sorted(Comparator.comparing(Sprint::getIteration))
-          .filter(s -> s.getIteration() >= fromIteration && s.getIteration() <= toIteration)
+          .filter(s -> s.getIteration() >= fromIterationNumber && s.getIteration() <= toIterationNumber)
           .flatMap(s -> s.getItems().stream())
           .map(BacklogItem::getTitle)
           .collect(joining("\n"));
-      return releasedNotes;
    }
 }
