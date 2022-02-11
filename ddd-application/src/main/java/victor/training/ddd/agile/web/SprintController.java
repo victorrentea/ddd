@@ -3,13 +3,14 @@ package victor.training.ddd.agile.web;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import victor.training.ddd.agile.domain.model.ProductBacklogItem;
+import victor.training.ddd.agile.domain.repo.SprintBacklogItemRepo;
 import victor.training.ddd.agile.infra.EmailService;
 import victor.training.ddd.agile.infra.MailingListService;
-import victor.training.ddd.agile.domain.model.BacklogItem;
 import victor.training.ddd.agile.domain.model.Product;
 import victor.training.ddd.agile.domain.model.Sprint;
 import victor.training.ddd.agile.domain.model.Sprint.Status;
-import victor.training.ddd.agile.domain.repo.BacklogItemRepo;
+import victor.training.ddd.agile.domain.repo.ProductBacklogItemRepo;
 import victor.training.ddd.agile.domain.repo.ProductRepo;
 import victor.training.ddd.agile.domain.repo.SprintRepo;
 import victor.training.ddd.agile.web.dto.AddBacklogItemRequest;
@@ -27,7 +28,8 @@ import java.util.stream.Collectors;
 public class SprintController {
    private final SprintRepo sprintRepo;
    private final ProductRepo productRepo;
-   private final BacklogItemRepo backlogItemRepo;
+   private final ProductBacklogItemRepo productBacklogItemRepo;
+   private final SprintBacklogItemRepo sprintBacklogItemRepo;
    private final MailingListService mailingListService;
    private final EmailService emailService;
 
@@ -66,8 +68,8 @@ public class SprintController {
       sprint.setEnd(LocalDate.now());
       sprint.setStatus(Status.FINISHED);
 
-      List<BacklogItem> notDone = sprint.getItems().stream()
-          .filter(item -> item.getStatus() != BacklogItem.Status.DONE)
+      List<ProductBacklogItem> notDone = sprint.getItems().stream()
+          .filter(item -> item.getStatus() != ProductBacklogItem.Status.DONE)
           .collect(Collectors.toList());
 
       if (notDone.size() >= 1) { // TODO Victor 2022-02-11: events instead
@@ -84,16 +86,16 @@ public class SprintController {
          throw new IllegalStateException();
       }
       SprintMetrics dto = new SprintMetrics();
-      List<BacklogItem> doneItems = sprint.getItems().stream()
-          .filter(item -> item.getStatus() == BacklogItem.Status.DONE)
+      List<ProductBacklogItem> doneItems = sprint.getItems().stream()
+          .filter(item -> item.getStatus() == ProductBacklogItem.Status.DONE)
           .collect(Collectors.toList());
-      dto.consumedHours = sprint.getItems().stream().mapToInt(BacklogItem::getHoursConsumed).sum();
+      dto.consumedHours = sprint.getItems().stream().mapToInt(ProductBacklogItem::getHoursConsumed).sum();
       dto.calendarDays = sprint.getStart().until(sprint.getEnd()).getDays();
-      dto.doneFP = doneItems.stream().mapToInt(BacklogItem::getFpEstimation).sum();
+      dto.doneFP = doneItems.stream().mapToInt(ProductBacklogItem::getFpEstimation).sum();
       dto.fpVelocity = 1.0 * dto.doneFP / dto.consumedHours;
       dto.hoursConsumedForNotDone = sprint.getItems().stream()
-          .filter(item -> item.getStatus() != BacklogItem.Status.DONE)
-          .mapToInt(BacklogItem::getHoursConsumed).sum();
+          .filter(item -> item.getStatus() != ProductBacklogItem.Status.DONE)
+          .mapToInt(ProductBacklogItem::getHoursConsumed).sum();
       if (sprint.getEnd().isAfter(sprint.getPlannedEnd())) {
          dto.delayDays = sprint.getPlannedEnd().until(sprint.getEnd()).getDays();
       }
@@ -102,16 +104,16 @@ public class SprintController {
    @PostMapping("sprint/{sprintId}/add-item")
    @Transactional
    public void addItem(@PathVariable long sprintId, @RequestBody AddBacklogItemRequest request) {
-      BacklogItem backlogItem = backlogItemRepo.findOneById(request.backlogId);
+      ProductBacklogItem backlogItem = productBacklogItemRepo.findOneById(request.backlogId);
 
       Sprint sprint = sprintRepo.findOneById(sprintId);
 
-      sprint.addItem(backlogItem, request.fpEstimation);
+      sprint.addItem(backlogItem, request.fpEstimation); // strange to change the param inside th meth
    }
 
    @PostMapping("sprint/{sprintId}/item/{backlogId}/start")
    public void startItem(@PathVariable long sprintId, @PathVariable long backlogId) {
-      BacklogItem backlogItem = backlogItemRepo.findOneById(backlogId);
+      ProductBacklogItem backlogItem = productBacklogItemRepo.findOneById(backlogId);
 
       Sprint sprint = sprintRepo.findOneById(sprintId);
 
@@ -123,14 +125,14 @@ public class SprintController {
 
    @PostMapping("sprint/{id}/complete-item/{backlogId}")
    public void completeItem(@PathVariable long id, @PathVariable long backlogId) {
-      BacklogItem backlogItem = backlogItemRepo.findOneById(backlogId);
+      ProductBacklogItem backlogItem = productBacklogItemRepo.findOneById(backlogId);
       Sprint sprint = sprintRepo.findOneById(id);
 
       sprint.checkSprintMatchesAndStarted(backlogItem);
 
       backlogItem.complete();
 
-      if (sprint.getItems().stream().allMatch(item -> item.getStatus() == BacklogItem.Status.DONE)) {
+      if (sprint.getItems().stream().allMatch(item -> item.getStatus() == ProductBacklogItem.Status.DONE)) {
          Product product = productRepo.findOneById(sprint.getProductId());
 
          System.out.println("Sending CONGRATS email to team of product " + product.getCode() + ": They finished the items earlier. They have time to refactor! (OMG!)");
@@ -142,11 +144,11 @@ public class SprintController {
 
    @PostMapping("sprint/{id}/log-hours")
    public void logHours(@PathVariable long id, @RequestBody LogHoursRequest request) {
-      BacklogItem backlogItem = backlogItemRepo.findOneById(request.backlogId);
+      ProductBacklogItem backlogItem = productBacklogItemRepo.findOneById(request.backlogId);
       Sprint sprint = sprintRepo.findOneById(id);
 
       sprint.checkSprintMatchesAndStarted(backlogItem);
-      if (backlogItem.getStatus() != BacklogItem.Status.STARTED) {
+      if (backlogItem.getStatus() != ProductBacklogItem.Status.STARTED) {
          throw new IllegalStateException("Item not started");
       }
       backlogItem.addHours(request.hours);

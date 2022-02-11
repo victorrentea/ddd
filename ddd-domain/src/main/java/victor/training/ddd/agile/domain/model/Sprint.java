@@ -25,7 +25,7 @@ public class Sprint {
    public Sprint() {
    }
 
-   public void checkSprintMatchesAndStarted(BacklogItem backlogItem) {
+   public void checkSprintMatchesAndStarted(ProductBacklogItem backlogItem) {
       if (!backlogItem.getSprint().getId().equals(getId())) {
          throw new IllegalArgumentException("item not in sprint");
       }
@@ -67,7 +67,7 @@ public class Sprint {
       return this.status;
    }
 
-   public List<BacklogItem> getItems() {
+   public List<ProductBacklogItem> getItems() {
       return Collections.unmodifiableList(this.items);
    }
 
@@ -102,7 +102,7 @@ public class Sprint {
       return this;
    }
 
-   public void addItem(BacklogItem backlogItem, int fpEstimation) {
+   public void addItem(ProductBacklogItem backlogItem, int fpEstimation) {
       if (status != Status.CREATED) {
          throw new IllegalStateException("Can only add items to Sprint before it starts");
       }
@@ -121,7 +121,7 @@ public class Sprint {
    private Status status = Status.CREATED;
 
    @OneToMany(mappedBy = "sprint")
-   private List<BacklogItem> items = new ArrayList<>();
+   private List<ProductBacklogItem> items = new ArrayList<>();
 
 }
 

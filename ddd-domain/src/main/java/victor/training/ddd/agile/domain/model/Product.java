@@ -35,7 +35,7 @@ public class Product {
    private String teamMailingList;
 
    @OneToMany(mappedBy = "product")
-   private List<BacklogItem> backlogItems = new ArrayList<>();
+   private List<ProductBacklogItem> productBacklogItems = new ArrayList<>();
    @OneToMany(mappedBy = "product")
    private List<Sprint> sprints = new ArrayList<>();
 
@@ -91,7 +91,7 @@ public class Product {
 
       return releasedIterations.stream()
           .flatMap(s -> s.getItems().stream())
-          .map(BacklogItem::getTitle)
+          .map(ProductBacklogItem::getTitle)
           .collect(joining("\n"));
    }
 }

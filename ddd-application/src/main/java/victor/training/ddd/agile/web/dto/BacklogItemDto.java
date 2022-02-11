@@ -2,7 +2,7 @@ package victor.training.ddd.agile.web.dto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import victor.training.ddd.agile.domain.model.BacklogItem;
+import victor.training.ddd.agile.domain.model.ProductBacklogItem;
 
 @Data
 @NoArgsConstructor
@@ -13,11 +13,11 @@ public class BacklogItemDto {
    public String description;
    public Long version;
 
-   public BacklogItemDto(BacklogItem backlogItem) {
-      id = backlogItem.getId();
-      productId = backlogItem.getProduct().getId();
-      description = backlogItem.getDescription();
-      title = backlogItem.getTitle();
-      version = backlogItem.getVersion();
+   public BacklogItemDto(ProductBacklogItem productBacklogItem) {
+      id = productBacklogItem.getId();
+      productId = productBacklogItem.getProduct().getId();
+      description = productBacklogItem.getDescription();
+      title = productBacklogItem.getTitle();
+      version = productBacklogItem.getVersion();
    }
 }
