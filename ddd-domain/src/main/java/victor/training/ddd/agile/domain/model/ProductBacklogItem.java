@@ -24,7 +24,7 @@ public class ProductBacklogItem extends AbstractAggregateRoot<ProductBacklogItem
    private String description;
 
    private LocalDateTime createTime = LocalDateTime.now(); // field readonly after creation
-   @Version
+   @Version // for optimistic locking only, enforced by EntityManager
    private Long version;
 
 

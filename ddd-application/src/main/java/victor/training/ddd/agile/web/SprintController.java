@@ -9,7 +9,6 @@ import victor.training.ddd.agile.domain.model.Product;
 import victor.training.ddd.agile.domain.model.ProductBacklogItem;
 import victor.training.ddd.agile.domain.model.Sprint;
 import victor.training.ddd.agile.domain.model.Sprint.Status;
-import victor.training.ddd.agile.domain.model.SprintBacklogItem;
 import victor.training.ddd.agile.domain.repo.ProductBacklogItemRepo;
 import victor.training.ddd.agile.domain.repo.ProductRepo;
 import victor.training.ddd.agile.domain.repo.SprintBacklogItemRepo;
@@ -23,7 +22,6 @@ import victor.training.ddd.agile.web.dto.SprintMetrics;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Transactional
 @RestController
@@ -71,14 +69,15 @@ public class SprintController {
       sprint.setEnd(LocalDate.now());
       sprint.setStatus(Status.FINISHED);
 
-      List<ProductBacklogItem> notDone = sprint.getItems().stream()
-          .filter(item -> item.getStatus() != SprintBacklogItem.Status.DONE)
-          .collect(Collectors.toList());
-
-      if (notDone.size() >= 1) { // TODO Victor 2022-02-11: events instead
-         Product product = productRepo.findOneById(sprint.getProductId());
-         emailService.sendNotDoneItemsDebrief(product.getOwner().getEmail(), notDone);
-      }
+      // TODO
+//      List<ProductBacklogItem> notDone = sprint.getItems().stream()
+//          .filter(item -> item.getStatus() != SprintBacklogItem.Status.DONE)
+//          .collect(Collectors.toList());
+//
+//      if (notDone.size() >= 1) { // TODO Victor 2022-02-11: events instead
+//         Product product = productRepo.findOneById(sprint.getProductId());
+//         emailService.sendNotDoneItemsDebrief(product.getOwner().getEmail(), notDone);
+//      }
    }
 
    @GetMapping("sprint/{id}/metrics")
