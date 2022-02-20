@@ -24,13 +24,13 @@ class SprintController {
    private final EmailService emailService;
 
    @Data
-   static class SprintDto {
+   static class CreateSprintRequest {
       public Long productId;
       public LocalDate plannedEnd;
    }
 
    @PostMapping("sprint")
-   public Long createSprint(@RequestBody SprintDto dto) {
+   public Long createSprint(@RequestBody CreateSprintRequest dto) {
       Product product = productRepo.findOneById(dto.productId);
       Sprint sprint = new Sprint()
           .setIteration(product.incrementAndGetIteration())

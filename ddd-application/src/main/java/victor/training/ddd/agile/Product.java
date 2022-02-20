@@ -19,7 +19,6 @@ import java.util.List;
 class ProductController {
    private final ProductRepo productRepo;
 
-
    @Data
    static class ProductDto {
       public Long id;

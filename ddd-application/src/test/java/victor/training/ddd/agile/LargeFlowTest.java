@@ -5,7 +5,7 @@ import victor.training.ddd.agile.BacklogItemController.BacklogItemDto;
 import victor.training.ddd.agile.ProductController.ProductDto;
 import victor.training.ddd.agile.SprintController.AddBacklogItemRequest;
 import victor.training.ddd.agile.SprintController.LogHoursRequest;
-import victor.training.ddd.agile.SprintController.SprintDto;
+import victor.training.ddd.agile.SprintController.CreateSprintRequest;
 import victor.training.ddd.agile.SprintController.SprintMetrics;
 
 import java.time.LocalDate;
@@ -28,7 +28,7 @@ public class LargeFlowTest extends SystemTestBase {
           .extracting(ProductDto::getCode, ProductDto::getName, ProductDto::getMailingList)
           .isEqualTo(List.of("PNM", "::ProductName::", "::MailList::"));
 
-      Long sprintId = sprints.createSprint(new SprintDto()
+      Long sprintId = sprints.createSprint(new CreateSprintRequest()
           .setProductId(productId)
           .setPlannedEnd(LocalDate.now().plusDays(14)));
 
