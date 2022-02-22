@@ -8,7 +8,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class MailingListService {
+public class MailingListClient {
    private final RestTemplate rest;
 
    public List<String> retrieveEmails(String mailingList) {

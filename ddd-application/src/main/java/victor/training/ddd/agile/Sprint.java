@@ -17,7 +17,7 @@ import static javax.persistence.EnumType.STRING;
 @Transactional
 @RestController
 @RequiredArgsConstructor
-class SprintController {
+class SprintService {
    private final SprintRepo sprintRepo;
    private final ProductRepo productRepo;
    private final BacklogItemRepo backlogItemRepo;
@@ -88,10 +88,10 @@ class SprintController {
       if (sprint.getStatus() != Status.FINISHED) {
          throw new IllegalStateException();
       }
-      SprintMetrics dto = new SprintMetrics();
       List<BacklogItem> doneItems = sprint.getItems().stream()
           .filter(item -> item.getStatus() == BacklogItem.Status.DONE)
           .collect(Collectors.toList());
+      SprintMetrics dto = new SprintMetrics();
       dto.consumedHours = sprint.getItems().stream().mapToInt(BacklogItem::getHoursConsumed).sum();
       dto.calendarDays = sprint.getStart().until(sprint.getEnd()).getDays();
       dto.doneFP = doneItems.stream().mapToInt(BacklogItem::getFpEstimation).sum();
@@ -137,7 +137,7 @@ class SprintController {
       backlogItem.setStatus(BacklogItem.Status.STARTED);
    }
 
-   private final MailingListService mailingListService;
+   private final MailingListClient mailingListClient;
 
    @PostMapping("sprint/{id}/complete-item/{backlogId}")
    public void completeItem(@PathVariable long id, @PathVariable long backlogId) {
@@ -150,7 +150,7 @@ class SprintController {
       Sprint sprint = sprintRepo.findOneById(id);
       if (sprint.getItems().stream().allMatch(item -> item.getStatus() == BacklogItem.Status.DONE)) {
          System.out.println("Sending CONGRATS email to team of product " + sprint.getProduct().getCode() + ": They finished the items earlier. They have time to refactor! (OMG!)");
-         List<String> emails = mailingListService.retrieveEmails(sprint.getProduct().getTeamMailingList());
+         List<String> emails = mailingListClient.retrieveEmails(sprint.getProduct().getTeamMailingList());
          emailService.sendCongratsEmail(emails);
       }
    }

@@ -7,13 +7,13 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 @SpringBootTest
 public abstract class SystemTestBase {
    @Autowired
-   ProductController products;
+   ProductService products;
    @Autowired
-   BacklogItemController backlogItems;
+   BacklogItemService backlogItems;
    @Autowired
-   SprintController sprints;
+   SprintService sprints;
    @Autowired
-   ReleaseController releases;
+   ReleaseService releases;
    @MockBean
-   MailingListService mailingListService;
+   MailingListClient mailingListClient;
 }

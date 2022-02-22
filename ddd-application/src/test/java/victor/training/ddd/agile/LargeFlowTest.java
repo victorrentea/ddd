@@ -1,12 +1,12 @@
 package victor.training.ddd.agile;
 
 import org.junit.jupiter.api.Test;
-import victor.training.ddd.agile.BacklogItemController.BacklogItemDto;
-import victor.training.ddd.agile.ProductController.ProductDto;
-import victor.training.ddd.agile.SprintController.AddBacklogItemRequest;
-import victor.training.ddd.agile.SprintController.LogHoursRequest;
-import victor.training.ddd.agile.SprintController.CreateSprintRequest;
-import victor.training.ddd.agile.SprintController.SprintMetrics;
+import victor.training.ddd.agile.BacklogItemService.BacklogItemDto;
+import victor.training.ddd.agile.ProductService.ProductDto;
+import victor.training.ddd.agile.SprintService.AddBacklogItemRequest;
+import victor.training.ddd.agile.SprintService.LogHoursRequest;
+import victor.training.ddd.agile.SprintService.CreateSprintRequest;
+import victor.training.ddd.agile.SprintService.SprintMetrics;
 
 import java.time.LocalDate;
 import java.util.List;

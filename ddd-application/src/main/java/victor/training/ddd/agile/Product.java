@@ -16,7 +16,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-class ProductController {
+class ProductService {
    private final ProductRepo productRepo;
 
    @Data
@@ -25,6 +25,9 @@ class ProductController {
       public String code;
       public String name;
       public String mailingList;
+      public String poEmail;
+      public String poName;
+      public String poPhone;
    }
 
    @PostMapping("products")
@@ -36,6 +39,9 @@ class ProductController {
           .setCode(dto.code)
           .setName(dto.name)
           .setTeamMailingList(dto.mailingList)
+          .setOwnerEmail(dto.poEmail)
+          .setOwnerName(dto.poName)
+          .setOwnerPhone(dto.poPhone)
           ;
       return productRepo.save(product).getId();
    }
@@ -50,7 +56,6 @@ class ProductController {
       dto.mailingList = product.getTeamMailingList();
       return dto;
    }
-
 }
 
 
@@ -70,8 +75,8 @@ class Product {
    private String ownerEmail;
    private String ownerName;
    private String ownerPhone;
-   private String teamMailingList;
 
+   private String teamMailingList;
 
    @OneToMany(mappedBy = "product")
    private List<BacklogItem> backlogItems = new ArrayList<>();
@@ -81,11 +86,13 @@ class Product {
    private List<Release> releases = new ArrayList<>();
 
    public int incrementAndGetIteration() {
-      return ++ currentIteration;
+      currentIteration++;
+      return currentIteration;
    }
 
    public int incrementAndGetVersion() {
-      return ++ currentVersion;
+      currentVersion++;
+      return currentVersion;
    }
 }
 

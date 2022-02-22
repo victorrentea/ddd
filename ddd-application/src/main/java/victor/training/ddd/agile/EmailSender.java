@@ -7,6 +7,6 @@ import org.springframework.stereotype.Service;
 public class EmailSender {
 	
 	public void sendEmail(String from, String to, String subject, String message) {
-		// implementation goes here
+		// implementation goes here. connect to SMTP...
 	}
 }

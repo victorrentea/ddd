@@ -11,7 +11,7 @@ import static javax.persistence.EnumType.STRING;
 
 @RestController
 @RequiredArgsConstructor
-class BacklogItemController {
+class BacklogItemService {
    private final BacklogItemRepo backlogItemRepo;
    private final ProductRepo productRepo;
 
@@ -50,6 +50,7 @@ class BacklogItemController {
 
    @PutMapping("backlog")
    public void updateBacklogItem(@RequestBody BacklogItemDto dto) {
+      // TODO if Backlog Item is COMPLETED, reject the update
       BacklogItem backlogItem = new BacklogItem()
           .setId(dto.id)
           .setProduct(productRepo.findOneById(dto.productId))

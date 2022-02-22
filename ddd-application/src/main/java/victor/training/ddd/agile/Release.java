@@ -21,7 +21,7 @@ import static java.util.stream.Collectors.joining;
 @Transactional
 @RestController
 @RequiredArgsConstructor
-class ReleaseController {
+class ReleaseService {
    private final ReleaseRepo releaseRepo;
    private final ProductRepo productRepo;
    private final SprintRepo sprintRepo;
@@ -39,7 +39,7 @@ class ReleaseController {
 
       List<BacklogItem> releasedItems = product.getSprints().stream()
           .sorted(Comparator.comparing(Sprint::getIteration))
-          .filter(s -> s.getIteration() >= fromIteration && s.getIteration() <= toIteration)
+          .filter(s -> s.getIteration() > fromIteration && s.getIteration() <= toIteration)
           .flatMap(s -> s.getItems().stream())
           .collect(Collectors.toList());
 

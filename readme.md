@@ -5,17 +5,17 @@ Intro Reading:
 - https://www.infoq.com/minibooks/domain-driven-design-quickly/
 
 Tip for accidental reader: see the branches for how the code evolves.
-
-## Product
+## Overall requirements
+### Product
 - The user can create a new product
 - The code of the product must be of 3 uppercase letters and has to be unique system-wide
 
-## Backlog Item
+### Backlog Item
 - Users can create and edit Product Backlog Items
 - System must block attempts to edit the same product Backlog Item by two users at the same time (concurrent access)
 - Once an item is completed in a Sprint, it cannot be edited anymore
 
-## Sprint
+### Sprint
 - The user can schedule the next Sprint providing the planned end date
 - The Sprint must store the actual start and end dates
 - Given a Backlog Item was estimated in Function Points(),
@@ -33,7 +33,7 @@ Tip for accidental reader: see the branches for how the code evolves.
   they return to the product backlog so that future sprints can continue it again later.
   In addition, the PO is emailed automatically (to shield devs from apparent shame)
 
-## Release
+### Release
 - A user can plan a release of any finished Sprint, for a certain date
 - You cannot release sprints previous to the latest released one
 - The changelog of a Release should list all backlog items completed since the last release
@@ -42,3 +42,17 @@ Tip for accidental reader: see the branches for how the code evolves.
   - 1.2 -(major)-> 2.0
   - 2.0 -(minor)-> 2.1
 
+## Refactoring Steps
+At every stage try to ask as many design and domain questions you can
+1. SprintService: Declutter: move out SprintService.getSprintMetrics
+2. SprintService: Sprint.start()
+3. SprintService: BacklogItem.activate()
+4. SprintService: Aggregate Sprint-BacklogItem to move checkSprintMatchesAndStarted() inside Sprint
+5. Sprint = > BacklogItem: move to unidirectional JPA link.
+6. Aggregates should not have direct links to other aggregates
+7. Send emails from Sprint.complete() via events; techniques for publishing events
+8. BacklogItem -> split in ProductBacklogItem + SprintBacklogItem
+9. Aggregate Design: how to draw consistency boundaries
+10. Freeze ProductBacklogItem after the SprintBacklogItem is DONE; look for domain questions to ask
+11. Layers: domain/application/infra + Dep Inversion via a) separate module or b) ArchUnit
+12. Release.notes: can they change after creation?
