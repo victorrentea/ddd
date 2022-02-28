@@ -37,7 +37,7 @@ class SprintService {
       Product product = productRepo.findOneById(dto.productId);
       Sprint sprint = new Sprint()
           .setIteration(product.incrementAndGetIteration())
-          .setProduct(product)
+          .setProductId(product.getId())
           .setPlannedEnd(dto.plannedEnd);
       return sprintRepo.save(sprint).getId();
    }
@@ -69,7 +69,8 @@ class SprintService {
           .collect(Collectors.toList());
 
       if (notDone.size() >= 1) {
-         emailService.sendNotDoneItemsDebrief(sprint.getProduct().getOwnerEmail(), notDone);
+         Product product = productRepo.findOneById(sprint.getProductId());
+         emailService.sendNotDoneItemsDebrief(product.getOwnerEmail(), notDone);
       }
    }
 
@@ -147,8 +148,9 @@ class SprintService {
       sprint.completeItem(backlogId);
 
       if (sprint.getItems().stream().allMatch(item -> item.getStatus() == BacklogItem.Status.DONE)) {
-         System.out.println("Sending CONGRATS email to team of product " + sprint.getProduct().getCode() + ": They finished the items earlier. They have time to refactor! (OMG!)");
-         List<String> emails = mailingListClient.retrieveEmails(sprint.getProduct().getTeamMailingList());
+         Product product = productRepo.findOneById(sprint.getProductId());
+         System.out.println("Sending CONGRATS email to team of product " + product.getCode() + ": They finished the items earlier. They have time to refactor! (OMG!)");
+         List<String> emails = mailingListClient.retrieveEmails(product.getTeamMailingList());
          emailService.sendCongratsEmail(emails);
       }
    }
@@ -179,15 +181,20 @@ class Sprint {
    private int iteration;
 
    // Reference other Aggregates via id (not via object links)
-   @ManyToOne
-   private Product product;
-
-//   private Long productId;
+   private Long productId;
 
    private LocalDate start;
    private LocalDate plannedEnd;
    private LocalDate end;
 
+   public Long getProductId() {
+      return productId;
+   }
+
+   public Sprint setProductId(Long productId) {
+      this.productId = productId;
+      return this;
+   }
 
    public Long getId() {
       return id;
@@ -195,10 +202,6 @@ class Sprint {
 
    public int getIteration() {
       return iteration;
-   }
-
-   public Product getProduct() {
-      return product;
    }
 
    public LocalDate getStart() {
@@ -228,11 +231,6 @@ class Sprint {
 
    public Sprint setIteration(int iteration) {
       this.iteration = iteration;
-      return this;
-   }
-
-   public Sprint setProduct(Product product) {
-      this.product = product;
       return this;
    }
 
@@ -300,4 +298,5 @@ class Sprint {
 }
 
 interface SprintRepo extends CustomJpaRepository<Sprint, Long> {
+   List<Sprint> findAllByProductId(long productId);
 }
