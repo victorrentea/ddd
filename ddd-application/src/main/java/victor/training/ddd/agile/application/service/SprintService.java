@@ -12,7 +12,6 @@ import victor.training.ddd.agile.domain.event.SprintFinishedEvent;
 import victor.training.ddd.agile.domain.model.BacklogItem;
 import victor.training.ddd.agile.domain.model.Product;
 import victor.training.ddd.agile.domain.model.Sprint;
-import victor.training.ddd.agile.domain.model.Sprint.Status;
 import victor.training.ddd.agile.domain.repo.BacklogItemRepo;
 import victor.training.ddd.agile.domain.repo.ProductRepo;
 import victor.training.ddd.agile.domain.repo.SprintRepo;
@@ -48,11 +47,6 @@ public class SprintService {
    public void startSprint(@PathVariable long id) {
       Sprint sprint = sprintRepo.findOneById(id);
       sprint.start();
-//      darkLogic(sprint);// do you dare to pass an attached entity into some complex logic.
-      // if the Sprint entity defends its consistency correcly sprint.start();, it is SAFER to pass it in
-//      Thread.sleep(1000); // common reason for reducing the scope of transaction
-//      sprintMongoRepo.save(sprint);
-//       sprintRepo.save(sprint); //useless IF the entity is retrieved within an open Transaction (autoflushing)
    }
 @Transactional
    @PostMapping("sprint/{id}/end")
@@ -95,13 +89,9 @@ public class SprintService {
    public Long addItem(@PathVariable long sprintId, @RequestBody AddBacklogItemRequest request) {
       BacklogItem backlogItem = backlogItemRepo.findOneById(request.backlogId);
       Sprint sprint = sprintRepo.findOneById(sprintId);
-      if (sprint.getStatus() != Status.CREATED) {
-         throw new IllegalStateException("Can only add items to Sprint before it starts");
-      }
 
-      sprint.getItems().add(backlogItem);
+      sprint.addItem(backlogItem, request.fpEstimation);
 
-      backlogItem.setFpEstimation(request.fpEstimation);
       return backlogItem.getId();
    }
 
@@ -124,12 +114,8 @@ public class SprintService {
    public void completeItem(@PathVariable long id, @PathVariable long backlogId) {
       Sprint sprint = sprintRepo.findOneById(id);
       sprint.completeItem(backlogId);
-
-      if (sprint.getItems().stream().allMatch(item -> item.getStatus() == BacklogItem.Status.DONE)) {
-         Product product = productRepo.findOneById(sprint.getProductId());
-         System.out.println("Sending CONGRATS email to team of product " + product.getCode() + ": They finished the items earlier. They have time to refactor! (OMG!)");
-         List<String> emails = mailingListClient.retrieveEmails(product.getTeamMailingList());
-         emailService.sendCongratsEmail(emails);
+      if (sprint.allItemsDone()) {
+         emailService.sendCongratsEmail(sprint.getProductId());
       }
    }
 

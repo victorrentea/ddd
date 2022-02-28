@@ -151,6 +151,18 @@ public class Sprint extends AbstractAggregateRoot<Sprint> {
            .collect(toList());
    }
 
+   public void addItem(BacklogItem backlogItem, int fpEstimation) {
+      if (status != Status.CREATED) {
+         throw new IllegalStateException("Can only add items to Sprint before it starts");
+      }
+      items.add(backlogItem);
+      backlogItem.setFpEstimation(fpEstimation);
+   }
+
+   public boolean allItemsDone() {
+      return getItems().stream().allMatch(item -> item.getStatus() == BacklogItem.Status.DONE);
+   }
+
    public enum Status {
       CREATED,
       STARTED,
@@ -160,9 +172,14 @@ public class Sprint extends AbstractAggregateRoot<Sprint> {
    @Enumerated(STRING)
    private Status status = Status.CREATED;
 
-   @OneToMany
-   @JoinColumn
+   @OneToMany // unidirectional
+   @JoinColumn // adds a SPRINT_ID column to BACKLOG_ITEM table.!!!
    private List<BacklogItem> items = new ArrayList<>();
 
 }
+
+
+// SPRINT ()
+
+// BACKLOG_ITEM ()
 
