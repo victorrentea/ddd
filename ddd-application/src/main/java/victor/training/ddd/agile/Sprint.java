@@ -1,6 +1,9 @@
 package victor.training.ddd.agile;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import victor.training.ddd.agile.Sprint.Status;
@@ -44,24 +47,22 @@ class SprintService {
       return sprintRepo.findOneById(id);
    }
 
+//   @Transactional // be mindful of this. be wary of performance (connection starvation issues)
    @PostMapping("sprint/{id}/start")
    public void startSprint(@PathVariable long id) {
       Sprint sprint = sprintRepo.findOneById(id);
-      if (sprint.getStatus() != Status.CREATED) {
-         throw new IllegalStateException();
-      }
-      sprint.setStart(LocalDate.now());
-      sprint.setStatus(Status.STARTED);
+      sprint.start();
+//      darkLogic(sprint);// do you dare to pass an attached entity into some complex logic.
+      // if the Sprint entity defends its consistency correcly sprint.start();, it is SAFER to pass it in
+//      Thread.sleep(1000); // common reason for reducing the scope of transaction
+//      sprintMongoRepo.save(sprint);
+//       sprintRepo.save(sprint); //useless IF the entity is retrieved within an open Transaction (autoflushing)
    }
 
    @PostMapping("sprint/{id}/end")
    public void endSprint(@PathVariable long id) {
       Sprint sprint = sprintRepo.findOneById(id);
-      if (sprint.getStatus() != Status.STARTED) {
-         throw new IllegalStateException();
-      }
-      sprint.setEnd(LocalDate.now());
-      sprint.setStatus(Status.FINISHED);
+      sprint.finish();
 
       List<BacklogItem> notDone = sprint.getItems().stream()
           .filter(item -> item.getStatus() != BacklogItem.Status.DONE)
@@ -129,39 +130,26 @@ class SprintService {
 
    @PostMapping("sprint/{id}/start-item/{backlogId}")
    public void startItem(@PathVariable long id, @PathVariable long backlogId) {
-      BacklogItem backlogItem = backlogItemRepo.findOneById(backlogId);
-      checkSprintMatchesAndStarted(id, backlogItem);
-      if (backlogItem.getStatus() != BacklogItem.Status.CREATED) {
-         throw new IllegalStateException("Item already started");
-      }
-      backlogItem.setStatus(BacklogItem.Status.STARTED);
+      // this should be blocked
+      // 1: BacklogItem.start() will be package-protected
+      // 2: I will delete the BacklogItemRepo
+//      backlogItemRepo.findOneById(backlogId).start();
+
+      Sprint sprint = sprintRepo.findOneById(id);
+      sprint.startItem(backlogId); // TODO after break : changing the child entity through the parent Aggregate
    }
 
    private final MailingListClient mailingListClient;
 
    @PostMapping("sprint/{id}/complete-item/{backlogId}")
    public void completeItem(@PathVariable long id, @PathVariable long backlogId) {
-      BacklogItem backlogItem = backlogItemRepo.findOneById(backlogId);
-      checkSprintMatchesAndStarted(id, backlogItem);
-      if (backlogItem.getStatus() != BacklogItem.Status.STARTED) {
-         throw new IllegalStateException("Cannot complete an Item before starting it");
-      }
-      backlogItem.setStatus(BacklogItem.Status.DONE);
       Sprint sprint = sprintRepo.findOneById(id);
+      sprint.completeItem(backlogId);
+
       if (sprint.getItems().stream().allMatch(item -> item.getStatus() == BacklogItem.Status.DONE)) {
          System.out.println("Sending CONGRATS email to team of product " + sprint.getProduct().getCode() + ": They finished the items earlier. They have time to refactor! (OMG!)");
          List<String> emails = mailingListClient.retrieveEmails(sprint.getProduct().getTeamMailingList());
          emailService.sendCongratsEmail(emails);
-      }
-   }
-
-   private void checkSprintMatchesAndStarted(long id, BacklogItem backlogItem) {
-      if (!backlogItem.getSprint().getId().equals(id)) {
-         throw new IllegalArgumentException("item not in sprint");
-      }
-      Sprint sprint = sprintRepo.findOneById(id);
-      if (sprint.getStatus() != Status.STARTED) {
-         throw new IllegalStateException("Sprint not started");
       }
    }
 
@@ -175,31 +163,127 @@ class SprintService {
 
    @PostMapping("sprint/{id}/log-hours")
    public void logHours(@PathVariable long id, @RequestBody LogHoursRequest request) {
-      BacklogItem backlogItem = backlogItemRepo.findOneById(request.backlogId);
-      checkSprintMatchesAndStarted(id, backlogItem);
-      if (backlogItem.getStatus() != BacklogItem.Status.STARTED) {
-         throw new IllegalStateException("Item not started");
-      }
-      backlogItem.addHours(request.hours);
+      Sprint sprint = sprintRepo.findOneById(id);
+      sprint.logHours(request.backlogId, request.hours);
    }
 
 }
 
 
-@Getter
-@Setter
-@NoArgsConstructor
 @Entity
+// AggregateRoot is responsible to enforce all contraints spanning bETWEEN the entities inside this Aggregate
 class Sprint {
    @Id
    @GeneratedValue
    private Long id;
    private int iteration;
+
+   // Reference other Aggregates via id (not via object links)
    @ManyToOne
    private Product product;
+
+//   private Long productId;
+
    private LocalDate start;
    private LocalDate plannedEnd;
    private LocalDate end;
+
+
+   public Long getId() {
+      return id;
+   }
+
+   public int getIteration() {
+      return iteration;
+   }
+
+   public Product getProduct() {
+      return product;
+   }
+
+   public LocalDate getStart() {
+      return start;
+   }
+
+   public LocalDate getPlannedEnd() {
+      return plannedEnd;
+   }
+
+   public LocalDate getEnd() {
+      return end;
+   }
+
+   public Status getStatus() {
+      return status;
+   }
+
+   public List<BacklogItem> getItems() {
+      return items;
+   }
+
+   public Sprint setId(Long id) {
+      this.id = id;
+      return this;
+   }
+
+   public Sprint setIteration(int iteration) {
+      this.iteration = iteration;
+      return this;
+   }
+
+   public Sprint setProduct(Product product) {
+      this.product = product;
+      return this;
+   }
+
+
+   public Sprint setPlannedEnd(LocalDate plannedEnd) {
+      this.plannedEnd = plannedEnd;
+      return this;
+   }
+
+   public void start() {
+      if (status != Status.CREATED) {
+         throw new IllegalStateException();
+      }
+      status = Status.STARTED;
+      start = LocalDate.now();
+   }
+
+   public void finish() {
+      if (status != Status.STARTED) {
+         throw new IllegalStateException();
+      }
+      status = Status.FINISHED;
+      end = LocalDate.now();
+   }
+
+   void startItem(long backlogId) {
+      if (status != Status.STARTED) {
+         throw new IllegalStateException("Sprint not started");
+      }
+      backlogItemById(backlogId).start();
+   }
+
+   private BacklogItem backlogItemById(long backlogId) {
+      return items.stream().filter(it -> it.getId() == backlogId).findFirst().orElseThrow();
+   }
+
+   void completeItem(long backlogId) {
+      if (status != Status.STARTED) {
+         throw new IllegalStateException("Sprint not started");
+      }
+      BacklogItem backlogItem = backlogItemById(backlogId);
+      backlogItem.complete();
+   }
+
+   void logHours(long backlogId, int hours) {
+      BacklogItem backlogItem = backlogItemById(backlogId);
+      if (status != Status.STARTED) {
+         throw new IllegalStateException("Sprint not started");
+      }
+      backlogItem.addHours(hours);
+   }
 
    public enum Status {
       CREATED,

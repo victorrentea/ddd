@@ -70,6 +70,7 @@ class BacklogItemService {
 @Setter
 @NoArgsConstructor
 @Entity
+// Child Entity of the Sprint Aggregate
 class BacklogItem {
    @Id
    @GeneratedValue
@@ -78,6 +79,19 @@ class BacklogItem {
    private Product product;
    private String title;
    private String description;
+
+   public void start() {
+      if (status != Status.CREATED) {
+         throw new IllegalStateException("Item already started");
+      }
+      status = Status.STARTED;
+   }
+   public void complete() {
+      if (status != Status.STARTED) {
+         throw new IllegalStateException("Item already started");
+      }
+      status = Status.DONE;
+   }
 
    public enum Status {
       CREATED,
@@ -96,6 +110,9 @@ class BacklogItem {
    private Long version;
 
    public void addHours(int hours) {
+      if (this.status != BacklogItem.Status.STARTED) {
+         throw new IllegalStateException("Item not started");
+      }
       hoursConsumed += hours;
    }
 
