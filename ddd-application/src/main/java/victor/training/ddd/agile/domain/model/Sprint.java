@@ -1,5 +1,6 @@
 package victor.training.ddd.agile.domain.model;
 
+import victor.training.ddd.agile.domain.event.SprintFinishedEvent;
 import victor.training.ddd.common.events.DomainEvents;
 
 import javax.persistence.*;
@@ -96,7 +97,6 @@ public class Sprint {
       start = LocalDate.now();
    }
 
-
    public void finish() {
       if (status != Status.STARTED) {
          throw new IllegalStateException();
@@ -104,8 +104,7 @@ public class Sprint {
       status = Status.FINISHED;
       end = LocalDate.now();
 
-
-      DomainEvents.publishEvent(new SprintFinishedEvent(id));
+      DomainEvents.publishEvent(new SprintFinishedEvent(id)); // more reusable
    }
 
    public void startItem(long backlogId) {

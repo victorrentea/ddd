@@ -8,6 +8,7 @@ import victor.training.ddd.agile.application.dto.AddBacklogItemRequest;
 import victor.training.ddd.agile.application.dto.CreateSprintRequest;
 import victor.training.ddd.agile.application.dto.LogHoursRequest;
 import victor.training.ddd.agile.application.dto.SprintMetrics;
+import victor.training.ddd.agile.domain.event.SprintFinishedEvent;
 import victor.training.ddd.agile.domain.model.BacklogItem;
 import victor.training.ddd.agile.domain.model.Product;
 import victor.training.ddd.agile.domain.model.Sprint;
@@ -63,7 +64,7 @@ public class SprintService {
 
    @EventListener
    public void onSprintFinishedEvent(SprintFinishedEvent event) {
-      sprintRepo.findOneById(e.id)
+      Sprint sprint = sprintRepo.findOneById(event.getSprintId());
       List<BacklogItem> notDone = sprint.getItemsNotDone();
       if (notDone.size() >= 1) {
          Product product = productRepo.findOneById(sprint.getProductId());

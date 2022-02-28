@@ -20,6 +20,7 @@ public class DomainEvents {
    public void injectSpringPublisher(ApplicationEventPublisher publisher) {
       springPublisher = publisher;
    }
+
    @VisibleForTesting
    public static void clearEventsFromTests() {
       // TODO make sure you call this from a @Rule/JUnit5 Extension before every test
