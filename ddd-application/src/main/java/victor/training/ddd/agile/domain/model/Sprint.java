@@ -160,7 +160,8 @@ public class Sprint extends AbstractAggregateRoot<Sprint> {
    @Enumerated(STRING)
    private Status status = Status.CREATED;
 
-   @OneToMany(mappedBy = "sprint")
+   @OneToMany
+   @JoinColumn
    private List<BacklogItem> items = new ArrayList<>();
 
 }

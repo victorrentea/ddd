@@ -15,8 +15,23 @@ public class BacklogItem {
    @Id
    @GeneratedValue
    private Long id;
+   public enum Status {
+      CREATED,
+      STARTED,
+      DONE
+   }
+   @Enumerated(STRING)
+   private Status status = Status.CREATED;
+
+   private Integer fpEstimation; // ⚠ not NULL when assigned to a sprint
+   private Integer hoursConsumed; // ⚠ not NULL when assigned to a sprint
+
+   @Version
+   private Long version;
    @ManyToOne
    private Product product;
+//   private Long productId;
+
    private String title;
    private String description;
 
@@ -37,21 +52,6 @@ public class BacklogItem {
       return status == Status.DONE;
    }
 
-   public enum Status {
-      CREATED,
-      STARTED,
-      DONE
-   }
-   @Enumerated(STRING)
-   private Status status = Status.CREATED;
-
-   @ManyToOne
-   private Sprint sprint; // ⚠ not NULL when assigned to a sprint
-   private Integer fpEstimation; // ⚠ not NULL when assigned to a sprint
-   private Integer hoursConsumed; // ⚠ not NULL when assigned to a sprint
-
-   @Version
-   private Long version;
 
    public void addHours(int hours) {
       if (this.status != BacklogItem.Status.STARTED) {

@@ -32,8 +32,8 @@ public class BacklogItemService {
       BacklogItem backlogItem = backlogItemRepo.findOneById(id);
       BacklogItemDto dto = new BacklogItemDto();
       dto.id = backlogItem.getId();
-      if (backlogItem.getSprint()!=null)
-      dto.productId = backlogItem.getSprint().getProductId();
+
+      dto.productId = backlogItem.getProduct().getId();
       dto.description = backlogItem.getDescription();
       dto.title = backlogItem.getTitle();
       dto.version = backlogItem.getVersion();
