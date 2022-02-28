@@ -1,6 +1,7 @@
 package victor.training.ddd.agile.application.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.event.EventListener;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import victor.training.ddd.agile.application.dto.AddBacklogItemRequest;
@@ -52,18 +53,22 @@ public class SprintService {
 //      sprintMongoRepo.save(sprint);
 //       sprintRepo.save(sprint); //useless IF the entity is retrieved within an open Transaction (autoflushing)
    }
+
    @Transactional
    @PostMapping("sprint/{id}/end")
    public void endSprint(@PathVariable long id) {
       Sprint sprint = sprintRepo.findOneById(id);
+      sprint.finish();
+   }
 
-      List<BacklogItem> notDone = sprint.finish();
-//      List<BacklogItem> notDone = sprint.getItemsNotDone();
+   @EventListener
+   public void onSprintFinishedEvent(SprintFinishedEvent event) {
+      sprintRepo.findOneById(e.id)
+      List<BacklogItem> notDone = sprint.getItemsNotDone();
       if (notDone.size() >= 1) {
          Product product = productRepo.findOneById(sprint.getProductId());
          emailService.sendNotDoneItemsDebrief(product.getOwnerEmail(), notDone);
       }
-
 
    }
 

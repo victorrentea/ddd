@@ -1,5 +1,7 @@
 package victor.training.ddd.agile.domain.model;
 
+import victor.training.ddd.common.events.DomainEvents;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -95,14 +97,15 @@ public class Sprint {
    }
 
 
-   public List<BacklogItem> finish() {
+   public void finish() {
       if (status != Status.STARTED) {
          throw new IllegalStateException();
       }
       status = Status.FINISHED;
       end = LocalDate.now();
 
-      return  getItemsNotDone();
+
+      DomainEvents.publishEvent(new SprintFinishedEvent(id));
    }
 
    public void startItem(long backlogId) {
