@@ -18,52 +18,12 @@ import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.joining;
 
-@Transactional
-@RestController
-@RequiredArgsConstructor
-class ReleaseService {
-   private final ReleaseRepo releaseRepo;
-   private final ProductRepo productRepo;
-   private final SprintRepo sprintRepo;
-
-   @PostMapping("product/{productId}/release/{sprintId}")
-   public Release createRelease(@PathVariable long productId, @PathVariable long sprintId) {
-      Product product = productRepo.findOneById(productId);
-      Sprint sprint = sprintRepo.findOneById(sprintId);
-
-      int fromIteration = product.getReleases().stream()
-          .map(Release::getSprint)
-          .mapToInt(Sprint::getIteration)
-          .max().orElse(0);
-      int toIteration = sprint.getIteration();
-
-      List<Sprint> sprints = sprintRepo.findAllByProductId(sprint.getProductId());
-      List<BacklogItem> releasedItems = sprints.stream()
-          .sorted(Comparator.comparing(Sprint::getIteration))
-          .filter(s -> s.getIteration() > fromIteration && s.getIteration() <= toIteration)
-          .flatMap(s -> s.getItems().stream())
-          .collect(Collectors.toList());
-
-      Release release = new Release()
-          .setProduct(product)
-          .setSprint(sprint)
-          .setReleasedItems(releasedItems)
-          .setDate(LocalDate.now())
-          .setVersion(product.incrementAndGetVersion() + ".0");
-      product.getReleases().add(release);
-
-      releaseRepo.save(release);
-      return release;
-   }
-}
-
-
 
 @Getter
 @Setter
 @NoArgsConstructor
 @Entity
-class Release {
+public class Release {
    @Id
    @GeneratedValue
    private Long id;
@@ -84,5 +44,3 @@ class Release {
    }
 }
 
-interface ReleaseRepo extends JpaRepository<Release, Long> {
-}
