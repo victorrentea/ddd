@@ -1,9 +1,11 @@
-package victor.training.ddd.agile;
+package victor.training.ddd.agile.application.service;
 
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import victor.training.ddd.agile.application.dto.ProductDto;
+import victor.training.ddd.agile.domain.model.Product;
+import victor.training.ddd.agile.domain.repo.ProductRepo;
 
 @Slf4j
 @RestController
@@ -11,16 +13,7 @@ import org.springframework.web.bind.annotation.*;
 public class ProductService {
    private final ProductRepo productRepo;
 
-   @Data
-   static class ProductDto {
-      public Long id;
-      public String code;
-      public String name;
-      public String mailingList;
-      public String poEmail;
-      public String poName;
-      public String poPhone;
-   }
+
 
    @PostMapping("products")
    public Long createProduct(@RequestBody ProductDto dto) {

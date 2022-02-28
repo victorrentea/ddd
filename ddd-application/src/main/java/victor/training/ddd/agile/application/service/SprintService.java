@@ -1,14 +1,20 @@
-package victor.training.ddd.agile;
+package victor.training.ddd.agile.application.service;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import victor.training.ddd.agile.Sprint.Status;
+import victor.training.ddd.agile.application.dto.AddBacklogItemRequest;
+import victor.training.ddd.agile.application.dto.CreateSprintRequest;
+import victor.training.ddd.agile.application.dto.LogHoursRequest;
+import victor.training.ddd.agile.application.dto.SprintMetrics;
+import victor.training.ddd.agile.domain.model.BacklogItem;
+import victor.training.ddd.agile.domain.model.Product;
+import victor.training.ddd.agile.domain.model.Sprint;
+import victor.training.ddd.agile.domain.model.Sprint.Status;
+import victor.training.ddd.agile.domain.repo.BacklogItemRepo;
+import victor.training.ddd.agile.domain.repo.ProductRepo;
+import victor.training.ddd.agile.domain.repo.SprintRepo;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,12 +26,6 @@ public class SprintService {
    private final ProductRepo productRepo;
    private final BacklogItemRepo backlogItemRepo;
    private final EmailService emailService;
-
-   @Data
-   static class CreateSprintRequest {
-      public Long productId;
-      public LocalDate plannedEnd;
-   }
 
    @PostMapping("sprint")
    public Long createSprint(@RequestBody CreateSprintRequest dto) {
@@ -69,15 +69,7 @@ public class SprintService {
       }
    }
 
-   @Data
-   static class SprintMetrics {
-      public int consumedHours;
-      public int doneFP;
-      public double fpVelocity;
-      public int hoursConsumedForNotDone;
-      public int calendarDays;
-      public int delayDays;
-   }
+
 
    @GetMapping("sprint/{id}/metrics")
    public SprintMetrics getSprintMetrics(@PathVariable long id) {
@@ -102,13 +94,7 @@ public class SprintService {
       return dto;
    }
 
-   @Data
-   @AllArgsConstructor
-   @NoArgsConstructor
-   static class AddBacklogItemRequest {
-      public long backlogId;
-      public int fpEstimation;
-   }
+
 
    @PostMapping("sprint/{sprintId}/add-item")
    public Long addItem(@PathVariable long sprintId, @RequestBody AddBacklogItemRequest request) {
@@ -150,13 +136,7 @@ public class SprintService {
       }
    }
 
-   @Data
-   @NoArgsConstructor
-   @AllArgsConstructor
-   static class LogHoursRequest {
-      public long backlogId;
-      public int hours;
-   }
+
 
    @PostMapping("sprint/{id}/log-hours")
    public void logHours(@PathVariable long id, @RequestBody LogHoursRequest request) {

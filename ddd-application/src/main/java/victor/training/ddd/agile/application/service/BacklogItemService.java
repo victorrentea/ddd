@@ -1,24 +1,19 @@
-package victor.training.ddd.agile;
+package victor.training.ddd.agile.application.service;
 
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import victor.training.ddd.agile.application.dto.BacklogItemDto;
+import victor.training.ddd.agile.domain.model.BacklogItem;
+import victor.training.ddd.agile.domain.model.Product;
+import victor.training.ddd.agile.domain.repo.BacklogItemRepo;
+import victor.training.ddd.agile.domain.repo.ProductRepo;
 
 @RestController
 @RequiredArgsConstructor
 public class BacklogItemService {
    private final BacklogItemRepo backlogItemRepo;
    private final ProductRepo productRepo;
-
-   @Data
-   static class BacklogItemDto {
-      public Long id;
-      public Long productId;
-      public String title;
-      public String description;
-      public Long version;
-   }
 
    @PostMapping("backlog")
    @Transactional

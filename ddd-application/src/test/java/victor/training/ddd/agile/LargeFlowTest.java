@@ -1,19 +1,17 @@
 package victor.training.ddd.agile;
 
 import org.junit.jupiter.api.Test;
-import victor.training.ddd.agile.BacklogItemService.BacklogItemDto;
-import victor.training.ddd.agile.ProductService.ProductDto;
-import victor.training.ddd.agile.SprintService.AddBacklogItemRequest;
-import victor.training.ddd.agile.SprintService.LogHoursRequest;
-import victor.training.ddd.agile.SprintService.CreateSprintRequest;
-import victor.training.ddd.agile.SprintService.SprintMetrics;
+import victor.training.ddd.agile.application.dto.*;
+import victor.training.ddd.agile.domain.model.Release;
 
 import java.time.LocalDate;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class LargeFlowTest extends SystemTestBase {
+
 
    @Test
    void longAndHappy() {

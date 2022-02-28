@@ -1,7 +1,8 @@
-package victor.training.ddd.agile;
+package victor.training.ddd.agile.application.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import victor.training.ddd.agile.domain.model.BacklogItem;
 
 import java.util.List;
 

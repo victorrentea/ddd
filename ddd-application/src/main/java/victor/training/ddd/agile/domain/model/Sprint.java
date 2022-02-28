@@ -1,19 +1,9 @@
-package victor.training.ddd.agile;
-
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
-import victor.training.ddd.agile.Sprint.Status;
-import victor.training.ddd.common.repo.CustomJpaRepository;
+package victor.training.ddd.agile.domain.model;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static javax.persistence.EnumType.STRING;
 
@@ -102,7 +92,7 @@ public class Sprint {
       end = LocalDate.now();
    }
 
-   void startItem(long backlogId) {
+   public void startItem(long backlogId) {
       if (status != Status.STARTED) {
          throw new IllegalStateException("Sprint not started");
       }
@@ -113,7 +103,7 @@ public class Sprint {
       return items.stream().filter(it -> it.getId() == backlogId).findFirst().orElseThrow();
    }
 
-   void completeItem(long backlogId) {
+   public void completeItem(long backlogId) {
       if (status != Status.STARTED) {
          throw new IllegalStateException("Sprint not started");
       }
@@ -121,7 +111,7 @@ public class Sprint {
       backlogItem.complete();
    }
 
-   void logHours(long backlogId, int hours) {
+   public void logHours(long backlogId, int hours) {
       BacklogItem backlogItem = backlogItemById(backlogId);
       if (status != Status.STARTED) {
          throw new IllegalStateException("Sprint not started");

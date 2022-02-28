@@ -1,4 +1,4 @@
-package victor.training.ddd.agile;
+package victor.training.ddd.agile.application.service;
 
 import org.springframework.stereotype.Service;
 

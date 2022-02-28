@@ -1,10 +1,6 @@
-package victor.training.ddd.agile;
+package victor.training.ddd.agile.domain.model;
 
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
-import victor.training.ddd.common.repo.CustomJpaRepository;
 
 import javax.persistence.*;
 import java.util.ArrayList;

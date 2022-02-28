@@ -1,9 +1,6 @@
-package victor.training.ddd.agile;
+package victor.training.ddd.agile.domain.model;
 
 import lombok.*;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
-import victor.training.ddd.common.repo.CustomJpaRepository;
 
 import javax.persistence.*;
 
