@@ -99,8 +99,8 @@ public class SprintService {
             // what if the item is NOT DONE at the end of the Sprint?!!
 
 
-
-      sprint.addItem(productBacklogItem, request.fpEstimation);
+      SprintBacklogItem sprintBacklogItem = new SprintBacklogItem(productBacklogItem.getProductId(), request.fpEstimation);
+      sprint.addItem(sprintBacklogItem, request.fpEstimation);
 
       return productBacklogItem.getId();
    }

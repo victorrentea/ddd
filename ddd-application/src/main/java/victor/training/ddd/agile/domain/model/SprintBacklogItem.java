@@ -13,7 +13,7 @@ public class SprintBacklogItem {
    //a: the involvment of a ProductBacklogItem in a Sprint
       // title description are preserved on PBI
       // a productBacklogItemId stored on the SprintBacklogId
-//   private Long productBacklogItemId;
+   private Long productBacklogItemId;
 
    //b: the entire representation of a backlog item during Sprint
       // a SprintBacklogItem replaces a ProdcutBacklogItem
@@ -33,17 +33,22 @@ public class SprintBacklogItem {
 
    // Sprint
    @Column(nullable = false) // NOT NULL
-   private Integer fpEstimation; // ⚠ not NULL when assigned to a sprint
-   private Integer hoursConsumed; // ⚠ not NULL when assigned to a sprint
+   private Integer fpEstimation;
+   private Integer hoursConsumed = 0;
+
+
+   public SprintBacklogItem(long productBacklogItemId, int fpEstimation) {
+      this.productBacklogItemId = productBacklogItemId;
+      this.fpEstimation = fpEstimation;
+   }
+
+   public Long getProductBacklogItemId() {
+      return productBacklogItemId;
+   }
 
 
    public Long getId() {
       return id;
-   }
-
-   public SprintBacklogItem setFpEstimation(Integer fpEstimation) {
-      this.fpEstimation = fpEstimation;
-      return this;
    }
 
    public void start() {

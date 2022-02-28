@@ -2,7 +2,6 @@ package victor.training.ddd.agile.domain.model;
 
 import org.springframework.data.domain.AbstractAggregateRoot;
 import victor.training.ddd.agile.domain.event.SprintFinishedEvent;
-import victor.training.ddd.agile.domain.model.SprintBacklogItem.Status;
 import victor.training.ddd.common.events.DomainEvents;
 
 import javax.persistence.*;
@@ -169,7 +168,6 @@ public class Sprint extends AbstractAggregateRoot<Sprint> {
          throw new IllegalStateException("Can only add items to Sprint before it starts");
       }
       items.add(item);
-      item.setFpEstimation(fpEstimation);
    }
 
    public boolean allItemsDone() {
