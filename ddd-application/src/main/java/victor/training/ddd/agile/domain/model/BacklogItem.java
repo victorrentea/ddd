@@ -33,6 +33,10 @@ public class BacklogItem {
       status = Status.DONE;
    }
 
+   public boolean isDone() {
+      return status == Status.DONE;
+   }
+
    public enum Status {
       CREATED,
       STARTED,

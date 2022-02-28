@@ -16,10 +16,8 @@ import victor.training.ddd.agile.domain.repo.ProductRepo;
 import victor.training.ddd.agile.domain.repo.SprintRepo;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
-@Transactional
 @RestController
 public class SprintService {
    private final SprintRepo sprintRepo;
@@ -44,6 +42,7 @@ public class SprintService {
 
    //   @Transactional // be mindful of this. be wary of performance (connection starvation issues)
    @PostMapping("sprint/{id}/start")
+   @Transactional
    public void startSprint(@PathVariable long id) {
       Sprint sprint = sprintRepo.findOneById(id);
       sprint.start();
@@ -53,32 +52,27 @@ public class SprintService {
 //      sprintMongoRepo.save(sprint);
 //       sprintRepo.save(sprint); //useless IF the entity is retrieved within an open Transaction (autoflushing)
    }
-
+   @Transactional
    @PostMapping("sprint/{id}/end")
    public void endSprint(@PathVariable long id) {
       Sprint sprint = sprintRepo.findOneById(id);
-      sprint.finish();
 
-      // TODO
-      List<BacklogItem> notDone = sprint.getItems().stream()
-          .filter(item -> item.getStatus() != BacklogItem.Status.DONE)
-          .collect(Collectors.toList());
-
+      List<BacklogItem> notDone = sprint.finish();
+//      List<BacklogItem> notDone = sprint.getItemsNotDone();
       if (notDone.size() >= 1) {
          Product product = productRepo.findOneById(sprint.getProductId());
          emailService.sendNotDoneItemsDebrief(product.getOwnerEmail(), notDone);
       }
+
+
    }
-
-
 
    @GetMapping("sprint/{id}/metrics")
    public SprintMetrics getSprintMetrics(@PathVariable long id) {
-      SprintMetrics dto = sprintMetricsService.computeMetrics(id);
-      return dto;
+      return sprintMetricsService.computeMetrics(id);
    }
 
-
+   @Transactional
    @PostMapping("sprint/{sprintId}/add-item")
    public Long addItem(@PathVariable long sprintId, @RequestBody AddBacklogItemRequest request) {
       BacklogItem backlogItem = backlogItemRepo.findOneById(request.backlogId);
@@ -92,7 +86,7 @@ public class SprintService {
       return backlogItem.getId();
    }
 
-
+   @Transactional
    @PostMapping("sprint/{id}/start-item/{backlogId}")
    public void startItem(@PathVariable long id, @PathVariable long backlogId) {
       // this should be blocked
@@ -107,6 +101,7 @@ public class SprintService {
    private final MailingListClient mailingListClient;
 
    @PostMapping("sprint/{id}/complete-item/{backlogId}")
+   @Transactional
    public void completeItem(@PathVariable long id, @PathVariable long backlogId) {
       Sprint sprint = sprintRepo.findOneById(id);
       sprint.completeItem(backlogId);
@@ -119,9 +114,8 @@ public class SprintService {
       }
    }
 
-
-
    @PostMapping("sprint/{id}/log-hours")
+   @Transactional
    public void logHours(@PathVariable long id, @RequestBody LogHoursRequest request) {
       Sprint sprint = sprintRepo.findOneById(id);
       sprint.logHours(request.backlogId, request.hours);

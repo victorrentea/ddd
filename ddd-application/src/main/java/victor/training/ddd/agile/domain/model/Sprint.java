@@ -5,7 +5,10 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.util.function.Predicate.not;
+import static java.util.stream.Collectors.toList;
 import static javax.persistence.EnumType.STRING;
+
 
 
 @Entity
@@ -91,12 +94,15 @@ public class Sprint {
       start = LocalDate.now();
    }
 
-   public void finish() {
+
+   public List<BacklogItem> finish() {
       if (status != Status.STARTED) {
          throw new IllegalStateException();
       }
       status = Status.FINISHED;
       end = LocalDate.now();
+
+      return  getItemsNotDone();
    }
 
    public void startItem(long backlogId) {
@@ -124,6 +130,12 @@ public class Sprint {
          throw new IllegalStateException("Sprint not started");
       }
       backlogItem.addHours(hours);
+   }
+
+   public List<BacklogItem> getItemsNotDone() {
+      return getItems().stream()
+          .filter(not(BacklogItem::isDone))
+           .collect(toList());
    }
 
    public enum Status {
