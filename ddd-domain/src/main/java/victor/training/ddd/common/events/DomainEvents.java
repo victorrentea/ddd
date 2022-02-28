@@ -33,6 +33,7 @@ public class DomainEvents {
 
    public static void publishEvent(Object domainEvent) {
       springPublisher.publishEvent(domainEvent);
+      System.out.println("AFTER ALL LISTENERS ARE NOTIFIED");
    }
 
    private static class NoopPublisher implements ApplicationEventPublisher {

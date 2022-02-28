@@ -54,7 +54,7 @@ public class SprintService {
 //      sprintMongoRepo.save(sprint);
 //       sprintRepo.save(sprint); //useless IF the entity is retrieved within an open Transaction (autoflushing)
    }
-
+@Transactional
    @PostMapping("sprint/{id}/end")
    public void endSprint(@PathVariable long id) {
       Sprint sprint = sprintRepo.findOneById(id);
@@ -64,6 +64,17 @@ public class SprintService {
       // events toall @EventListenters
    }
 
+
+   // Domain Events model explicitly the side effects that propagate between Aggregates
+
+   // processe in the same thread but different tx
+   //   @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+
+   // the most horror: different thread (thus, different transaction)
+//   @EventListener
+//   @Async
+
+   // processed in the same thread (and tx) as the publisher
    @EventListener
    public void onSprintFinishedEvent(SprintFinishedEvent event) {
       Sprint sprint = sprintRepo.findOneById(event.getSprintId());
@@ -72,7 +83,6 @@ public class SprintService {
          Product product = productRepo.findOneById(sprint.getProductId());
          emailService.sendNotDoneItemsDebrief(product.getOwnerEmail(), notDone);
       }
-
    }
 
    @GetMapping("sprint/{id}/metrics")

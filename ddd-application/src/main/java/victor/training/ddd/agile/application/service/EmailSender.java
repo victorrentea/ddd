@@ -8,5 +8,6 @@ public class EmailSender {
 	
 	public void sendEmail(String from, String to, String subject, String message) {
 		// implementation goes here. connect to SMTP...
+		System.out.println("Prented send email " + subject);
 	}
 }

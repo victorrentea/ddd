@@ -27,9 +27,9 @@ public class CheckEntitiesFromController implements BeanPostProcessor {
             if (Stream.of(method.getParameterTypes()).anyMatch(this::isJpaObject)) {
                throw new IllegalArgumentException("Method " + method + " takes JPA annotated object as parameter");
             }
-            if (isJpaObject(method.getReturnType())) {
-               throw new IllegalArgumentException("Method " + method + " returns JPA annotated object");
-            }
+//            if (isJpaObject(method.getReturnType())) {
+//               throw new IllegalArgumentException("Method " + method + " returns JPA annotated object");
+//            }
          }
       }
       return BeanPostProcessor.super.postProcessBeforeInitialization(bean, beanName);

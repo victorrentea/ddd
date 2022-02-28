@@ -2,6 +2,7 @@ package victor.training.ddd.agile.domain.model;
 
 import org.springframework.data.domain.AbstractAggregateRoot;
 import victor.training.ddd.agile.domain.event.SprintFinishedEvent;
+import victor.training.ddd.common.events.DomainEvents;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -104,9 +105,18 @@ public class Sprint extends AbstractAggregateRoot<Sprint> {
       status = Status.FINISHED;
       end = LocalDate.now();
 
-//      DomainEvents.publishEvent(new SprintFinishedEvent(id)); // more reusable
-      registerEvent(new SprintFinishedEvent(id));
+      DomainEvents.publishEvent(new SprintFinishedEvent(id)); // more reusable
+//      registerEvent(new SprintFinishedEvent(id));
    }
+
+   // banning to keep references to other Aggregates and/or Spring manged beans *Service/Repo
+   // aims to make calling methods in an aggregate SAFE. The worse that can happen is
+   // 1 changes to fields of the aggregate
+   // 2 a Domain Event might have been published.
+//   @ManyToOne
+//   private Product product;
+//   @Autowired
+//   private SprintRepo sprintRepo;
 
    public void startItem(long backlogId) {
       if (status != Status.STARTED) {
