@@ -55,11 +55,13 @@ public class SprintService {
 //       sprintRepo.save(sprint); //useless IF the entity is retrieved within an open Transaction (autoflushing)
    }
 
-   @Transactional
    @PostMapping("sprint/{id}/end")
    public void endSprint(@PathVariable long id) {
       Sprint sprint = sprintRepo.findOneById(id);
       sprint.finish();
+      sprintRepo.save(sprint); // you have to call .save on a spring Data repo. Then spring will call the
+      // ,method annotated with @DomainEvents (inherited from AbstractAggregateRoot) and then publish the
+      // events toall @EventListenters
    }
 
    @EventListener

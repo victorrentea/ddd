@@ -1,7 +1,7 @@
 package victor.training.ddd.agile.domain.model;
 
+import org.springframework.data.domain.AbstractAggregateRoot;
 import victor.training.ddd.agile.domain.event.SprintFinishedEvent;
-import victor.training.ddd.common.events.DomainEvents;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -16,7 +16,7 @@ import static javax.persistence.EnumType.STRING;
 
 @Entity
 // AggregateRoot is responsible to enforce all contraints spanning bETWEEN the entities inside this Aggregate
-public class Sprint {
+public class Sprint extends AbstractAggregateRoot<Sprint> {
    @Id
    @GeneratedValue
    private Long id;
@@ -104,7 +104,8 @@ public class Sprint {
       status = Status.FINISHED;
       end = LocalDate.now();
 
-      DomainEvents.publishEvent(new SprintFinishedEvent(id)); // more reusable
+//      DomainEvents.publishEvent(new SprintFinishedEvent(id)); // more reusable
+      registerEvent(new SprintFinishedEvent(id));
    }
 
    public void startItem(long backlogId) {
