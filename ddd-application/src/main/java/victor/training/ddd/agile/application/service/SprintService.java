@@ -91,10 +91,21 @@ public class SprintService {
       ProductBacklogItem productBacklogItem = productBacklogItemRepo.findOneById(request.backlogId);
       Sprint sprint = sprintRepo.findOneById(sprintId);
 
+      // WE PLAY A:
+      // a: new SprintBacklogItem(productBacklogItem.id)
+
+      // b: new SprintBacklogItem(productBacklogItem.title, .description)
+            // + DELETE ProductBacklogItem because I do not want to duplicate title+descr OR FREEZE
+            // what if the item is NOT DONE at the end of the Sprint?!!
+
+
+
       sprint.addItem(productBacklogItem, request.fpEstimation);
 
       return productBacklogItem.getId();
    }
+
+
 
    @Transactional
    @PostMapping("sprint/{id}/start-item/{backlogId}")

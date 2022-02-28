@@ -1,9 +1,6 @@
 package victor.training.ddd.agile.domain.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 import static javax.persistence.EnumType.STRING;
 
@@ -13,6 +10,18 @@ public class SprintBacklogItem {
    @Id
    @GeneratedValue
    private Long id;
+   //a: the involvment of a ProductBacklogItem in a Sprint
+      // title description are preserved on PBI
+      // a productBacklogItemId stored on the SprintBacklogId
+//   private Long productBacklogItemId;
+
+   //b: the entire representation of a backlog item during Sprint
+      // a SprintBacklogItem replaces a ProdcutBacklogItem
+      // title+description in another entity (in 2 tables)
+//   private String title;
+//   private String description;
+//   @Version
+//   private Long version;
 
    public enum Status { // Sprint
       CREATED,
@@ -23,6 +32,7 @@ public class SprintBacklogItem {
    private Status status = Status.CREATED;  // Sprint
 
    // Sprint
+   @Column(nullable = false) // NOT NULL
    private Integer fpEstimation; // ⚠ not NULL when assigned to a sprint
    private Integer hoursConsumed; // ⚠ not NULL when assigned to a sprint
 
