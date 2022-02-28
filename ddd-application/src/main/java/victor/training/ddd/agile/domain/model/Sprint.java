@@ -23,6 +23,13 @@ public class Sprint {
    private LocalDate plannedEnd;
    private LocalDate end;
 
+   private Sprint() {} // just for Hibernate - it still works as private
+
+   public Sprint(long productId, int iteration) {
+      this.productId = productId;
+      this.iteration = iteration;
+   }
+
    public Long getProductId() {
       return productId;
    }

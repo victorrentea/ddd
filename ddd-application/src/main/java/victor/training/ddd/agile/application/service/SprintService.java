@@ -18,22 +18,21 @@ import victor.training.ddd.agile.domain.repo.SprintRepo;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 @Transactional
 @RestController
-@RequiredArgsConstructor
 public class SprintService {
    private final SprintRepo sprintRepo;
    private final ProductRepo productRepo;
    private final BacklogItemRepo backlogItemRepo;
    private final EmailService emailService;
+   private final SprintMetricsService sprintMetricsService;
 
    @PostMapping("sprint")
    public Long createSprint(@RequestBody CreateSprintRequest dto) {
       Product product = productRepo.findOneById(dto.productId);
-      Sprint sprint = new Sprint()
-          .setIteration(product.incrementAndGetIteration())
-          .setProductId(product.getId())
-          .setPlannedEnd(dto.plannedEnd);
+      Sprint sprint = new Sprint(product.getId(), product.incrementAndGetIteration())
+          .setPlannedEnd(dto.plannedEnd); // i imagine that some other use case might leave the sprint without a planned end.
       return sprintRepo.save(sprint).getId();
    }
 
@@ -41,6 +40,7 @@ public class SprintService {
    public Sprint getSprint(@PathVariable long id) {
       return sprintRepo.findOneById(id);
    }
+   // TODO move to SprintDto
 
    //   @Transactional // be mindful of this. be wary of performance (connection starvation issues)
    @PostMapping("sprint/{id}/start")
@@ -59,6 +59,7 @@ public class SprintService {
       Sprint sprint = sprintRepo.findOneById(id);
       sprint.finish();
 
+      // TODO
       List<BacklogItem> notDone = sprint.getItems().stream()
           .filter(item -> item.getStatus() != BacklogItem.Status.DONE)
           .collect(Collectors.toList());
@@ -73,27 +74,9 @@ public class SprintService {
 
    @GetMapping("sprint/{id}/metrics")
    public SprintMetrics getSprintMetrics(@PathVariable long id) {
-      Sprint sprint = sprintRepo.findOneById(id);
-      if (sprint.getStatus() != Status.FINISHED) {
-         throw new IllegalStateException();
-      }
-      List<BacklogItem> doneItems = sprint.getItems().stream()
-          .filter(item -> item.getStatus() == BacklogItem.Status.DONE)
-          .collect(Collectors.toList());
-      SprintMetrics dto = new SprintMetrics();
-      dto.consumedHours = sprint.getItems().stream().mapToInt(BacklogItem::getHoursConsumed).sum();
-      dto.calendarDays = sprint.getStart().until(sprint.getEnd()).getDays();
-      dto.doneFP = doneItems.stream().mapToInt(BacklogItem::getFpEstimation).sum();
-      dto.fpVelocity = 1.0 * dto.doneFP / dto.consumedHours;
-      dto.hoursConsumedForNotDone = sprint.getItems().stream()
-          .filter(item -> item.getStatus() != BacklogItem.Status.DONE)
-          .mapToInt(BacklogItem::getHoursConsumed).sum();
-      if (sprint.getEnd().isAfter(sprint.getPlannedEnd())) {
-         dto.delayDays = sprint.getPlannedEnd().until(sprint.getEnd()).getDays();
-      }
+      SprintMetrics dto = sprintMetricsService.computeMetrics(id);
       return dto;
    }
-
 
 
    @PostMapping("sprint/{sprintId}/add-item")

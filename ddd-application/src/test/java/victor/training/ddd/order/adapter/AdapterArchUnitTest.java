@@ -12,9 +12,9 @@ public class AdapterArchUnitTest {
       JavaClasses classes = new ClassFileImporter().importPackages("victor.training");
 
       ClassesShouldConjunction domainDoesnDependOnInfra = ArchRuleDefinition.noClasses()
-          .that().resideInAPackage("..adapter.domain")
+          .that().resideInAPackage("..domain..")
           .should()
-          .dependOnClassesThat().resideInAPackage("..adapter.infra");
+          .dependOnClassesThat().resideInAPackage("..application..");
 
       domainDoesnDependOnInfra.check(classes);
    }

@@ -3,6 +3,7 @@ package victor.training.ddd.agile;
 import org.junit.jupiter.api.Test;
 import victor.training.ddd.agile.application.dto.*;
 import victor.training.ddd.agile.domain.model.Release;
+import victor.training.ddd.agile.application.dto.SprintMetrics;
 
 import java.time.LocalDate;
 import java.util.List;
