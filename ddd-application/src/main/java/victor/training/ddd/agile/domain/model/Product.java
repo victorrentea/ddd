@@ -24,8 +24,9 @@ public class Product {
 
    private String teamMailingList;
 
-   @OneToMany(mappedBy = "product")
-   private List<BacklogItem> backlogItems = new ArrayList<>();
+//   @OneToMany
+//   @JoinColumn
+//   private List<BacklogItem> backlogItems = new ArrayList<>();
 //   @OneToMany(mappedBy = "product")
 //   private List<Sprint> sprints = new ArrayList<>();
    @OneToMany(mappedBy = "product")

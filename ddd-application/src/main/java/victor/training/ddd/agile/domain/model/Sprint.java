@@ -2,6 +2,7 @@ package victor.training.ddd.agile.domain.model;
 
 import org.springframework.data.domain.AbstractAggregateRoot;
 import victor.training.ddd.agile.domain.event.SprintFinishedEvent;
+import victor.training.ddd.agile.domain.model.SprintBacklogItem.Status;
 import victor.training.ddd.common.events.DomainEvents;
 
 import javax.persistence.*;
@@ -12,7 +13,6 @@ import java.util.List;
 import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toList;
 import static javax.persistence.EnumType.STRING;
-
 
 
 @Entity
@@ -29,6 +29,19 @@ public class Sprint extends AbstractAggregateRoot<Sprint> {
    private LocalDate start;
    private LocalDate plannedEnd;
    private LocalDate end;
+
+   public enum Status {
+      CREATED,
+      STARTED,
+      FINISHED
+   }
+
+   @Enumerated(STRING)
+   private Status status = Status.CREATED;
+
+   @OneToMany // unidirectional
+   @JoinColumn // adds a SPRINT_ID column to BACKLOG_ITEM table.!!!
+   private List<SprintBacklogItem> items = new ArrayList<>();
 
    private Sprint() {} // just for Hibernate - it still works as private
 
@@ -70,7 +83,7 @@ public class Sprint extends AbstractAggregateRoot<Sprint> {
       return status;
    }
 
-   public List<BacklogItem> getItems() {
+   public List<SprintBacklogItem> getItems() {
       return items;
    }
 
@@ -125,7 +138,7 @@ public class Sprint extends AbstractAggregateRoot<Sprint> {
       backlogItemById(backlogId).start();
    }
 
-   private BacklogItem backlogItemById(long backlogId) {
+   private SprintBacklogItem backlogItemById(long backlogId) {
       return items.stream().filter(it -> it.getId() == backlogId).findFirst().orElseThrow();
    }
 
@@ -133,48 +146,36 @@ public class Sprint extends AbstractAggregateRoot<Sprint> {
       if (status != Status.STARTED) {
          throw new IllegalStateException("Sprint not started");
       }
-      BacklogItem backlogItem = backlogItemById(backlogId);
-      backlogItem.complete();
+      SprintBacklogItem item = backlogItemById(backlogId);
+      item.complete();
    }
 
    public void logHours(long backlogId, int hours) {
-      BacklogItem backlogItem = backlogItemById(backlogId);
+      SprintBacklogItem item = backlogItemById(backlogId);
       if (status != Status.STARTED) {
          throw new IllegalStateException("Sprint not started");
       }
-      backlogItem.addHours(hours);
+      item.addHours(hours);
    }
 
-   public List<BacklogItem> getItemsNotDone() {
+   public List<SprintBacklogItem> getItemsNotDone() {
       return getItems().stream()
-          .filter(not(BacklogItem::isDone))
+          .filter(not(SprintBacklogItem::isDone))
            .collect(toList());
    }
 
-   public void addItem(BacklogItem backlogItem, int fpEstimation) {
+   public void addItem(SprintBacklogItem item, int fpEstimation) {
       if (status != Status.CREATED) {
          throw new IllegalStateException("Can only add items to Sprint before it starts");
       }
-      items.add(backlogItem);
-      backlogItem.setFpEstimation(fpEstimation);
+      items.add(item);
+      item.setFpEstimation(fpEstimation);
    }
 
    public boolean allItemsDone() {
-      return getItems().stream().allMatch(item -> item.getStatus() == BacklogItem.Status.DONE);
+      return getItems().stream().allMatch(item -> item.getStatus() == SprintBacklogItem.Status.DONE);
    }
 
-   public enum Status {
-      CREATED,
-      STARTED,
-      FINISHED
-   }
-
-   @Enumerated(STRING)
-   private Status status = Status.CREATED;
-
-   @OneToMany // unidirectional
-   @JoinColumn // adds a SPRINT_ID column to BACKLOG_ITEM table.!!!
-   private List<BacklogItem> items = new ArrayList<>();
 
 }
 

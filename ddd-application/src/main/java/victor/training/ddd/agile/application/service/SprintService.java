@@ -9,10 +9,11 @@ import victor.training.ddd.agile.application.dto.CreateSprintRequest;
 import victor.training.ddd.agile.application.dto.LogHoursRequest;
 import victor.training.ddd.agile.application.dto.SprintMetrics;
 import victor.training.ddd.agile.domain.event.SprintFinishedEvent;
-import victor.training.ddd.agile.domain.model.BacklogItem;
+import victor.training.ddd.agile.domain.model.ProductBacklogItem;
 import victor.training.ddd.agile.domain.model.Product;
 import victor.training.ddd.agile.domain.model.Sprint;
-import victor.training.ddd.agile.domain.repo.BacklogItemRepo;
+import victor.training.ddd.agile.domain.model.SprintBacklogItem;
+import victor.training.ddd.agile.domain.repo.ProductBacklogItemRepo;
 import victor.training.ddd.agile.domain.repo.ProductRepo;
 import victor.training.ddd.agile.domain.repo.SprintRepo;
 
@@ -23,7 +24,7 @@ import java.util.List;
 public class SprintService {
    private final SprintRepo sprintRepo;
    private final ProductRepo productRepo;
-   private final BacklogItemRepo backlogItemRepo;
+   private final ProductBacklogItemRepo productBacklogItemRepo;
    private final EmailService emailService;
    private final SprintMetricsService sprintMetricsService;
 
@@ -72,7 +73,7 @@ public class SprintService {
    @EventListener
    public void onSprintFinishedEvent(SprintFinishedEvent event) {
       Sprint sprint = sprintRepo.findOneById(event.getSprintId());
-      List<BacklogItem> notDone = sprint.getItemsNotDone();
+      List<SprintBacklogItem> notDone = sprint.getItemsNotDone();
       if (notDone.size() >= 1) {
          Product product = productRepo.findOneById(sprint.getProductId());
          emailService.sendNotDoneItemsDebrief(product.getOwnerEmail(), notDone);
@@ -87,12 +88,12 @@ public class SprintService {
    @Transactional
    @PostMapping("sprint/{sprintId}/add-item")
    public Long addItem(@PathVariable long sprintId, @RequestBody AddBacklogItemRequest request) {
-      BacklogItem backlogItem = backlogItemRepo.findOneById(request.backlogId);
+      ProductBacklogItem productBacklogItem = productBacklogItemRepo.findOneById(request.backlogId);
       Sprint sprint = sprintRepo.findOneById(sprintId);
 
-      sprint.addItem(backlogItem, request.fpEstimation);
+      sprint.addItem(productBacklogItem, request.fpEstimation);
 
-      return backlogItem.getId();
+      return productBacklogItem.getId();
    }
 
    @Transactional

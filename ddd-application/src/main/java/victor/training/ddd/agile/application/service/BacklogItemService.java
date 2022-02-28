@@ -4,56 +4,49 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import victor.training.ddd.agile.application.dto.BacklogItemDto;
-import victor.training.ddd.agile.domain.model.BacklogItem;
-import victor.training.ddd.agile.domain.model.Product;
-import victor.training.ddd.agile.domain.repo.BacklogItemRepo;
-import victor.training.ddd.agile.domain.repo.ProductRepo;
+import victor.training.ddd.agile.domain.model.ProductBacklogItem;
+import victor.training.ddd.agile.domain.repo.ProductBacklogItemRepo;
 
 @RestController
 @RequiredArgsConstructor
 public class BacklogItemService {
-   private final BacklogItemRepo backlogItemRepo;
-   private final ProductRepo productRepo;
+   private final ProductBacklogItemRepo productBacklogItemRepo;
 
    @PostMapping("backlog")
    @Transactional
    public Long createBacklogItem(@RequestBody BacklogItemDto dto) {
-      Product product = productRepo.findOneById(dto.productId);
-      BacklogItem backlogItem = new BacklogItem()
-          .setProduct(product)
-          .setDescription(dto.description)
-          .setTitle(dto.title);
-      product.getBacklogItems().add(backlogItem);
-      return backlogItemRepo.save(backlogItem).getId();
+      ProductBacklogItem productBacklogItem = new ProductBacklogItem(dto.productId)
+          .setContents(dto.title, dto.description)
+          ;
+
+      return productBacklogItemRepo.save(productBacklogItem).getId();
    }
 
    @GetMapping("backlog/{id}")
    public BacklogItemDto getBacklogItem(@PathVariable long id) {
-      BacklogItem backlogItem = backlogItemRepo.findOneById(id);
+      ProductBacklogItem productBacklogItem = productBacklogItemRepo.findOneById(id);
       BacklogItemDto dto = new BacklogItemDto();
-      dto.id = backlogItem.getId();
+      dto.id = productBacklogItem.getId();
 
-      dto.productId = backlogItem.getProduct().getId();
-      dto.description = backlogItem.getDescription();
-      dto.title = backlogItem.getTitle();
-      dto.version = backlogItem.getVersion();
+      dto.productId = productBacklogItem.getProductId();
+      dto.description = productBacklogItem.getDescription();
+      dto.title = productBacklogItem.getTitle();
+      dto.version = productBacklogItem.getVersion();
       return dto;
    }
 
    @PutMapping("backlog")
+   @Transactional
    public void updateBacklogItem(@RequestBody BacklogItemDto dto) {
       // TODO if Backlog Item is COMPLETED, reject the update
-      BacklogItem backlogItem = new BacklogItem()
-          .setId(dto.id)
-          .setProduct(productRepo.findOneById(dto.productId))
-          .setDescription(dto.description)
-          .setTitle(dto.title)
+      ProductBacklogItem item = productBacklogItemRepo.findOneById(dto.id);
+      item
+          .setContents(dto.title, dto.description)
           .setVersion(dto.version);
-      backlogItemRepo.save(backlogItem);
    }
 
    @DeleteMapping("backlog/{id}")
    public void deleteBacklogItem(@PathVariable long id) {
-      backlogItemRepo.deleteById(id);
+      productBacklogItemRepo.deleteById(id);
    }
 }

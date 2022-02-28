@@ -1,39 +1,40 @@
 package victor.training.ddd.agile.domain.model;
 
-import lombok.*;
-
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
 import static javax.persistence.EnumType.STRING;
 
-@Getter
-@Setter
-@NoArgsConstructor
 @Entity
 // Child Entity of the Sprint Aggregate
-public class BacklogItem {
+public class SprintBacklogItem {
    @Id
    @GeneratedValue
    private Long id;
-   public enum Status {
+
+   public enum Status { // Sprint
       CREATED,
       STARTED,
       DONE
    }
    @Enumerated(STRING)
-   private Status status = Status.CREATED;
+   private Status status = Status.CREATED;  // Sprint
 
+   // Sprint
    private Integer fpEstimation; // ⚠ not NULL when assigned to a sprint
    private Integer hoursConsumed; // ⚠ not NULL when assigned to a sprint
 
-   @Version
-   private Long version;
-   @ManyToOne
-   private Product product;
-//   private Long productId;
 
-   private String title;
-   private String description;
+   public Long getId() {
+      return id;
+   }
+
+   public SprintBacklogItem setFpEstimation(Integer fpEstimation) {
+      this.fpEstimation = fpEstimation;
+      return this;
+   }
 
    public void start() {
       if (status != Status.CREATED) {
@@ -54,11 +55,22 @@ public class BacklogItem {
 
 
    public void addHours(int hours) {
-      if (this.status != BacklogItem.Status.STARTED) {
+      if (status != Status.STARTED) {
          throw new IllegalStateException("Item not started");
       }
       hoursConsumed += hours;
    }
 
-}
+   public Status getStatus() {
+      return status;
+   }
 
+   public Integer getFpEstimation() {
+      return fpEstimation;
+   }
+
+   public Integer getHoursConsumed() {
+      return hoursConsumed;
+   }
+
+}

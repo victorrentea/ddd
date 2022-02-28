@@ -5,7 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
-import victor.training.ddd.agile.domain.model.BacklogItem;
+import victor.training.ddd.agile.domain.model.ProductBacklogItem;
 import victor.training.ddd.agile.domain.model.Product;
 import victor.training.ddd.agile.domain.model.Release;
 import victor.training.ddd.agile.domain.model.Sprint;
@@ -38,7 +38,7 @@ public class ReleaseService {
       int toIteration = sprint.getIteration();
 
       List<Sprint> sprints = sprintRepo.findAllByProductId(sprint.getProductId());
-      List<BacklogItem> releasedItems = sprints.stream()
+      List<ProductBacklogItem> releasedItems = sprints.stream()
           .sorted(Comparator.comparing(Sprint::getIteration))
           .filter(s -> s.getIteration() > fromIteration && s.getIteration() <= toIteration)
           .flatMap(s -> s.getItems().stream())
