@@ -8,9 +8,9 @@ import victor.training.ddd.agile.application.service.*;
 @SpringBootTest
 public abstract class SystemTestBase {
    @Autowired
-   ProductService products;
+   ProductService productApi;
    @Autowired
-   BacklogItemService backlogItems;
+   BacklogItemService backlogItemApi;
    @Autowired
    SprintService sprintService;
    @Autowired

@@ -22,7 +22,8 @@ public class ProductService {
          throw new IllegalArgumentException("Code already defined");
       }
       ProductOwner po = new ProductOwner(dto.poEmail, dto.poName, dto.poPhone);
-      Product product = new Product(dto.code, dto.name, dto.mailingList, po);
+      Product product = new Product(dto.code, dto.name, po)
+          .setTeamMailingList(dto.mailingList);
       return productRepo.save(product).getId();
    }
 
@@ -33,7 +34,7 @@ public class ProductService {
       dto.id = product.getId();
       dto.name = product.getName();
       dto.code = product.getCode();
-      dto.mailingList = product.getTeamMailingList();
+      dto.mailingList = product.getTeamMailingList().orElse(null);
       return dto;
    }
 }

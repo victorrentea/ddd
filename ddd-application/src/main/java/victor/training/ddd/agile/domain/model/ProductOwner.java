@@ -1,19 +1,25 @@
 package victor.training.ddd.agile.domain.model;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import java.util.Objects;
+import java.util.Optional;
 
 @Embeddable // VALUE OBJECT
 public class ProductOwner {
-   private String email;
+   @Column(nullable = false)
    private String name;
+   @Column(nullable = false)
+   private String email;
+//   @Column(name = "OWNER_PHONE")
    private String phone;
 
    private ProductOwner() {
    }
 
    public ProductOwner(String email, String name, String phone) {
-      this.email = email;
-      this.name = name;
+      this.name = Objects.requireNonNull(name);
+      this.email = Objects.requireNonNull(email);
       this.phone = phone;
    }
 
@@ -25,7 +31,7 @@ public class ProductOwner {
       return email;
    }
 
-   public String getPhone() {
-      return phone;
+   public Optional<String> getPhone() {
+      return Optional.ofNullable(phone);
    }
 }

@@ -13,17 +13,16 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class WorkflowTest extends SystemTestBase {
 
-
    @Test
    void integrationTest() {
       ProductDto productDto = new ProductDto()
           .setCode("PNM")
           .setName("::ProductName::")
           .setMailingList("::MailList::");
-      Long productId = products.createProduct(productDto);
-      assertThatThrownBy(() -> products.createProduct(productDto)).describedAs("cannot create with same code");
+      Long productId = productApi.createProduct(productDto);
+      assertThatThrownBy(() -> productApi.createProduct(productDto)).describedAs("cannot create with same code");
 
-      assertThat(products.getProduct(productId))
+      assertThat(productApi.getProduct(productId))
           .extracting(ProductDto::getCode, ProductDto::getName, ProductDto::getMailingList)
           .isEqualTo(List.of("PNM", "::ProductName::", "::MailList::"));
 
@@ -36,16 +35,18 @@ public class WorkflowTest extends SystemTestBase {
           .matches(s -> s.getPlannedEnd().isAfter(LocalDate.now().plusDays(13)));
 
 
-      Long backlogItemId = backlogItems.createBacklogItem(new BacklogItemDto()
-          .setProductId(productId).setTitle("::item1::").setDescription("::descr::"));
+      Long productBacklogItemId = backlogItemApi.createBacklogItem(new BacklogItemDto()
+          .setProductId(productId)
+          .setTitle("::item1::")
+          .setDescription("::descr::"));
 
-      BacklogItemDto backlogDto = backlogItems.getBacklogItem(backlogItemId);
+      BacklogItemDto backlogDto = backlogItemApi.getBacklogItem(productBacklogItemId);
       backlogDto.description += "More Text";
-      backlogItems.updateBacklogItem(backlogDto);
+      backlogItemApi.updateBacklogItem(backlogDto);
 
       String itemId = sprintService.addItem(sprintId, new AddBacklogItemRequest()
           .setFpEstimation(2)
-          .setBacklogId(backlogItemId));
+          .setBacklogId(productBacklogItemId));
 
       sprintService.startSprint(sprintId);
       assertThatThrownBy(() -> sprintService.startSprint(sprintId)).describedAs("cannot start again");
@@ -72,7 +73,7 @@ public class WorkflowTest extends SystemTestBase {
       assertThat(release.getVersion()).isEqualTo("1.0");
 
       // try to update a done backlog item
-      BacklogItemDto backlogDto2 = backlogItems.getBacklogItem(backlogItemId);
+      BacklogItemDto backlogDto2 = backlogItemApi.getBacklogItem(productBacklogItemId);
       backlogDto2.description += "IllegalChange";
       // TODO Victor 2022-03-01: uncomment (change request):
 //      assertThatThrownBy(() -> backlogItems.updateBacklogItem(backlogDto2)).describedAs("cannot edit done item");

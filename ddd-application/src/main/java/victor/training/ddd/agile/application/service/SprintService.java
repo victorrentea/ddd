@@ -1,8 +1,14 @@
 package victor.training.ddd.agile.application.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.web.bind.annotation.*;
 import victor.training.ddd.agile.application.dto.AddBacklogItemRequest;
 import victor.training.ddd.agile.application.dto.CreateSprintRequest;
@@ -21,6 +27,7 @@ import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 public class SprintService {
@@ -89,30 +96,44 @@ public class SprintService {
       return sprintMetricsService.computeMetrics(id);
    }
 
-//   @Transactional // TODO Victor 2022-03-01: Not needed anymore
+   @Transactional
    @PostMapping("sprint/{sprintId}/add-item")
    public String addItem(@PathVariable long sprintId, @RequestBody AddBacklogItemRequest request) {
       Sprint sprint = sprintRepo.findOneById(sprintId);
 
-      // WE PLAY A:
-      // a: new SprintBacklogItem(productBacklogItem.id)
 
-      // b: new SprintBacklogItem(productBacklogItem.title, .description)
-            // + DELETE ProductBacklogItem because I do not want to duplicate title+descr OR FREEZE
-            // what if the item is NOT DONE at the end of the Sprint?!!
-
-
-      SprintBacklogItem sprintBacklogItem = new SprintBacklogItem(request.backlogId, request.fpEstimation);
+      SprintBacklogItem sprintBacklogItem = new SprintBacklogItem(request.backlogId, request.fpEstimation)
+//          .setId(request.desiredId)
+//          .setId(sprintRepo.newId())
+          ;
       sprint.addItem(sprintBacklogItem);
-      sprint = sprintRepo.save(sprint); // TODO Victor 2022-03-01: flush children, assign id
-      return sprintBacklogItem.getId();
 
+      // CR: send Kafka message after item is added to sprint
+      publisher.publishEvent(new ItemAddedEvent(sprintBacklogItem.getId()));
+
+      return sprintBacklogItem.getId();
       // TODO Victor 2022-03-01: ID of sprintBacklogItem is not set on the item instance above
-      // a) share PK with PBI
-      // b) move to manually generated PF for SBI (eg UUID)
-      // c) [hard] switch to 'local IDs for PBI' : composite PK (SprintId, IndexInSprint)
+      // a) manually assign ID > give up @GeneratedValue
+      // b) UUID: move to manually generated PK for SBI (eg UUID) > BRUTAL because I had to move from Long to String
+             // not DEV friendly> hack short-UUID in pre prod envs.
+      // c) SprintBacklogItem to share the PK with ProductBacklogItem < DROP because there could be 2 SBI linked to the same 1 PBI
+      // d) [hard] switch to 'local IDs for PBI' : SBI to have a composite PK (SprintId, IndexInSprint)
    }
 
+   @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+   public void afterItemAddedTxCommited(ItemAddedEvent event) {
+      log.debug("After tx sending to kafka " + event.sprintBacklogItemId);
+//      mq.send(sprintBacklogItem.getId());
+
+   }
+
+   @Autowired
+   private ApplicationEventPublisher publisher;
+
+   @Value
+   public static class ItemAddedEvent {
+      String sprintBacklogItemId;
+   }
 
 
    @Transactional

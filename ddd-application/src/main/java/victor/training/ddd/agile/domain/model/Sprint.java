@@ -40,7 +40,9 @@ public class Sprint extends AbstractAggregateRoot<Sprint> {
    @Enumerated(STRING)
    private Status status = Status.CREATED;
 
-   @OneToMany(cascade = ALL, orphanRemoval = true, fetch = FetchType.EAGER) // unidirectional // TODO Tue
+   @OneToMany(cascade =ALL, orphanRemoval = true,
+       fetch = FetchType.EAGER // even if it's a bad practice, you may want this to avoid LAZY LOADING > allow you to NOT keep @Transaction one
+   ) // unidirectional // TODO Tue
    @JoinColumn // adds a SPRINT_ID column to BACKLOG_ITEM table.!!!
    private List<SprintBacklogItem> items = new ArrayList<>();
 

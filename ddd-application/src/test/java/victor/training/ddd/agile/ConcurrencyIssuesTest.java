@@ -8,25 +8,25 @@ public class ConcurrencyIssuesTest extends SystemTestBase{
 
    @Test
    void lazyUser() {
-      Long productId = products.createProduct(new ProductDto()
+      Long productId = productApi.createProduct(new ProductDto()
           .setName("::name::")
           .setCode("PNM")
           .setMailingList("a"));
 
-      Long itemId = backlogItems.createBacklogItem(new BacklogItemDto()
+      Long itemId = backlogItemApi.createBacklogItem(new BacklogItemDto()
           .setProductId(productId)
           .setTitle("Vreau ceva da nu stiu ce"));
 
 
-      /* joe */ BacklogItemDto dataSentToBrowser1 = backlogItems.getBacklogItem(itemId);
+      /* joe */ BacklogItemDto dataSentToBrowser1 = backlogItemApi.getBacklogItem(itemId);
       /* joe */ dataSentToBrowser1.description ="sa faca inghetata";
       /* joe */ // leaves for lunch without saving
 
-      /* bob */ BacklogItemDto dataSentToBrowser2 = backlogItems.getBacklogItem(itemId);
+      /* bob */ BacklogItemDto dataSentToBrowser2 = backlogItemApi.getBacklogItem(itemId);
       /* bob */ dataSentToBrowser2.description="rachete!";
-      /* bob */ backlogItems.updateBacklogItem(dataSentToBrowser2);
+      /* bob */ backlogItemApi.updateBacklogItem(dataSentToBrowser2);
 
       /* joe */ // returns from lunch
-      /* joe */ backlogItems.updateBacklogItem(dataSentToBrowser1);
+      /* joe */ backlogItemApi.updateBacklogItem(dataSentToBrowser1);
    }
 }

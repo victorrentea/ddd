@@ -1,6 +1,7 @@
 package victor.training.ddd.agile.application.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import victor.training.ddd.agile.domain.model.ProductBacklogItem;
 import victor.training.ddd.agile.domain.model.Product;
@@ -10,6 +11,7 @@ import java.util.List;
 
 import static java.util.stream.Collectors.joining;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class EmailService {
@@ -18,11 +20,13 @@ public class EmailService {
    private final MailingListClient mailingListClient;
 
    public void sendCongratsEmail(Long productId) {
-
       Product product = productRepo.findOneById(productId);
+      if (product.getTeamMailingList().isEmpty()) {
+         log.error("NO mailing list on project");
+         return;
+      }
       System.out.println("Sending CONGRATS email to team of product " + product.getCode() + ": They finished the items earlier. They have time to refactor! (OMG!)");
-      List<String> emails = mailingListClient.retrieveEmails(product.getTeamMailingList());
-
+      List<String> emails = mailingListClient.retrieveEmails(product.getTeamMailingList().get());
       emailSender.sendEmail("happy@corp.intra", String.join(";", emails), "Congrats!",
           "You have finished the sprint earlier. You have more time for refactor!");
    }

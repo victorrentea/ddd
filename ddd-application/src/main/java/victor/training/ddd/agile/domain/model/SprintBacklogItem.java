@@ -12,13 +12,20 @@ import static javax.persistence.EnumType.STRING;
 @Entity
 // Child Entity of the Sprint Aggregate
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
+//@Table(uniqueConstraints = {@UniqueConstraint()})
 public class SprintBacklogItem {
+//   @Id
+//   @GeneratedValue
+//   private Long id;
    @Id
    private String id = UUID.randomUUID().toString();
    //a: the involvment of a ProductBacklogItem in a Sprint
       // title description are preserved on PBI
       // a productBacklogItemId stored on the SprintBacklogId
    private Long productBacklogItemId;
+
+//   private String tenantId;
+//   private String externalId;
 
    //b: the entire representation of a backlog item during Sprint
       // a SprintBacklogItem replaces a ProdcutBacklogItem
@@ -27,6 +34,8 @@ public class SprintBacklogItem {
 //   private String description;
 //   @Version
 //   private Long version;
+
+
 
    public enum Status { // Sprint
       CREATED,
@@ -45,6 +54,11 @@ public class SprintBacklogItem {
    public SprintBacklogItem(long productBacklogItemId, int fpEstimation) {
       this.productBacklogItemId = productBacklogItemId;
       this.fpEstimation = fpEstimation;
+   }
+
+   public SprintBacklogItem setId(String id) {
+      this.id = id;
+      return this;
    }
 
    public Long getProductBacklogItemId() {
