@@ -75,7 +75,7 @@ public class SprintService {
       backlogItem.setSprint(sprint);
       sprint.getItems().add(backlogItem);
       backlogItem.setFpEstimation(request.fpEstimation);
-      return backlogItem.getId();
+      return backlogItem.getId(); // Hint: if you have JPA issues getting the new ID, consider using UUID instead of sequence
    }
 
 
