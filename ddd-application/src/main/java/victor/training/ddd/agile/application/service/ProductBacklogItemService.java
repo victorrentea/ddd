@@ -52,10 +52,13 @@ public class ProductBacklogItemService {
    }
    @EventListener
    @Transactional
+//   public void onItemFreeze(SprintBacklogItemCompletedEvent event) {
    public void onItemFreeze(FreezeProductBacklogItemEvent event) {
+//      sprint = ...event.getSprintBacklogItemId()
       ProductBacklogItem item = productBacklogItemRepo.findOneById(event.getProductBacklogItemId());
       item.freeze();
    }
+//   private final SprintRepo sprintRepo;
 
    @GetMapping("backlog/{id}")
    public ProductBacklogItemDto getBacklogItem(@PathVariable long id) {

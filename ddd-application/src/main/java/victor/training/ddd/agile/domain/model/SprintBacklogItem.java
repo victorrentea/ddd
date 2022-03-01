@@ -85,7 +85,8 @@ public class SprintBacklogItem {
          throw new IllegalStateException("Item already started");
       }
       status = Status.DONE;
-      DomainEvents.publishEvent(new FreezeProductBacklogItemEvent(productBacklogItemId));
+      DomainEvents.publishEvent(new FreezeProductBacklogItemEvent(productBacklogItemId)); // COMMAND, coupling me to what happens next
+//      DomainEvents.publishEvent(new SprintBacklogItemCompletedEvent(id));
       // CR after completing a backlog item, the system should NOT allow the item to be further edited (title/description)
    }
 
