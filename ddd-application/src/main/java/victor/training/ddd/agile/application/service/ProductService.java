@@ -8,6 +8,8 @@ import victor.training.ddd.agile.domain.model.Product;
 import victor.training.ddd.agile.domain.model.ProductOwner;
 import victor.training.ddd.agile.domain.repo.ProductRepo;
 
+import javax.validation.Valid;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -15,15 +17,16 @@ public class ProductService {
    private final ProductRepo productRepo;
 
 
-
+//@PreAuthorized("hasRole('ADMIN')") < forgetting to put this = the most common security hole. ie. securing only the visible Frontend element
    @PostMapping("products")
-   public Long createProduct(@RequestBody ProductDto dto) {
+   public Long createProduct(@RequestBody @Valid ProductDto dto) {
       if (productRepo.existsByCode(dto.code)) {
          throw new IllegalArgumentException("Code already defined");
       }
       ProductOwner po = new ProductOwner(dto.poEmail, dto.poName, dto.poPhone);
       Product product = new Product(dto.code, dto.name, po)
           .setTeamMailingList(dto.mailingList);
+//      kafka.send()
       return productRepo.save(product).getId();
    }
 

@@ -8,7 +8,9 @@
 //   @Id
 //    @GeneratedValue
 //   Long id;
-//   String title,description;
+////   @NotNull(groups = {ProductBacklogItem.class})
+//   String title;
+//   String description;
 //}
 //@DiscriminatorValue("PRODUCT_ITEM")
 //class ProductBacklogItem extends AbstractBacklogItem {

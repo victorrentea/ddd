@@ -35,12 +35,12 @@ public class WorkflowTest extends SystemTestBase {
           .matches(s -> s.getPlannedEnd().isAfter(LocalDate.now().plusDays(13)));
 
 
-      Long productBacklogItemId = backlogItemApi.createBacklogItem(new BacklogItemDto()
+      Long productBacklogItemId = backlogItemApi.createBacklogItem(new ProductBacklogItemDto()
           .setProductId(productId)
           .setTitle("::item1::")
           .setDescription("::descr::"));
 
-      BacklogItemDto backlogDto = backlogItemApi.getBacklogItem(productBacklogItemId);
+      ProductBacklogItemDto backlogDto = backlogItemApi.getBacklogItem(productBacklogItemId);
       backlogDto.description += "More Text";
       backlogItemApi.updateBacklogItem(backlogDto);
 
@@ -73,7 +73,7 @@ public class WorkflowTest extends SystemTestBase {
       assertThat(release.getVersion()).isEqualTo("1.0");
 
       // try to update a done backlog item
-      BacklogItemDto backlogDto2 = backlogItemApi.getBacklogItem(productBacklogItemId);
+      ProductBacklogItemDto backlogDto2 = backlogItemApi.getBacklogItem(productBacklogItemId);
       backlogDto2.description += "IllegalChange";
       // TODO Victor 2022-03-01: uncomment (change request):
 //      assertThatThrownBy(() -> backlogItems.updateBacklogItem(backlogDto2)).describedAs("cannot edit done item");

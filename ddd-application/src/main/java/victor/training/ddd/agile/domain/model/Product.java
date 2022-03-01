@@ -1,11 +1,14 @@
 package victor.training.ddd.agile.domain.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
+
+import static java.util.Objects.requireNonNull;
+import static java.util.Optional.ofNullable;
 
 // consider encapsulating changes
 @Entity
@@ -17,8 +20,14 @@ public class Product {
    private int currentIteration = 0;
    private int currentVersion = 0;
 
-//   @NotNull // useless
+   @NotNull // automatically checked by Hibernate on perist/merge
+   @Min(3)
+   // havily used in practice > 60-80%
+   // relying on annotations to check validity of entities allows
+   // a "window of inconsistency" until you save or the Tx ends
+
    @Column(nullable = false) // UPDATE SET code = null
+//   @UniqueCode
    private String code;
    @Column(nullable = false) // alter table set name not null;
    private String name;
@@ -28,26 +37,37 @@ public class Product {
 
    private String teamMailingList;
 
-//   @OneToMany
-//   @JoinColumn
-//   private List<BacklogItem> backlogItems = new ArrayList<>();
-//   @OneToMany(mappedBy = "product")
-//   private List<Sprint> sprints = new ArrayList<>();
    @OneToMany(mappedBy = "product")
    private List<Release> releases = new ArrayList<>();
 
-   public Product(String code, String name, ProductOwner owner) {
-      this.code = Objects.requireNonNull(code);
-      this.name = Objects.requireNonNull(name);
-      this.owner = Objects.requireNonNull(owner);
+   private Product() {
    }
 
-   private Product() {
+   public Product(String code, String name, ProductOwner owner) {
+//      HocusPocus.getValidator().validate(this); // still using validation annotations
+      if (code.length() != 3) throw new RuntimeException("Boom");
+      this.code = requireNonNull(code);
+      setName(name);
+      setOwner(owner);
    }
 
    public Product setTeamMailingList(String teamMailingList) {
       this.teamMailingList = teamMailingList;
       return this;
+   }
+
+   public Product setName(String name) {
+      this.name = requireNonNull(name);
+//      HocusPocus.getValidator().validate(this);
+      return this;
+   }
+
+   public Product setOwner(ProductOwner owner) {
+      this.owner = owner;
+      return this;
+   }
+   public Optional<String> getTeamMailingList() {
+      return ofNullable(teamMailingList);
    }
 
    public int incrementAndGetIteration() {
@@ -61,42 +81,23 @@ public class Product {
    }
 
    public Long getId() {
-      return this.id;
+      return id;
    }
 
-   public @NotNull String getCode() {
-      return this.code;
+   public String getCode() {
+      return code;
    }
 
    public String getName() {
-      return this.name;
+      return name;
    }
 
    public ProductOwner getOwner() {
-      return this.owner;
-   }
-
-   public Optional<String> getTeamMailingList() {
-      return Optional.ofNullable(this.teamMailingList);
+      return owner;
    }
 
    public List<Release> getReleases() {
-      return this.releases;
-   }
-
-   public Product setId(Long id) {
-      this.id = id;
-      return this;
-   }
-
-   public Product setName(String name) {
-      this.name = name;
-      return this;
-   }
-
-   public Product setOwner(ProductOwner owner) {
-      this.owner = owner;
-      return this;
+      return releases;
    }
 
 }
