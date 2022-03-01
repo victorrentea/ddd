@@ -16,7 +16,6 @@ import javax.validation.Valid;
 public class ProductService {
    private final ProductRepo productRepo;
 
-
 //@PreAuthorized("hasRole('ADMIN')") < forgetting to put this = the most common security hole. ie. securing only the visible Frontend element
    @PostMapping("products")
    public Long createProduct(@RequestBody @Valid ProductDto dto) {
@@ -31,12 +30,6 @@ public class ProductService {
 
    @GetMapping("products/{id}")
    public ProductDto getProduct(@PathVariable long id) {
-      Product product = productRepo.findOneById(id);
-      ProductDto dto = new ProductDto();
-      dto.id = product.getId();
-      dto.name = product.getName();
-      dto.code = product.getCode();
-      dto.mailingList = product.getTeamMailingList().orElse(null);
-      return dto;
+      return new ProductDto(productRepo.findOneById(id));
    }
 }

@@ -1,7 +1,9 @@
 package victor.training.ddd.agile.domain.model;
 
 import org.springframework.data.domain.AbstractAggregateRoot;
+import victor.training.ddd.agile.domain.event.ItemAddedEvent;
 import victor.training.ddd.agile.domain.event.SprintFinishedEvent;
+import victor.training.ddd.common.DDD.AggregateRoot;
 import victor.training.ddd.common.events.DomainEvents;
 
 import javax.persistence.*;
@@ -15,7 +17,7 @@ import static java.util.stream.Collectors.toList;
 import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.EnumType.STRING;
 
-
+@AggregateRoot
 @Entity
 // AggregateRoot is responsible to enforce all contraints spanning bETWEEN the entities inside this Aggregate
 public class Sprint extends AbstractAggregateRoot<Sprint> {
@@ -172,6 +174,8 @@ public class Sprint extends AbstractAggregateRoot<Sprint> {
          throw new IllegalStateException("Can only add items to Sprint before it starts");
       }
       items.add(item);
+      DomainEvents.publishEvent(new ItemAddedEvent(item.getId()));
+
    }
 
    public boolean allItemsDone() {

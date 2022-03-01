@@ -1,6 +1,7 @@
 package victor.training.ddd.agile.application.dto;
 
 import lombok.Data;
+import victor.training.ddd.agile.domain.model.ProductBacklogItem;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -8,6 +9,15 @@ import javax.validation.constraints.NotNull;
 
 @Data
 public class ProductBacklogItemDto {
+   public ProductBacklogItemDto(ProductBacklogItem productBacklogItem) {
+      id = productBacklogItem.getId();
+      productId = productBacklogItem.getProductId();
+      description = productBacklogItem.getDescription();
+      title = productBacklogItem.getTitle();
+      version = productBacklogItem.getVersion();
+   }
+   public ProductBacklogItemDto() {}
+
    public interface Groups {
       public interface Create {}
       public interface Update {}

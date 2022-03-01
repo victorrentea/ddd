@@ -1,5 +1,7 @@
 package victor.training.ddd.agile.domain.model;
 
+import victor.training.ddd.common.DDD.AggregateRoot;
+
 import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -12,7 +14,7 @@ import static java.util.Optional.ofNullable;
 
 // consider encapsulating changes
 @Entity
-// AggregateRoot
+@AggregateRoot
 public class Product {
    @Id
    @GeneratedValue
@@ -38,7 +40,7 @@ public class Product {
    private String teamMailingList;
 
    @OneToMany(mappedBy = "product")
-   private List<Release> releases = new ArrayList<>();
+   private List<Release> releases = new ArrayList<>(); // TODO delete
 
    private Product() {
    }

@@ -1,14 +1,17 @@
 package victor.training.ddd.agile.domain.model;
 
 import lombok.NoArgsConstructor;
+import victor.training.ddd.common.DDD.AggregateRoot;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Version;
 
+import static java.util.Objects.requireNonNull;
 import static lombok.AccessLevel.PRIVATE;
 
+@AggregateRoot
 @Entity
 @NoArgsConstructor(access = PRIVATE) // Hibernate
 public class ProductBacklogItem {
@@ -24,8 +27,9 @@ public class ProductBacklogItem {
    @Version
    private Long version;
 
-   public ProductBacklogItem(Long productId) {
+   public ProductBacklogItem(Long productId, String title, String description) {
       this.productId = productId;
+      setContents(title, description);
    }
 
    public Long getId() {
@@ -54,8 +58,8 @@ public class ProductBacklogItem {
    }
 
    public ProductBacklogItem setContents(String title, String description) {
-      this.title = title;
-      this.description = description;
+      this.title = requireNonNull(title);
+      this.description = requireNonNull(description);
       return this;
    }
 

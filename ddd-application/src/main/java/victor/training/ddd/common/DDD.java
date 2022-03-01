@@ -19,7 +19,7 @@ public @interface DDD {
    @Retention(RetentionPolicy.RUNTIME)
    @interface DomainEntity {}
    @Retention(RetentionPolicy.RUNTIME)
-   @interface Aggregate {}
+   @interface AggregateRoot {}
    @Retention(RetentionPolicy.RUNTIME)
    @interface ValueObject {}
 }

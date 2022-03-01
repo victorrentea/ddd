@@ -2,8 +2,6 @@ package victor.training.ddd.agile.application.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.event.EventListener;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
@@ -13,18 +11,12 @@ import victor.training.ddd.agile.application.dto.CreateSprintRequest;
 import victor.training.ddd.agile.application.dto.LogHoursRequest;
 import victor.training.ddd.agile.application.dto.SprintMetrics;
 import victor.training.ddd.agile.domain.event.ItemAddedEvent;
-import victor.training.ddd.agile.domain.event.SprintFinishedEvent;
 import victor.training.ddd.agile.domain.model.Product;
-import victor.training.ddd.agile.domain.model.ProductBacklogItem;
 import victor.training.ddd.agile.domain.model.Sprint;
 import victor.training.ddd.agile.domain.model.SprintBacklogItem;
 import victor.training.ddd.agile.domain.repo.ProductBacklogItemRepo;
 import victor.training.ddd.agile.domain.repo.ProductRepo;
 import victor.training.ddd.agile.domain.repo.SprintRepo;
-
-import java.util.List;
-
-import static java.util.stream.Collectors.toList;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -45,10 +37,10 @@ public class SprintService {
    }
 
    @GetMapping("sprint/{id}")
+   // TODO move to SprintDto
    public Sprint getSprint(@PathVariable long id) {
       return sprintRepo.findOneById(id);
    }
-   // TODO move to SprintDto
 
    //   @Transactional // be mindful of this. be wary of performance (connection starvation issues)
    @PostMapping("sprint/{id}/start")
@@ -57,7 +49,8 @@ public class SprintService {
       Sprint sprint = sprintRepo.findOneById(id);
       sprint.start();
    }
-@Transactional
+
+   @Transactional
    @PostMapping("sprint/{id}/end")
    public void endSprint(@PathVariable long id) {
       Sprint sprint = sprintRepo.findOneById(id);
@@ -65,29 +58,6 @@ public class SprintService {
       sprintRepo.save(sprint); // you have to call .save on a spring Data repo. Then spring will call the
       // ,method annotated with @DomainEvents (inherited from AbstractAggregateRoot) and then publish the
       // events toall @EventListenters
-   }
-
-
-   // Domain Events model explicitly the side effects that propagate between Aggregates
-
-   // processe in the same thread but different tx
-   //   @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-
-   // the most horror: different thread (thus, different transaction)
-//   @EventListener
-//   @Async
-
-   // processed in the same thread (and tx) as the publisher
-   @EventListener
-   public void onSprintFinishedEvent(SprintFinishedEvent event) {
-      Sprint sprint = sprintRepo.findOneById(event.getSprintId());
-      List<SprintBacklogItem> notDone = sprint.getItemsNotDone();
-      if (notDone.size() >= 1) {
-         Product product = productRepo.findOneById(sprint.getProductId());
-         List<Long> productItemIds = notDone.stream().map(SprintBacklogItem::getProductBacklogItemId).collect(toList());
-         List<ProductBacklogItem> productItems = productBacklogItemRepo.findAllById(productItemIds);
-         emailService.sendNotDoneItemsDebrief(product.getOwner().getEmail(), productItems);
-      }
    }
 
    @GetMapping("sprint/{id}/metrics")
@@ -99,16 +69,8 @@ public class SprintService {
    @PostMapping("sprint/{sprintId}/add-item")
    public String addItem(@PathVariable long sprintId, @RequestBody AddBacklogItemRequest request) {
       Sprint sprint = sprintRepo.findOneById(sprintId);
-
-      SprintBacklogItem sprintBacklogItem = new SprintBacklogItem(request.backlogId, request.fpEstimation)
-//          .setId(request.desiredId)
-//          .setId(sprintRepo.newId())
-          ;
+      SprintBacklogItem sprintBacklogItem = new SprintBacklogItem(request.productBacklogId, request.fpEstimation);
       sprint.addItem(sprintBacklogItem);
-
-      // CR: send Kafka message after item is added to sprint
-      publisher.publishEvent(new ItemAddedEvent(sprintBacklogItem.getId()));
-
       return sprintBacklogItem.getId();
       //IDs
       // a) manually assign ID > give up @GeneratedValue
@@ -125,8 +87,6 @@ public class SprintService {
 
    }
 
-   private final ApplicationEventPublisher publisher;
-
 
    @Transactional
    @PostMapping("sprint/{id}/start-item/{backlogId}")
@@ -141,10 +101,10 @@ public class SprintService {
    }
 
    @PostMapping("sprint/{id}/complete-item/{backlogId}")
-   @Transactional
    public void completeItem(@PathVariable long id, @PathVariable String backlogId) {
       Sprint sprint = sprintRepo.findOneById(id);
       sprint.completeItem(backlogId);
+      sprintRepo.save(sprint);
       if (sprint.allItemsDone()) {
          emailService.sendCongratsEmail(sprint.getProductId());
       }

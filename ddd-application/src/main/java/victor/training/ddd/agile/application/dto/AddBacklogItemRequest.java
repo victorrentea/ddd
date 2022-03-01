@@ -13,6 +13,6 @@ public class AddBacklogItemRequest {
       // 2) it is external from a 3rd party
       // 3) client generate an UUID and in case of timeout are ALLOWED to retry the same ID.
             // > IDEMPOTENT HTTP ENDPOINT when you receive such a request twice, they will share the desiredId >PK violation i you try to persist again
-   public long backlogId;
+   public long productBacklogId;
    public int fpEstimation;
 }

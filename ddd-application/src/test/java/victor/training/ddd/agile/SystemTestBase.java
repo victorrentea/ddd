@@ -10,7 +10,7 @@ public abstract class SystemTestBase {
    @Autowired
    ProductService productApi;
    @Autowired
-   BacklogItemService backlogItemApi;
+   ProductBacklogItemService backlogItemApi;
    @Autowired
    SprintService sprintService;
    @Autowired

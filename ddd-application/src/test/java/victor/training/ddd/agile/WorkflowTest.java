@@ -46,7 +46,7 @@ public class WorkflowTest extends SystemTestBase {
 
       String itemId = sprintService.addItem(sprintId, new AddBacklogItemRequest()
           .setFpEstimation(2)
-          .setBacklogId(productBacklogItemId));
+          .setProductBacklogId(productBacklogItemId));
 
       sprintService.startSprint(sprintId);
       assertThatThrownBy(() -> sprintService.startSprint(sprintId)).describedAs("cannot start again");
