@@ -91,7 +91,7 @@ public class SprintService {
 
 //   @Transactional // TODO Victor 2022-03-01: Not needed anymore
    @PostMapping("sprint/{sprintId}/add-item")
-   public Long addItem(@PathVariable long sprintId, @RequestBody AddBacklogItemRequest request) {
+   public String addItem(@PathVariable long sprintId, @RequestBody AddBacklogItemRequest request) {
       Sprint sprint = sprintRepo.findOneById(sprintId);
 
       // WE PLAY A:
@@ -117,7 +117,7 @@ public class SprintService {
 
    @Transactional
    @PostMapping("sprint/{id}/start-item/{backlogId}")
-   public void startItem(@PathVariable long id, @PathVariable long backlogId) {
+   public void startItem(@PathVariable long id, @PathVariable String backlogId) {
       // this should be blocked
       // 1: BacklogItem.start() will be package-protected
       // 2: I will delete the BacklogItemRepo
@@ -131,7 +131,7 @@ public class SprintService {
 
    @PostMapping("sprint/{id}/complete-item/{backlogId}")
    @Transactional
-   public void completeItem(@PathVariable long id, @PathVariable long backlogId) {
+   public void completeItem(@PathVariable long id, @PathVariable String backlogId) {
       Sprint sprint = sprintRepo.findOneById(id);
       sprint.completeItem(backlogId);
       if (sprint.allItemsDone()) {

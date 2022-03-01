@@ -5,6 +5,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+import java.util.UUID;
+
 import static javax.persistence.EnumType.STRING;
 
 @Entity
@@ -12,8 +14,7 @@ import static javax.persistence.EnumType.STRING;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SprintBacklogItem {
    @Id
-   @GeneratedValue
-   private Long id;
+   private String id = UUID.randomUUID().toString();
    //a: the involvment of a ProductBacklogItem in a Sprint
       // title description are preserved on PBI
       // a productBacklogItemId stored on the SprintBacklogId
@@ -51,7 +52,7 @@ public class SprintBacklogItem {
    }
 
 
-   public Long getId() {
+   public String getId() {
       return id;
    }
 

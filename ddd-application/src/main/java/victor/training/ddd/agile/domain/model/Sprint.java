@@ -8,6 +8,7 @@ import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toList;
@@ -131,18 +132,18 @@ public class Sprint extends AbstractAggregateRoot<Sprint> {
 //   @Autowired
 //   private SprintRepo sprintRepo;
 
-   public void startItem(long backlogId) {
+   public void startItem(String backlogId) {
       if (status != Status.STARTED) {
          throw new IllegalStateException("Sprint not started");
       }
       backlogItemById(backlogId).start();
    }
 
-   private SprintBacklogItem backlogItemById(long backlogId) {
-      return items.stream().filter(it -> it.getId() == backlogId).findFirst().orElseThrow();
+   private SprintBacklogItem backlogItemById(String backlogId) {
+      return items.stream().filter(it -> Objects.equals(it.getId(), backlogId)).findFirst().orElseThrow();
    }
 
-   public void completeItem(long backlogId) {
+   public void completeItem(String backlogId) {
       if (status != Status.STARTED) {
          throw new IllegalStateException("Sprint not started");
       }
@@ -150,7 +151,7 @@ public class Sprint extends AbstractAggregateRoot<Sprint> {
       item.complete();
    }
 
-   public void logHours(long backlogId, int hours) {
+   public void logHours(String backlogId, int hours) {
       SprintBacklogItem item = backlogItemById(backlogId);
       if (status != Status.STARTED) {
          throw new IllegalStateException("Sprint not started");

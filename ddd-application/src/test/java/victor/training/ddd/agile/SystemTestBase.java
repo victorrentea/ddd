@@ -12,7 +12,7 @@ public abstract class SystemTestBase {
    @Autowired
    BacklogItemService backlogItems;
    @Autowired
-   SprintService sprints;
+   SprintService sprintService;
    @Autowired
    ReleaseService releases;
    @MockBean

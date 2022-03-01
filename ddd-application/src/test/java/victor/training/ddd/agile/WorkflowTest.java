@@ -11,11 +11,11 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class LargeFlowTest extends SystemTestBase {
+public class WorkflowTest extends SystemTestBase {
 
 
    @Test
-   void longAndHappy() {
+   void integrationTest() {
       ProductDto productDto = new ProductDto()
           .setCode("PNM")
           .setName("::ProductName::")
@@ -27,11 +27,11 @@ public class LargeFlowTest extends SystemTestBase {
           .extracting(ProductDto::getCode, ProductDto::getName, ProductDto::getMailingList)
           .isEqualTo(List.of("PNM", "::ProductName::", "::MailList::"));
 
-      Long sprintId = sprints.createSprint(new CreateSprintRequest()
+      Long sprintId = sprintService.createSprint(new CreateSprintRequest()
           .setProductId(productId)
           .setPlannedEnd(LocalDate.now().plusDays(14)));
 
-      assertThat(sprints.getSprint(sprintId))
+      assertThat(sprintService.getSprint(sprintId))
           .matches(s -> s.getIteration() == 1)
           .matches(s -> s.getPlannedEnd().isAfter(LocalDate.now().plusDays(13)));
 
@@ -43,26 +43,26 @@ public class LargeFlowTest extends SystemTestBase {
       backlogDto.description += "More Text";
       backlogItems.updateBacklogItem(backlogDto);
 
-      long itemId = sprints.addItem(sprintId, new AddBacklogItemRequest()
+      String itemId = sprintService.addItem(sprintId, new AddBacklogItemRequest()
           .setFpEstimation(2)
           .setBacklogId(backlogItemId));
 
-      sprints.startSprint(sprintId);
-      assertThatThrownBy(() -> sprints.startSprint(sprintId)).describedAs("cannot start again");
-      assertThatThrownBy(() -> sprints.completeItem(sprintId, itemId)).describedAs("must first start item");
+      sprintService.startSprint(sprintId);
+      assertThatThrownBy(() -> sprintService.startSprint(sprintId)).describedAs("cannot start again");
+      assertThatThrownBy(() -> sprintService.completeItem(sprintId, itemId)).describedAs("must first start item");
 
-      sprints.startItem(sprintId, itemId);
-      assertThatThrownBy(() -> sprints.startItem(sprintId, itemId)).describedAs("cannot start again");
+      sprintService.startItem(sprintId, itemId);
+      assertThatThrownBy(() -> sprintService.startItem(sprintId, itemId)).describedAs("cannot start again");
 
-      sprints.logHours(sprintId, new LogHoursRequest(itemId, 10));
+      sprintService.logHours(sprintId, new LogHoursRequest(itemId, 10));
 
-      sprints.completeItem(sprintId, itemId);
+      sprintService.completeItem(sprintId, itemId);
 
-      sprints.endSprint(sprintId);
+      sprintService.endSprint(sprintId);
 
-      System.out.println("Metrics: " + sprints.getSprintMetrics(sprintId));
+      System.out.println("Metrics: " + sprintService.getSprintMetrics(sprintId));
 
-      assertThat(sprints.getSprintMetrics(sprintId))
+      assertThat(sprintService.getSprintMetrics(sprintId))
           .extracting(SprintMetrics::getConsumedHours, SprintMetrics::getDoneFP, SprintMetrics::getHoursConsumedForNotDone)
           .containsExactly(10, 2, 0);
 
@@ -74,6 +74,7 @@ public class LargeFlowTest extends SystemTestBase {
       // try to update a done backlog item
       BacklogItemDto backlogDto2 = backlogItems.getBacklogItem(backlogItemId);
       backlogDto2.description += "IllegalChange";
-      assertThatThrownBy(() -> backlogItems.updateBacklogItem(backlogDto2)).describedAs("cannot edit done item");
+      // TODO Victor 2022-03-01: uncomment (change request):
+//      assertThatThrownBy(() -> backlogItems.updateBacklogItem(backlogDto2)).describedAs("cannot edit done item");
    }
 }

@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
    @NoArgsConstructor
    @AllArgsConstructor
    public class LogHoursRequest {
-      public long backlogId;
+      public String backlogId;
       public int hours;
    }
