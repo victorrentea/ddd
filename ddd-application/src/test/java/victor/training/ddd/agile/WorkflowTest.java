@@ -17,6 +17,8 @@ public class WorkflowTest extends SystemTestBase {
    void integrationTest() {
       ProductDto productDto = new ProductDto()
           .setCode("PNM")
+          .setPoEmail("boss@comp.org")
+          .setPoName("Boss")
           .setName("::ProductName::")
           .setMailingList("::MailList::");
       Long productId = productApi.createProduct(productDto);
@@ -75,7 +77,8 @@ public class WorkflowTest extends SystemTestBase {
       // try to update a done backlog item
       ProductBacklogItemDto backlogDto2 = backlogItemApi.getBacklogItem(productBacklogItemId);
       backlogDto2.description += "IllegalChange";
-      // TODO Victor 2022-03-01: uncomment (change request):
-//      assertThatThrownBy(() -> backlogItems.updateBacklogItem(backlogDto2)).describedAs("cannot edit done item");
+
+      // TODO Question: can we change
+      assertThatThrownBy(() -> backlogItemApi.updateBacklogItem(backlogDto2)).describedAs("cannot edit done item");
    }
 }

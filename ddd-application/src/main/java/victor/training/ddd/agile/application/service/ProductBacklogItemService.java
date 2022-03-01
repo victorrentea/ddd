@@ -1,11 +1,13 @@
 package victor.training.ddd.agile.application.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.event.EventListener;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import victor.training.ddd.agile.application.dto.ProductBacklogItemDto;
 import victor.training.ddd.agile.application.dto.ProductBacklogItemDto.Groups;
+import victor.training.ddd.agile.domain.event.FreezeProductBacklogItemEvent;
 import victor.training.ddd.agile.domain.model.ProductBacklogItem;
 import victor.training.ddd.agile.domain.repo.ProductBacklogItemRepo;
 
@@ -48,7 +50,12 @@ public class ProductBacklogItemService {
           .setContents(dto.title, dto.description)
           .setVersion(dto.version);
    }
-
+   @EventListener
+   @Transactional
+   public void onItemFreeze(FreezeProductBacklogItemEvent event) {
+      ProductBacklogItem item = productBacklogItemRepo.findOneById(event.getProductBacklogItemId());
+      item.freeze();
+   }
 
    @GetMapping("backlog/{id}")
    public ProductBacklogItemDto getBacklogItem(@PathVariable long id) {

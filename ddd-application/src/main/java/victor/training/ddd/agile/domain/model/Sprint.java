@@ -143,7 +143,7 @@ public class Sprint extends AbstractAggregateRoot<Sprint> {
       backlogItemById(backlogId).start();
    }
 
-   private SprintBacklogItem backlogItemById(String backlogId) {
+   public SprintBacklogItem backlogItemById(String backlogId) {
       return items.stream().filter(it -> Objects.equals(it.getId(), backlogId)).findFirst().orElseThrow();
    }
 

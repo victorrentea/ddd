@@ -31,8 +31,8 @@ public class ReleaseService {
       Product product = productRepo.findOneById(productId);
       Sprint sprint = sprintRepo.findOneById(sprintId);
 
-//      releaseRepo.findByProductId()
-      int previousReleasedIteration = product.getReleases().stream()
+      List<Release> releases = releaseRepo.findAllByProductId(productId);
+      int previousReleasedIteration = releases.stream()
           .map(Release::getSprint)
           .mapToInt(Sprint::getIteration)
           .max().orElse(0);
@@ -52,7 +52,6 @@ public class ReleaseService {
           .setSprint(sprint)
           .setReleasedItems(releasedItems)
           .setDate(LocalDate.now());
-      product.getReleases().add(release);
 
       releaseRepo.save(release);
       return release;

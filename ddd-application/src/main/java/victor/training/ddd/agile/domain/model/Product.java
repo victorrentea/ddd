@@ -5,8 +5,6 @@ import victor.training.ddd.common.DDD.AggregateRoot;
 import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
@@ -23,7 +21,7 @@ public class Product {
    private int currentVersion = 0;
 
    @NotNull // automatically checked by Hibernate on perist/merge
-   @Min(3)
+//   @Min(3)
    // havily used in practice > 60-80%
    // relying on annotations to check validity of entities allows
    // a "window of inconsistency" until you save or the Tx ends
@@ -38,9 +36,6 @@ public class Product {
    private ProductOwner owner;
 
    private String teamMailingList;
-
-   @OneToMany(mappedBy = "product")
-   private List<Release> releases = new ArrayList<>(); // TODO delete
 
    private Product() {
    }
@@ -96,10 +91,6 @@ public class Product {
 
    public ProductOwner getOwner() {
       return owner;
-   }
-
-   public List<Release> getReleases() {
-      return releases;
    }
 
 }

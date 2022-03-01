@@ -2,9 +2,13 @@ package victor.training.ddd.agile.domain.model;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import victor.training.ddd.agile.domain.event.FreezeProductBacklogItemEvent;
+import victor.training.ddd.common.events.DomainEvents;
 
-import javax.persistence.*;
-
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Enumerated;
+import javax.persistence.Id;
 import java.util.UUID;
 
 import static javax.persistence.EnumType.STRING;
@@ -81,6 +85,8 @@ public class SprintBacklogItem {
          throw new IllegalStateException("Item already started");
       }
       status = Status.DONE;
+      DomainEvents.publishEvent(new FreezeProductBacklogItemEvent(productBacklogItemId));
+      // CR after completing a backlog item, the system should NOT allow the item to be further edited (title/description)
    }
 
    public boolean isDone() {
