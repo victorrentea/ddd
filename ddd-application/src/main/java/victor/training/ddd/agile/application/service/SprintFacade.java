@@ -17,11 +17,13 @@ import victor.training.ddd.agile.domain.model.SprintBacklogItem;
 import victor.training.ddd.agile.domain.repo.ProductBacklogItemRepo;
 import victor.training.ddd.agile.domain.repo.ProductRepo;
 import victor.training.ddd.agile.domain.repo.SprintRepo;
+import victor.training.ddd.common.DDD.ApplicationService;
 
 @Slf4j
+@ApplicationService
 @RequiredArgsConstructor
 @RestController
-public class SprintService {
+public class SprintFacade {
    private final SprintRepo sprintRepo;
    private final ProductRepo productRepo;
    private final ProductBacklogItemRepo productBacklogItemRepo;

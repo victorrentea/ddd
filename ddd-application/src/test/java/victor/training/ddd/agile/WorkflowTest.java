@@ -2,7 +2,6 @@ package victor.training.ddd.agile;
 
 import org.junit.jupiter.api.Test;
 import victor.training.ddd.agile.application.dto.*;
-import victor.training.ddd.agile.domain.model.Release;
 import victor.training.ddd.agile.application.dto.SprintMetrics;
 
 import java.time.LocalDate;
@@ -28,11 +27,11 @@ public class WorkflowTest extends SystemTestBase {
           .extracting(ProductDto::getCode, ProductDto::getName, ProductDto::getMailingList)
           .isEqualTo(List.of("PNM", "::ProductName::", "::MailList::"));
 
-      Long sprintId = sprintService.createSprint(new CreateSprintRequest()
+      Long sprintId = sprintFacade.createSprint(new CreateSprintRequest()
           .setProductId(productId)
           .setPlannedEnd(LocalDate.now().plusDays(14)));
 
-      assertThat(sprintService.getSprint(sprintId))
+      assertThat(sprintFacade.getSprint(sprintId))
           .matches(s -> s.getIteration() == 1)
           .matches(s -> s.getPlannedEnd().isAfter(LocalDate.now().plusDays(13)));
 
@@ -46,30 +45,30 @@ public class WorkflowTest extends SystemTestBase {
       backlogDto.description += "More Text";
       backlogItemApi.updateBacklogItem(backlogDto);
 
-      String itemId = sprintService.addItem(sprintId, new AddBacklogItemRequest()
+      String itemId = sprintFacade.addItem(sprintId, new AddBacklogItemRequest()
           .setFpEstimation(2)
           .setProductBacklogId(productBacklogItemId));
 
-      sprintService.startSprint(sprintId);
-      assertThatThrownBy(() -> sprintService.startSprint(sprintId)).describedAs("cannot start again");
-      assertThatThrownBy(() -> sprintService.completeItem(sprintId, itemId)).describedAs("must first start item");
+      sprintFacade.startSprint(sprintId);
+      assertThatThrownBy(() -> sprintFacade.startSprint(sprintId)).describedAs("cannot start again");
+      assertThatThrownBy(() -> sprintFacade.completeItem(sprintId, itemId)).describedAs("must first start item");
 
-      sprintService.startItem(sprintId, itemId);
-      assertThatThrownBy(() -> sprintService.startItem(sprintId, itemId)).describedAs("cannot start again");
+      sprintFacade.startItem(sprintId, itemId);
+      assertThatThrownBy(() -> sprintFacade.startItem(sprintId, itemId)).describedAs("cannot start again");
 
-      sprintService.logHours(sprintId, new LogHoursRequest(itemId, 10));
+      sprintFacade.logHours(sprintId, new LogHoursRequest(itemId, 10));
 
-      sprintService.completeItem(sprintId, itemId);
+      sprintFacade.completeItem(sprintId, itemId);
 
-      sprintService.endSprint(sprintId);
+      sprintFacade.endSprint(sprintId);
 
-      System.out.println("Metrics: " + sprintService.getSprintMetrics(sprintId));
+      System.out.println("Metrics: " + sprintFacade.getSprintMetrics(sprintId));
 
-      assertThat(sprintService.getSprintMetrics(sprintId))
+      assertThat(sprintFacade.getSprintMetrics(sprintId))
           .extracting(SprintMetrics::getConsumedHours, SprintMetrics::getDoneFP, SprintMetrics::getHoursConsumedForNotDone)
           .containsExactly(10, 2, 0);
 
-      Release release = releases.createRelease(productId, sprintId);
+      ReleaseDto release = releases.createRelease(productId, sprintId);
 
       assertThat(release.getReleaseNotes()).contains("::item1::");
       assertThat(release.getVersion()).isEqualTo("1.0");

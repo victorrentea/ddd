@@ -7,13 +7,15 @@ import victor.training.ddd.agile.application.dto.ProductDto;
 import victor.training.ddd.agile.domain.model.Product;
 import victor.training.ddd.agile.domain.model.ProductOwner;
 import victor.training.ddd.agile.domain.repo.ProductRepo;
+import victor.training.ddd.common.DDD.ApplicationService;
 
 import javax.validation.Valid;
 
 @Slf4j
 @RestController
+@ApplicationService
 @RequiredArgsConstructor
-public class ProductService {
+public class ProductFacade {
    private final ProductRepo productRepo;
 
 //@PreAuthorized("hasRole('ADMIN')") < forgetting to put this = the most common security hole. ie. securing only the visible Frontend element

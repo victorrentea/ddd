@@ -8,13 +8,13 @@ import victor.training.ddd.agile.application.service.*;
 @SpringBootTest
 public abstract class SystemTestBase {
    @Autowired
-   ProductService productApi;
+   ProductFacade productApi;
    @Autowired
-   ProductBacklogItemService backlogItemApi;
+   ProductBacklogItemFacade backlogItemApi;
    @Autowired
-   SprintService sprintService;
+   SprintFacade sprintFacade;
    @Autowired
-   ReleaseService releases;
+   ReleaseFacade releases;
    @MockBean
    MailingListClient mailingListClient;
 }

@@ -1,4 +1,4 @@
-package victor.training.ddd.common;
+package victor.training.ddd.agile.domain;
 
 public class MyException extends RuntimeException {
    public enum ErrorCode {

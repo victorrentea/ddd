@@ -10,10 +10,12 @@ import victor.training.ddd.agile.application.dto.ProductBacklogItemDto.Groups;
 import victor.training.ddd.agile.domain.event.FreezeProductBacklogItemEvent;
 import victor.training.ddd.agile.domain.model.ProductBacklogItem;
 import victor.training.ddd.agile.domain.repo.ProductBacklogItemRepo;
+import victor.training.ddd.common.DDD.ApplicationService;
 
 @RestController
+@ApplicationService
 @RequiredArgsConstructor
-public class ProductBacklogItemService {
+public class ProductBacklogItemFacade {
    private final ProductBacklogItemRepo productBacklogItemRepo;
 
    @PostMapping("backlog")
@@ -44,6 +46,7 @@ public class ProductBacklogItemService {
 //       @RequestBody @Valid UpdateProductBacklogItemRequest dto) {
    public void updateBacklogItem(@RequestBody @Validated(Groups.Update.class)
                                         ProductBacklogItemDto dto) {
+
       // TODO if Backlog Item is COMPLETED, reject the update
       ProductBacklogItem item = productBacklogItemRepo.findOneById(dto.id);
       item

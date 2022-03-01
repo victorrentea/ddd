@@ -3,10 +3,12 @@ package victor.training.ddd.common;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import victor.training.ddd.common.MyException.ErrorCode;
+import victor.training.ddd.agile.domain.MyException;
+import victor.training.ddd.agile.domain.MyException.ErrorCode;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Locale;
@@ -18,9 +20,14 @@ public class GlobalExceptionHandler {
    private final MessageSource messageSource;
 
    @ExceptionHandler(MyException.class)
-   @ResponseStatus //500
-   public String handleMyException(HttpServletRequest request, MyException myException) {
-      return translateError(myException, myException.getErrorCode(), myException.getParameters(), request);
+   public ResponseEntity<String> handleMyException(HttpServletRequest request, MyException myException) {
+      String userMessage = translateError(myException, myException.getErrorCode(), myException.getParameters(), request);
+      String httpCodeStr = messageSource.getMessage(
+          "error." + myException.getErrorCode() + ".code", null,
+          "500", Locale.ENGLISH);
+      int httpStatus =  Integer.parseInt(httpCodeStr);
+
+      return ResponseEntity.status(httpStatus).body(userMessage);
    }
 
    @ExceptionHandler(Exception.class)
