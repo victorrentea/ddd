@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public class IntegrationTest extends SystemTestBase {
 
    @Test
-   void longAndHappy() {
+   void longWorkflow() {
       ProductDto productDto = new ProductDto()
           .setCode("PNM")
           .setName("::ProductName::")
