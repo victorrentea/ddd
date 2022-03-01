@@ -26,7 +26,6 @@ public class ProductService {
       ProductOwner po = new ProductOwner(dto.poEmail, dto.poName, dto.poPhone);
       Product product = new Product(dto.code, dto.name, po)
           .setTeamMailingList(dto.mailingList);
-//      kafka.send()
       return productRepo.save(product).getId();
    }
 

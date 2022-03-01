@@ -1,9 +1,7 @@
 package victor.training.ddd.agile.application.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +12,7 @@ import victor.training.ddd.agile.application.dto.AddBacklogItemRequest;
 import victor.training.ddd.agile.application.dto.CreateSprintRequest;
 import victor.training.ddd.agile.application.dto.LogHoursRequest;
 import victor.training.ddd.agile.application.dto.SprintMetrics;
+import victor.training.ddd.agile.domain.event.ItemAddedEvent;
 import victor.training.ddd.agile.domain.event.SprintFinishedEvent;
 import victor.training.ddd.agile.domain.model.Product;
 import victor.training.ddd.agile.domain.model.ProductBacklogItem;
@@ -101,7 +100,6 @@ public class SprintService {
    public String addItem(@PathVariable long sprintId, @RequestBody AddBacklogItemRequest request) {
       Sprint sprint = sprintRepo.findOneById(sprintId);
 
-
       SprintBacklogItem sprintBacklogItem = new SprintBacklogItem(request.backlogId, request.fpEstimation)
 //          .setId(request.desiredId)
 //          .setId(sprintRepo.newId())
@@ -112,7 +110,7 @@ public class SprintService {
       publisher.publishEvent(new ItemAddedEvent(sprintBacklogItem.getId()));
 
       return sprintBacklogItem.getId();
-      // TODO Victor 2022-03-01: ID of sprintBacklogItem is not set on the item instance above
+      //IDs
       // a) manually assign ID > give up @GeneratedValue
       // b) UUID: move to manually generated PK for SBI (eg UUID) > BRUTAL because I had to move from Long to String
              // not DEV friendly> hack short-UUID in pre prod envs.
@@ -122,18 +120,12 @@ public class SprintService {
 
    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
    public void afterItemAddedTxCommited(ItemAddedEvent event) {
-      log.debug("After tx sending to kafka " + event.sprintBacklogItemId);
+      log.debug("After tx sending to kafka " + event.getSprintBacklogItemId());
 //      mq.send(sprintBacklogItem.getId());
 
    }
 
-   @Autowired
-   private ApplicationEventPublisher publisher;
-
-   @Value
-   public static class ItemAddedEvent {
-      String sprintBacklogItemId;
-   }
+   private final ApplicationEventPublisher publisher;
 
 
    @Transactional
@@ -147,8 +139,6 @@ public class SprintService {
       Sprint sprint = sprintRepo.findOneById(id);
       sprint.startItem(backlogId); // TODO after break : changing the child entity through the parent Aggregate
    }
-
-   private final MailingListClient mailingListClient;
 
    @PostMapping("sprint/{id}/complete-item/{backlogId}")
    @Transactional
