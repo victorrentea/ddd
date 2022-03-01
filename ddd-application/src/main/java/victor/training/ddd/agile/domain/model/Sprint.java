@@ -11,6 +11,7 @@ import java.util.List;
 
 import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toList;
+import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.EnumType.STRING;
 
 
@@ -38,7 +39,7 @@ public class Sprint extends AbstractAggregateRoot<Sprint> {
    @Enumerated(STRING)
    private Status status = Status.CREATED;
 
-   @OneToMany // unidirectional
+   @OneToMany(cascade = ALL, orphanRemoval = true, fetch = FetchType.EAGER) // unidirectional // TODO Tue
    @JoinColumn // adds a SPRINT_ID column to BACKLOG_ITEM table.!!!
    private List<SprintBacklogItem> items = new ArrayList<>();
 
@@ -163,7 +164,7 @@ public class Sprint extends AbstractAggregateRoot<Sprint> {
            .collect(toList());
    }
 
-   public void addItem(SprintBacklogItem item, int fpEstimation) {
+   public void addItem(SprintBacklogItem item) {
       if (status != Status.CREATED) {
          throw new IllegalStateException("Can only add items to Sprint before it starts");
       }

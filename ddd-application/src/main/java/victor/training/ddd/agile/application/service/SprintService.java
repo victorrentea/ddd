@@ -9,8 +9,8 @@ import victor.training.ddd.agile.application.dto.CreateSprintRequest;
 import victor.training.ddd.agile.application.dto.LogHoursRequest;
 import victor.training.ddd.agile.application.dto.SprintMetrics;
 import victor.training.ddd.agile.domain.event.SprintFinishedEvent;
-import victor.training.ddd.agile.domain.model.ProductBacklogItem;
 import victor.training.ddd.agile.domain.model.Product;
+import victor.training.ddd.agile.domain.model.ProductBacklogItem;
 import victor.training.ddd.agile.domain.model.Sprint;
 import victor.training.ddd.agile.domain.model.SprintBacklogItem;
 import victor.training.ddd.agile.domain.repo.ProductBacklogItemRepo;
@@ -18,6 +18,8 @@ import victor.training.ddd.agile.domain.repo.ProductRepo;
 import victor.training.ddd.agile.domain.repo.SprintRepo;
 
 import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 @RequiredArgsConstructor
 @RestController
@@ -76,7 +78,9 @@ public class SprintService {
       List<SprintBacklogItem> notDone = sprint.getItemsNotDone();
       if (notDone.size() >= 1) {
          Product product = productRepo.findOneById(sprint.getProductId());
-         emailService.sendNotDoneItemsDebrief(product.getOwnerEmail(), notDone);
+         List<Long> productItemIds = notDone.stream().map(SprintBacklogItem::getProductBacklogItemId).collect(toList());
+         List<ProductBacklogItem> productItems = productBacklogItemRepo.findAllById(productItemIds);
+         emailService.sendNotDoneItemsDebrief(product.getOwner().getEmail(), productItems);
       }
    }
 
@@ -85,10 +89,9 @@ public class SprintService {
       return sprintMetricsService.computeMetrics(id);
    }
 
-   @Transactional
+//   @Transactional // TODO Victor 2022-03-01: Not needed anymore
    @PostMapping("sprint/{sprintId}/add-item")
    public Long addItem(@PathVariable long sprintId, @RequestBody AddBacklogItemRequest request) {
-      ProductBacklogItem productBacklogItem = productBacklogItemRepo.findOneById(request.backlogId);
       Sprint sprint = sprintRepo.findOneById(sprintId);
 
       // WE PLAY A:
@@ -99,10 +102,15 @@ public class SprintService {
             // what if the item is NOT DONE at the end of the Sprint?!!
 
 
-      SprintBacklogItem sprintBacklogItem = new SprintBacklogItem(productBacklogItem.getProductId(), request.fpEstimation);
-      sprint.addItem(sprintBacklogItem, request.fpEstimation);
+      SprintBacklogItem sprintBacklogItem = new SprintBacklogItem(request.backlogId, request.fpEstimation);
+      sprint.addItem(sprintBacklogItem);
+      sprint = sprintRepo.save(sprint); // TODO Victor 2022-03-01: flush children, assign id
+      return sprintBacklogItem.getId();
 
-      return productBacklogItem.getId();
+      // TODO Victor 2022-03-01: ID of sprintBacklogItem is not set on the item instance above
+      // a) share PK with PBI
+      // b) move to manually generated PF for SBI (eg UUID)
+      // c) [hard] switch to 'local IDs for PBI' : composite PK (SprintId, IndexInSprint)
    }
 
 

@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import victor.training.ddd.agile.application.dto.ProductDto;
 import victor.training.ddd.agile.domain.model.Product;
+import victor.training.ddd.agile.domain.model.ProductOwner;
 import victor.training.ddd.agile.domain.repo.ProductRepo;
 
 @Slf4j
@@ -20,13 +21,8 @@ public class ProductService {
       if (productRepo.existsByCode(dto.code)) {
          throw new IllegalArgumentException("Code already defined");
       }
-      Product product = new Product()
-          .setCode(dto.code)
-          .setName(dto.name)
-          .setTeamMailingList(dto.mailingList)
-          .setOwnerEmail(dto.poEmail)
-          .setOwnerName(dto.poName)
-          .setOwnerPhone(dto.poPhone);
+      ProductOwner po = new ProductOwner(dto.poEmail, dto.poName, dto.poPhone);
+      Product product = new Product(dto.code, dto.name, dto.mailingList, po);
       return productRepo.save(product).getId();
    }
 

@@ -1,11 +1,15 @@
 package victor.training.ddd.agile.domain.model;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 
 import static javax.persistence.EnumType.STRING;
 
 @Entity
 // Child Entity of the Sprint Aggregate
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SprintBacklogItem {
    @Id
    @GeneratedValue

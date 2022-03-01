@@ -43,7 +43,7 @@ public class LargeFlowTest extends SystemTestBase {
       backlogDto.description += "More Text";
       backlogItems.updateBacklogItem(backlogDto);
 
-      Long itemId = sprints.addItem(sprintId, new AddBacklogItemRequest()
+      long itemId = sprints.addItem(sprintId, new AddBacklogItemRequest()
           .setFpEstimation(2)
           .setBacklogId(backlogItemId));
 
