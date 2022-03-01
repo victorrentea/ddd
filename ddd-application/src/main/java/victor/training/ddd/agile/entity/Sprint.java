@@ -22,9 +22,9 @@ public class Sprint {
    private int iteration;
    @ManyToOne
    private Product product;
-   private LocalDate start;
-   private LocalDate plannedEnd;
-   private LocalDate end;
+   private LocalDate startDate;
+   private LocalDate plannedEndDate;
+   private LocalDate endDate;
 
    public enum Status {
       CREATED,

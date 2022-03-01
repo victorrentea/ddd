@@ -34,7 +34,7 @@ public class SprintService {
       Sprint sprint = new Sprint()
           .setIteration(product.incrementAndGetIteration())
           .setProduct(product)
-          .setPlannedEnd(dto.plannedEnd);
+          .setPlannedEndDate(dto.plannedEnd);
       return sprintRepo.save(sprint).getId();
    }
 
@@ -49,7 +49,7 @@ public class SprintService {
       if (sprint.getStatus() != Status.CREATED) {
          throw new IllegalStateException();
       }
-      sprint.setStart(LocalDate.now());
+      sprint.setStartDate(LocalDate.now());
       sprint.setStatus(Status.STARTED);
    }
 
@@ -59,16 +59,8 @@ public class SprintService {
       if (sprint.getStatus() != Status.STARTED) {
          throw new IllegalStateException();
       }
-      sprint.setEnd(LocalDate.now());
+      sprint.setEndDate(LocalDate.now());
       sprint.setStatus(Status.FINISHED);
-
-      List<BacklogItem> notDone = sprint.getItems().stream()
-          .filter(item -> item.getStatus() != BacklogItem.Status.DONE)
-          .collect(Collectors.toList());
-
-      if (notDone.size() >= 1) {
-         emailService.sendNotDoneItemsDebrief(sprint.getProduct().getOwnerEmail(), notDone);
-      }
    }
 
    /*****************************  ITEMS IN SPRINT *******************************************/
@@ -149,14 +141,14 @@ public class SprintService {
           .collect(Collectors.toList());
       SprintMetrics dto = new SprintMetrics();
       dto.consumedHours = sprint.getItems().stream().mapToInt(BacklogItem::getHoursConsumed).sum();
-      dto.calendarDays = sprint.getStart().until(sprint.getEnd()).getDays();
+      dto.calendarDays = sprint.getStartDate().until(sprint.getEndDate()).getDays();
       dto.doneFP = doneItems.stream().mapToInt(BacklogItem::getFpEstimation).sum();
       dto.fpVelocity = 1.0 * dto.doneFP / dto.consumedHours;
       dto.hoursConsumedForNotDone = sprint.getItems().stream()
           .filter(item -> item.getStatus() != BacklogItem.Status.DONE)
           .mapToInt(BacklogItem::getHoursConsumed).sum();
-      if (sprint.getEnd().isAfter(sprint.getPlannedEnd())) {
-         dto.delayDays = sprint.getPlannedEnd().until(sprint.getEnd()).getDays();
+      if (sprint.getEndDate().isAfter(sprint.getPlannedEndDate())) {
+         dto.delayDays = sprint.getPlannedEndDate().until(sprint.getEndDate()).getDays();
       }
       return dto;
    }

@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 import static javax.persistence.EnumType.STRING;
 
@@ -18,6 +19,8 @@ public class BacklogItem {
    private Long id;
    @ManyToOne
    private Product product;
+
+@NotNull
    private String title;
    private String description;
 
@@ -26,14 +29,14 @@ public class BacklogItem {
       STARTED,
       DONE
    }
-
    @Enumerated(STRING)
    private Status status = Status.CREATED;
 
    @ManyToOne
    private Sprint sprint; // ⚠ not NULL when assigned to a sprint
    private Integer fpEstimation; // ⚠ not NULL when assigned to a sprint
-   private Integer hoursConsumed; // ⚠ not NULL when assigned to a sprint
+
+   private int hoursConsumed;
 
    @Version
    private Long version;
