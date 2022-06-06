@@ -102,8 +102,10 @@ public class SprintService {
       Sprint sprint = sprintRepo.findOneById(id);
       if (sprint.getItems().stream().allMatch(item -> item.getStatus() == BacklogItem.Status.DONE)) {
          System.out.println("Sending CONGRATS email to team of product " + sprint.getProduct().getCode() + ": They finished the items earlier. They have time to refactor! (OMG!)");
-         List<String> emails = mailingListClient.retrieveEmails(sprint.getProduct().getTeamMailingList());
-         emailService.sendCongratsEmail(emails);
+         if (sprint.getProduct().getTeamMailingList().isPresent()) {
+            List<String> emails = mailingListClient.retrieveEmails(sprint.getProduct().getTeamMailingList().get());
+            emailService.sendCongratsEmail(emails);
+         }
       }
    }
 
