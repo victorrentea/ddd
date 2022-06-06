@@ -1,7 +1,5 @@
 package victor.training.ddd.agile.dto;
 
-import lombok.Data;
-
 import javax.validation.constraints.NotNull;
 
 
@@ -30,24 +28,28 @@ public class ProductDto {
       return code;
    }
 
-   public void setCode(String code) {
+   public ProductDto setCode(String code) {
       this.code = code;
+      return this;
+
    }
 
    public String getName() {
       return name;
    }
 
-   public void setName(String name) {
+   public ProductDto setName(String name) {
       this.name = name;
+      return this;
    }
 
    public String getMailingList() {
       return mailingList;
    }
 
-   public void setMailingList(String mailingList) {
+   public ProductDto setMailingList(String mailingList) {
       this.mailingList = mailingList;
+      return this;
    }
 
    public String getPoEmail() {

@@ -4,8 +4,10 @@
 //import javax.persistence.GeneratedValue;
 //import javax.persistence.Id;
 //import java.util.Objects;
+//import java.util.stream.Stream;
 //
 //public class Money {
+//    public static final Money ZERO = new Money(0, Currency.EUR);
 //    private final Integer amount;
 //    private final Currency currency;
 //
@@ -103,6 +105,10 @@
 //    }
 //    public void method(Customer customer, Money moreMoney) {
 //
+//        Money reduce = Stream.of(
+//                        new Money(1, Currency.EUR),
+//                        new Money(2, Currency.EUR))
+//                .reduce(Money.ZERO, (money, other) -> money.add(other));
 //        Money newMoney = customer.getMoney().add(moreMoney);
 //        customer.setMoney(newMoney);
 //    }

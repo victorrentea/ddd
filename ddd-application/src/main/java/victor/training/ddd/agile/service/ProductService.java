@@ -27,7 +27,7 @@ public class ProductService {
       return productRepo.save(product).getId();
    }
 
-   @GetMapping("products/{id}")
+   @GetMapping("products/{id}/notify")
    public void notifyOwner(@PathVariable Long id, @RequestParam String message) {
       Product product = productRepo.findOneById(id);
       String userId = product.getOwnerUserid().orElseThrow();
