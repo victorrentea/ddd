@@ -1,9 +1,5 @@
 package victor.training.ddd.agile.entity;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -11,20 +7,10 @@ import java.util.List;
 
 import static javax.persistence.EnumType.STRING;
 
-@Getter
-@Setter
-@NoArgsConstructor
 @Entity
 public class Sprint {
-   @Id
-   @GeneratedValue
-   private Long id;
-   private int iteration;
-   @ManyToOne
-   private Product product;
-   private LocalDate startDate;
-   private LocalDate plannedEndDate;
-   private LocalDate endDate;
+
+
 
    public enum Status {
       CREATED,
@@ -32,10 +18,119 @@ public class Sprint {
       FINISHED
    }
 
+   @Id
+   @GeneratedValue
+   private Long id;
+   private int iteration;
+   @ManyToOne
+   private Product product;
+
+   private LocalDate startDate;
+   private LocalDate plannedEndDate;
+   private LocalDate endDate;
+
    @Enumerated(STRING)
    private Status status = Status.CREATED;
 
    @OneToMany(mappedBy = "sprint")
    private List<BacklogItem> items = new ArrayList<>();
+
+   public Sprint() {
+   }
+
+   public Long getId() {
+      return this.id;
+   }
+
+   public int getIteration() {
+      return this.iteration;
+   }
+
+   public Product getProduct() {
+      return this.product;
+   }
+
+   public LocalDate getStartDate() {
+      return this.startDate;
+   }
+
+   public LocalDate getPlannedEndDate() {
+      return this.plannedEndDate;
+   }
+
+   public LocalDate getEndDate() {
+      return this.endDate;
+   }
+
+   public Status getStatus() {
+      return this.status;
+   }
+
+   public List<BacklogItem> getItems() {
+      return this.items;
+   }
+
+   public Sprint setId(Long id) {
+      this.id = id;
+      return this;
+   }
+
+   public Sprint setIteration(int iteration) {
+      this.iteration = iteration;
+      return this;
+   }
+
+   public Sprint setProduct(Product product) {
+      this.product = product;
+      return this;
+   }
+
+   public Sprint setStartDate(LocalDate startDate) {
+      this.startDate = startDate;
+      return this;
+   }
+
+   public Sprint setPlannedEndDate(LocalDate plannedEndDate) {
+      this.plannedEndDate = plannedEndDate;
+      return this;
+   }
+
+   public Sprint setEndDate(LocalDate endDate) {
+      this.endDate = endDate;
+      return this;
+   }
+
+   public void start() { // a simple state machine checking the preconditions of the transition
+      // and marking the audit column automatically
+      if (status != Status.CREATED) {
+         throw new IllegalStateException();
+      }
+      startDate = LocalDate.now();
+      status = Status.STARTED;
+   }
+
+   public void end() {
+      if (status != Status.STARTED) {
+         throw new IllegalStateException();
+      }
+      endDate = LocalDate.now();
+//      DomainEvents.publishEvent(new SprintEndedEvent(id));
+      status = Status.FINISHED;
+   }
+   // Any downsides?
+   // TESTING becomes harder. You can't just set the state to X, and how would I mock now() call.
+// the problem with testing is when in one test you want to use a FINISHED
+// Spring to pass it as a param to soem tested method. You can't just new Sprint().setState(FINISHED);
+   // you now have to respect the state transaction:
+   // s = new Sprint(); s.start(); s.end();
+   // Idea: TestData.aStartedSprint()
+
+   public Sprint setItems(List<BacklogItem> items) {
+      this.items = items;
+      return this;
+   }
+   public boolean isFinished() {
+      return status == Status.FINISHED;
+   }
 }
 

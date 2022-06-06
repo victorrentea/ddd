@@ -15,18 +15,17 @@ import victor.training.ddd.agile.repo.BacklogItemRepo;
 import victor.training.ddd.agile.repo.ProductRepo;
 import victor.training.ddd.agile.repo.SprintRepo;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 @Transactional
 @RestController
-@RequiredArgsConstructor
 public class SprintService {
    private final SprintRepo sprintRepo;
    private final ProductRepo productRepo;
    private final BacklogItemRepo backlogItemRepo;
    private final EmailService emailService;
+   private final SprintMetricsGenerator sprintMetricsGenerator;
 
    @PostMapping("sprint")
    public Long createSprint(@RequestBody CreateSprintRequest dto) {
@@ -46,21 +45,13 @@ public class SprintService {
    @PostMapping("sprint/{id}/start")
    public void startSprint(@PathVariable long id) {
       Sprint sprint = sprintRepo.findOneById(id);
-      if (sprint.getStatus() != Status.CREATED) {
-         throw new IllegalStateException();
-      }
-      sprint.setStartDate(LocalDate.now());
-      sprint.setStatus(Status.STARTED);
+      sprint.start();
    }
 
    @PostMapping("sprint/{id}/end")
    public void endSprint(@PathVariable long id) {
       Sprint sprint = sprintRepo.findOneById(id);
-      if (sprint.getStatus() != Status.STARTED) {
-         throw new IllegalStateException();
-      }
-      sprint.setEndDate(LocalDate.now());
-      sprint.setStatus(Status.FINISHED);
+      sprint.end();
    }
 
    /*****************************  ITEMS IN SPRINT *******************************************/
@@ -135,24 +126,19 @@ public class SprintService {
    @GetMapping("sprint/{id}/metrics")
    public SprintMetrics getSprintMetrics(@PathVariable long id) {
       Sprint sprint = sprintRepo.findOneById(id);
-      if (sprint.getStatus() != Status.FINISHED) {
-         throw new IllegalStateException();
-      }
-      List<BacklogItem> doneItems = sprint.getItems().stream()
-          .filter(item -> item.getStatus() == BacklogItem.Status.DONE)
-          .collect(Collectors.toList());
-      SprintMetrics dto = new SprintMetrics();
-      dto.consumedHours = sprint.getItems().stream().mapToInt(BacklogItem::getHoursConsumed).sum();
-      dto.calendarDays = sprint.getStartDate().until(sprint.getEndDate()).getDays();
-      dto.doneFP = doneItems.stream().mapToInt(BacklogItem::getFpEstimation).sum();
-      dto.fpVelocity = 1.0 * dto.doneFP / dto.consumedHours;
-      dto.hoursConsumedForNotDone = sprint.getItems().stream()
-          .filter(item -> item.getStatus() != BacklogItem.Status.DONE)
-          .mapToInt(BacklogItem::getHoursConsumed).sum();
-      if (sprint.getEndDate().isAfter(sprint.getPlannedEndDate())) {
-         dto.delayDays = sprint.getPlannedEndDate().until(sprint.getEndDate()).getDays();
-      }
-      return dto;
+      return sprintMetricsGenerator.computeMetrics(sprint);
    }
+
+   // PUSH in Entities:
+   // - data consitency protection; eg: when state = STARTED, the startDate MUST be NOT NULL
+   // - small bits of biz logic 1-3 lines IF they are highly reusable; eg. isActive() { reutrn !deleted; }
+
+   // do not push in Entities:
+   // - logic that talks to Spring @Autowired deps.
+   // - logic working with 2 Entities but that doesn't belong naturally to either of them
+   // - presentation logic
+   // - highly specific logic
+   // - complex logic (like the following)
+
 
 }
