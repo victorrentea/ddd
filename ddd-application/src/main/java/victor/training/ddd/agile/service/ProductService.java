@@ -6,6 +6,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import victor.training.ddd.agile.entity.Product;
 import victor.training.ddd.agile.dto.ProductDto;
+import victor.training.ddd.agile.entity.ProductOwner;
 import victor.training.ddd.agile.repo.ProductRepo;
 
 import javax.validation.Valid;
@@ -21,11 +22,11 @@ public class ProductService {
       if (productRepo.existsByCode(dto.code)) {
          throw new IllegalArgumentException("Code already defined");
       }
+//      ProductOwner productOwner = new ProductOwner(dto.poName, dto.poEmail, dto.poPhone);
       Product product = new Product(dto.code, dto.name)
-          .setTeamMailingList(dto.mailingList)
-          .setOwnerEmail(dto.poEmail)
-          .setOwnerName(dto.poName)
-          .setOwnerPhone(dto.poPhone);
+           .setTeamMailingList(dto.mailingList)
+           .setOwnerUserid(dto.poUserid);
+           ;
       return productRepo.save(product).getId();
    }
 

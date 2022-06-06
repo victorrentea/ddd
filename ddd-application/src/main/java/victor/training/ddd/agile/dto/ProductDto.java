@@ -15,4 +15,5 @@ public class ProductDto {
    public String poEmail;
    public String poName;
    public String poPhone;
+   public String poUserid;
 }
