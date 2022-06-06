@@ -5,6 +5,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@Entity
+class ProductOwner {
+   @Id @GeneratedValue
+   private Long id;
+
+   String ownerEmail;
+   String ownerName;
+   String ownerPhone;
+}
 
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(name = "UK_CODE", columnNames = "CODE")) // if on a relational DB, it's an opportunity hard to redfus
@@ -19,9 +28,12 @@ public class Product { // PRODUCT
    @Column(nullable = false)
    private String name;
 
-   private String ownerEmail;
-   private String ownerName;
-   private String ownerPhone;
+   @OneToOne(cascade = CascadeType.ALL)
+   private ProductOwner owner = new ProductOwner();
+
+//   private String ownerEmail;
+//   private String ownerName;
+//   private String ownerPhone;
 
    private String teamMailingList;
 
@@ -52,32 +64,12 @@ public class Product { // PRODUCT
       return id;
    }
 
-   public int getCurrentIteration() {
-      return currentIteration;
-   }
-
-   public int getCurrentVersion() {
-      return currentVersion;
-   }
-
    public String getCode() {
       return code;
    }
 
    public String getName() {
       return name;
-   }
-
-   public String getOwnerEmail() {
-      return ownerEmail;
-   }
-
-   public String getOwnerName() {
-      return ownerName;
-   }
-
-   public String getOwnerPhone() {
-      return ownerPhone;
    }
 
    public String getTeamMailingList() {
@@ -92,33 +84,18 @@ public class Product { // PRODUCT
       return releases;
    }
 
-   public Product setId(Long id) {
-      this.id = id;
-      return this;
-   }
-
-   public Product setCurrentIteration(int currentIteration) {
-      this.currentIteration = currentIteration;
-      return this;
-   }
-
-   public Product setCurrentVersion(int currentVersion) {
-      this.currentVersion = currentVersion;
-      return this;
-   }
-
    public Product setOwnerEmail(String ownerEmail) {
-      this.ownerEmail = ownerEmail;
+      this.owner.ownerEmail = ownerEmail;
       return this;
    }
 
    public Product setOwnerName(String ownerName) {
-      this.ownerName = ownerName;
+      this.owner.ownerName = ownerName;
       return this;
    }
 
    public Product setOwnerPhone(String ownerPhone) {
-      this.ownerPhone = ownerPhone;
+      this.owner.ownerPhone = ownerPhone;
       return this;
    }
 
@@ -126,17 +103,6 @@ public class Product { // PRODUCT
       this.teamMailingList = teamMailingList;
       return this;
    }
-
-   public Product setSprints(List<Sprint> sprints) {
-      this.sprints = sprints;
-      return this;
-   }
-
-   public Product setReleases(List<Release> releases) {
-      this.releases = releases;
-      return this;
-   }
-
 
    public String toString() {
       return "Product(id=" + getId() + ")";
