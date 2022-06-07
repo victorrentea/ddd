@@ -15,7 +15,7 @@ public class SprintMetricsGenerator {
             throw new IllegalStateException();
         }
         List<BacklogItem> doneItems = sprint.getItems().stream()
-                .filter(item -> item.getStatus() == BacklogItem.Status.DONE)
+                .filter(item -> item.getStatus() == BacklogItem.Status.COMPLETED)
                 .collect(Collectors.toList());
         SprintMetrics metrics = new SprintMetrics();
         metrics.consumedHours = sprint.getItems().stream().mapToInt(BacklogItem::getHoursConsumed).sum();
@@ -23,7 +23,7 @@ public class SprintMetricsGenerator {
         metrics.doneFP = doneItems.stream().mapToInt(BacklogItem::getFpEstimation).sum();
         metrics.fpVelocity = 1.0 * metrics.doneFP / metrics.consumedHours;
         metrics.hoursConsumedForNotDone = sprint.getItems().stream()
-                .filter(item -> item.getStatus() != BacklogItem.Status.DONE)
+                .filter(item -> item.getStatus() != BacklogItem.Status.COMPLETED)
                 .mapToInt(BacklogItem::getHoursConsumed).sum();
         if (sprint.getEndDate().isAfter(sprint.getPlannedEndDate())) {
             metrics.delayDays = sprint.getPlannedEndDate().until(sprint.getEndDate()).getDays();

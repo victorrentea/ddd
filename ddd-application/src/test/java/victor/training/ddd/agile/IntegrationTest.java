@@ -72,12 +72,12 @@ public class IntegrationTest extends SystemTestBase {
 
       Release release = releases.createRelease(productId, sprintId);
 
-      assertThat(release.getReleaseNotes()).contains("::item1::");
-      assertThat(release.getVersion()).isEqualTo("1.0");
-
-      // try to update a done backlog item
-      BacklogItemDto backlogDto2 = backlogItems.getBacklogItem(backlogItemId);
-      backlogDto2.description += "IllegalChange";
+//      assertThat(release.getReleaseNotes()).contains("::item1::");
+//      assertThat(release.getVersion()).isEqualTo("1.0");
+//
+//      // try to update a done backlog item
+//      BacklogItemDto backlogDto2 = backlogItems.getBacklogItem(backlogItemId);
+//      backlogDto2.description += "IllegalChange";
 
       // TODO new feature: uncomment below: should fail
       // assertThatThrownBy(() -> backlogItems.updateBacklogItem(backlogDto2)).describedAs("cannot edit done item");

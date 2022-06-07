@@ -35,17 +35,17 @@ public class BacklogItem {
        if (getStatus() != Status.STARTED) {
           throw new IllegalStateException("Cannot complete an Item before starting it");
        }
-       setStatus(Status.DONE);
+       setStatus(Status.COMPLETED);
     }
 
     public boolean isDone() {
-       return getStatus() == Status.DONE;
+       return getStatus() == Status.COMPLETED;
     }
 
     public enum Status {
       CREATED,
       STARTED,
-      DONE
+        COMPLETED
    }
    @Enumerated(STRING)
    private Status status = Status.CREATED;

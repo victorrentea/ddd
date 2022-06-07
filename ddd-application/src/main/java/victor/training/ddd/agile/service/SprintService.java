@@ -24,7 +24,6 @@ public class SprintService {
    private final SprintRepo sprintRepo;
    private final ProductRepo productRepo;
    private final BacklogItemRepo backlogItemRepo;
-   private final EmailService emailService;
    private final SprintMetricsGenerator sprintMetricsGenerator;
 
    @PostMapping("sprint")
@@ -75,7 +74,6 @@ public class SprintService {
       sprintRepo.findOneById(sprintId).startItem(backlogId);
    }
 
-   private final MailingListClient mailingListClient;
 
    // facade here
 
@@ -83,14 +81,14 @@ public class SprintService {
    public void completeItem(@PathVariable long sprintId, @PathVariable long backlogId) {
       Sprint sprint = sprintRepo.findOneById(sprintId);
       sprint.completeItem(backlogId);
-      Product product = productRepo.findOneById(sprint.getProductId());
-      if (sprint.allItemsAreDone()) {
-         System.out.println("Sending CONGRATS email to team of product " + product.getCode() + ": They finished the items earlier. They have time to refactor! (OMG!)");
-         if (product.getTeamMailingList().isPresent()) {
-            List<String> emails = mailingListClient.retrieveEmails(product.getTeamMailingList().get());
-            emailService.sendCongratsEmail(emails);
-         }
-      }
+//      Product product = productRepo.findOneById(sprint.getProductId());
+//      if (sprint.allItemsAreDone()) {
+//         System.out.println("Sending CONGRATS email to team of product " + product.getCode() + ": They finished the items earlier. They have time to refactor! (OMG!)");
+//         if (product.getTeamMailingList().isPresent()) {
+//            List<String> emails = mailingListClient.retrieveEmails(product.getTeamMailingList().get());
+//            emailService.sendCongratsEmail(emails);
+//         }
+//      }
    }
 
    private void checkSprintMatchesAndStarted(long sprintId, BacklogItem backlogItem) {

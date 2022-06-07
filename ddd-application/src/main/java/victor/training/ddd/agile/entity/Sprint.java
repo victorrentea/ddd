@@ -1,5 +1,8 @@
 package victor.training.ddd.agile.entity;
 
+import victor.training.ddd.agile.common.DomainEvents;
+import victor.training.ddd.agile.events.SprintFinishedEvent;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -11,9 +14,7 @@ import static javax.persistence.EnumType.STRING;
 public class Sprint {
 
 
-   public boolean allItemsAreDone() {
-      return getItems().stream().allMatch(BacklogItem::isDone);
-   }
+
 
    public enum Status {
       CREATED,
@@ -160,7 +161,9 @@ public class Sprint {
       }
       BacklogItem backlogItem = itemById(backlogId);
       backlogItem.completeItem();
-//      if (items.stream().allMatch(BacklogItem::isDone)) {
+      if (items.stream().allMatch(BacklogItem::isDone)) {
+         DomainEvents.publishEvent(new SprintFinishedEvent(id));
+      }
 //         System.out.println("Sending CONGRATS email to team of product " + product.getCode()
 //                            + ": They finished the items earlier. They have time to refactor! (OMG!)");
 //         if (product.getTeamMailingList().isPresent()) {
@@ -168,6 +171,9 @@ public class Sprint {
 //            emailService.sendCongratsEmail(emails); //3
 //         }
 //      }
+   }
+   public boolean allItemsAreDone() {
+      return this.items.stream().allMatch(BacklogItem::isDone);
    }
 
    private BacklogItem itemById(long backlogId) {
