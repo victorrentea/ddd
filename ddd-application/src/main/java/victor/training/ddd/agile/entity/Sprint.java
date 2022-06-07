@@ -1,5 +1,10 @@
 package victor.training.ddd.agile.entity;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.AbstractAggregateRoot;
 import victor.training.ddd.agile.common.DomainEvents;
 import victor.training.ddd.agile.events.SprintFinishedEvent;
 
@@ -10,12 +15,10 @@ import java.util.List;
 
 import static javax.persistence.EnumType.STRING;
 
+//@Configurable // DON'T USE ME! allows @Autowired to work in @Entity.
+@Slf4j
 @Entity // Aggregate Root
-public class Sprint {
-
-
-
-
+public class Sprint extends AbstractAggregateRoot<Sprint> {
    public enum Status {
       CREATED,
       STARTED,
@@ -162,8 +165,10 @@ public class Sprint {
       BacklogItem backlogItem = itemById(backlogId);
       backlogItem.completeItem();
       if (items.stream().allMatch(BacklogItem::isDone)) {
-         DomainEvents.publishEvent(new SprintFinishedEvent(id));
+//         DomainEvents.publishEvent(new SprintFinishedEvent(id)); //>50%
+         registerEvent(new SprintFinishedEvent(id));
       }
+      log.debug("AFter event fired");
 //         System.out.println("Sending CONGRATS email to team of product " + product.getCode()
 //                            + ": They finished the items earlier. They have time to refactor! (OMG!)");
 //         if (product.getTeamMailingList().isPresent()) {
@@ -172,6 +177,9 @@ public class Sprint {
 //         }
 //      }
    }
+
+//   @Autowired
+//   ApplicationEventPublisher publisher;
    public boolean allItemsAreDone() {
       return this.items.stream().allMatch(BacklogItem::isDone);
    }

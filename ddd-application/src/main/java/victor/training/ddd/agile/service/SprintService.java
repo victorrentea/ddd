@@ -81,6 +81,7 @@ public class SprintService {
    public void completeItem(@PathVariable long sprintId, @PathVariable long backlogId) {
       Sprint sprint = sprintRepo.findOneById(sprintId);
       sprint.completeItem(backlogId);
+      sprintRepo.save(sprint); // needed to publish the Domain Events from org.springframework.data.domain.AbstractAggregateRoot
 //      Product product = productRepo.findOneById(sprint.getProductId());
 //      if (sprint.allItemsAreDone()) {
 //         System.out.println("Sending CONGRATS email to team of product " + product.getCode() + ": They finished the items earlier. They have time to refactor! (OMG!)");

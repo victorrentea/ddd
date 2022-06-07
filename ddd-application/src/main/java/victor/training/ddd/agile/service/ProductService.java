@@ -3,6 +3,9 @@ package victor.training.ddd.agile.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import victor.training.ddd.agile.entity.Product;
@@ -38,14 +41,21 @@ public class ProductService {
     }
 
     @EventListener
+    public void onSprintFinishedEvent2(SprintFinishedEvent event) {
+        log.debug("me too!");
+    }
+    @EventListener
+//    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT) // dagerous, only consider if plannign to break into microservices in <3mon
+//    @Async // void + @Async = fire and forget
     public void onSprintFinishedEvent(SprintFinishedEvent event) {
         Sprint sprint = sprintRepo.findOneById(event.getSprintId());
         Product product = productRepo.findOneById(sprint.getProductId());
-        System.out.println("Sending CONGRATS email to team of product " + product.getCode() + ": They finished the items earlier. They have time to refactor! (OMG!)");
+        log.debug("Sending CONGRATS email to team of product " + product.getCode() + ": They finished the items earlier. They have time to refactor! (OMG!)");
         if (product.getTeamMailingList().isPresent()) {
             List<String> emails = mailingListClient.retrieveEmails(product.getTeamMailingList().get());
             emailService.sendCongratsEmail(emails);
         }
+//        throw new RuntimeException("Blows up everyting, incoiuding the original transacation");
     }
 
     @GetMapping("products/{id}/notify")

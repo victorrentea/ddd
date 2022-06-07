@@ -12,7 +12,7 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class DomainEvents {
+public class DomainEvents { // HACK
 
    private static ApplicationEventPublisher springPublisher = new NoopPublisher();
 
