@@ -34,7 +34,8 @@ public class Product { // PRODUCT
 
     private String teamMailingList;
 
-    @OneToMany(mappedBy = "product")
+    @OneToMany
+    @JoinColumn
     private List<Sprint> sprints = new ArrayList<>();
 
     @OneToMany(mappedBy = "product")
