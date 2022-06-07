@@ -1,4 +1,4 @@
-package victor.training.ddd.order.aggregates;
+package victor.training.ddd.agile.order.aggregates;
 
 import lombok.Data;
 
@@ -6,7 +6,7 @@ import javax.persistence.*;
 
 @Entity
 @Data
-public class Product {
+public class ProductToBuy {
    @Id
    @GeneratedValue
    private Long id;

@@ -32,7 +32,7 @@ public class SprintService {
       Product product = productRepo.findOneById(dto.productId);
       Sprint sprint = new Sprint()
           .setIteration(product.incrementAndGetIteration())
-          .setProduct(product)
+          .setProductId(product.getId())
           .setPlannedEndDate(dto.plannedEnd);
       return sprintRepo.save(sprint).getId();
    }
@@ -70,30 +70,24 @@ public class SprintService {
    }
 
 
-   @PostMapping("sprint/{id}/start-item/{backlogId}")
-   public void startItem(@PathVariable long id, @PathVariable long backlogId) {
-      BacklogItem backlogItem = backlogItemRepo.findOneById(backlogId);
-
-      checkSprintMatchesAndStarted(id, backlogItem);
-
-      backlogItem.start();
+   @PostMapping("sprint/{sprintId}/start-item/{backlogId}")
+   public void startItem(@PathVariable long sprintId, @PathVariable long backlogId) {
+      sprintRepo.findOneById(sprintId).startItem(backlogId);
    }
 
    private final MailingListClient mailingListClient;
 
-   @PostMapping("sprint/{id}/complete-item/{backlogId}")
-   public void completeItem(@PathVariable long id, @PathVariable long backlogId) {
-      BacklogItem backlogItem = backlogItemRepo.findOneById(backlogId);
-      checkSprintMatchesAndStarted(id, backlogItem);
-      if (backlogItem.getStatus() != BacklogItem.Status.STARTED) {
-         throw new IllegalStateException("Cannot complete an Item before starting it");
-      }
-      backlogItem.setStatus(BacklogItem.Status.DONE);
-      Sprint sprint = sprintRepo.findOneById(id);
-      if (sprint.getItems().stream().allMatch(item -> item.getStatus() == BacklogItem.Status.DONE)) {
-         System.out.println("Sending CONGRATS email to team of product " + sprint.getProduct().getCode() + ": They finished the items earlier. They have time to refactor! (OMG!)");
-         if (sprint.getProduct().getTeamMailingList().isPresent()) {
-            List<String> emails = mailingListClient.retrieveEmails(sprint.getProduct().getTeamMailingList().get());
+   // facade here
+
+   @PostMapping("sprint/{sprintId}/complete-item/{backlogId}")
+   public void completeItem(@PathVariable long sprintId, @PathVariable long backlogId) {
+      Sprint sprint = sprintRepo.findOneById(sprintId);
+      sprint.completeItem(backlogId);
+      Product product = productRepo.findOneById(sprint.getProductId());
+      if (sprint.allItemsAreDone()) {
+         System.out.println("Sending CONGRATS email to team of product " + product.getCode() + ": They finished the items earlier. They have time to refactor! (OMG!)");
+         if (product.getTeamMailingList().isPresent()) {
+            List<String> emails = mailingListClient.retrieveEmails(product.getTeamMailingList().get());
             emailService.sendCongratsEmail(emails);
          }
       }

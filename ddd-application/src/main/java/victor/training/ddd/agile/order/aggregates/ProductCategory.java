@@ -1,4 +1,4 @@
-package victor.training.ddd.order.aggregates;
+package victor.training.ddd.agile.order.aggregates;
 
 public enum ProductCategory {
    ELT("Electronics"),

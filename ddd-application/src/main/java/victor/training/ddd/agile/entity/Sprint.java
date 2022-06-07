@@ -7,10 +7,13 @@ import java.util.List;
 
 import static javax.persistence.EnumType.STRING;
 
-@Entity
+@Entity // Aggregate Root
 public class Sprint {
 
 
+   public boolean allItemsAreDone() {
+      return getItems().stream().allMatch(BacklogItem::isDone);
+   }
 
    public enum Status {
       CREATED,
@@ -22,8 +25,9 @@ public class Sprint {
    @GeneratedValue
    private Long id;
    private int iteration;
-   @ManyToOne
-   private Product product;
+//   @ManyToOne
+//   private Product product;
+   private Long productId;
 
    private LocalDate startDate;
    private LocalDate plannedEndDate;
@@ -38,6 +42,15 @@ public class Sprint {
    public Sprint() {
    }
 
+   public Long getProductId() {
+      return productId;
+   }
+
+   public Sprint setProductId(Long productId) {
+      this.productId = productId;
+      return this;
+   }
+
    public Long getId() {
       return this.id;
    }
@@ -46,9 +59,9 @@ public class Sprint {
       return this.iteration;
    }
 
-   public Product getProduct() {
-      return this.product;
-   }
+//   public Product getProduct() {
+//      return this.product;
+//   }
 
    public LocalDate getStartDate() {
       return this.startDate;
@@ -80,10 +93,10 @@ public class Sprint {
       return this;
    }
 
-   public Sprint setProduct(Product product) {
-      this.product = product;
-      return this;
-   }
+//   public Sprint setProduct(Product product) {
+//      this.product = product;
+//      return this;
+//   }
 
    public Sprint setStartDate(LocalDate startDate) {
       this.startDate = startDate;
@@ -131,6 +144,37 @@ public class Sprint {
    }
    public boolean isFinished() {
       return status == Status.FINISHED;
+   }
+
+   public void startItem(long backlogId) {
+      if (status != Status.STARTED) {
+         throw new IllegalStateException("Sprint not started");
+      }
+      BacklogItem backlogItem = itemById(backlogId);
+      backlogItem.start();
+   }
+
+   public void completeItem(long backlogId) {
+      if (status != Status.STARTED) {
+         throw new IllegalStateException("Sprint not started");
+      }
+      BacklogItem backlogItem = itemById(backlogId);
+      backlogItem.completeItem();
+//      if (items.stream().allMatch(BacklogItem::isDone)) {
+//         System.out.println("Sending CONGRATS email to team of product " + product.getCode()
+//                            + ": They finished the items earlier. They have time to refactor! (OMG!)");
+//         if (product.getTeamMailingList().isPresent()) {
+//            List<String> emails = mailingListClient.retrieveEmails(product.getTeamMailingList().get()); //2
+//            emailService.sendCongratsEmail(emails); //3
+//         }
+//      }
+   }
+
+   private BacklogItem itemById(long backlogId) {
+      return items.stream()
+              .filter(item -> item.getId().equals(backlogId))
+              .findFirst()
+              .orElseThrow();
    }
 }
 

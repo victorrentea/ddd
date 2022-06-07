@@ -12,7 +12,7 @@ import static javax.persistence.EnumType.STRING;
 @Getter
 @Setter
 @NoArgsConstructor
-@Entity
+@Entity // child entity of the  Sprint Aggregate
 public class BacklogItem {
    @Id
    @GeneratedValue
@@ -24,11 +24,22 @@ public class BacklogItem {
    private String title;
    private String description;
 
-    public void start() {
+   void start() {
         if (status != BacklogItem.Status.CREATED) {
             throw new IllegalStateException("Item already started");
         }
         this.status = Status.STARTED;
+    }
+
+    public void completeItem() {
+       if (getStatus() != Status.STARTED) {
+          throw new IllegalStateException("Cannot complete an Item before starting it");
+       }
+       setStatus(Status.DONE);
+    }
+
+    public boolean isDone() {
+       return getStatus() == Status.DONE;
     }
 
     public enum Status {
