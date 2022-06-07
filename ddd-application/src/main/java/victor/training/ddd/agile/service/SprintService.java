@@ -73,11 +73,10 @@ public class SprintService {
    @PostMapping("sprint/{id}/start-item/{backlogId}")
    public void startItem(@PathVariable long id, @PathVariable long backlogId) {
       BacklogItem backlogItem = backlogItemRepo.findOneById(backlogId);
+
       checkSprintMatchesAndStarted(id, backlogItem);
-      if (backlogItem.getStatus() != BacklogItem.Status.CREATED) {
-         throw new IllegalStateException("Item already started");
-      }
-      backlogItem.setStatus(BacklogItem.Status.STARTED);
+
+      backlogItem.start();
    }
 
    private final MailingListClient mailingListClient;
@@ -100,12 +99,11 @@ public class SprintService {
       }
    }
 
-   private void checkSprintMatchesAndStarted(long id, BacklogItem backlogItem) {
-      if (!backlogItem.getSprint().getId().equals(id)) {
+   private void checkSprintMatchesAndStarted(long sprintId, BacklogItem backlogItem) {
+      if (!backlogItem.getSprint().getId().equals(sprintId)) {
          throw new IllegalArgumentException("item not in sprint");
       }
-      Sprint sprint = sprintRepo.findOneById(id);
-      if (sprint.getStatus() != Status.STARTED) {
+      if (backlogItem.getSprint().getStatus() != Status.STARTED) {
          throw new IllegalStateException("Sprint not started");
       }
    }

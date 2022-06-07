@@ -24,7 +24,14 @@ public class BacklogItem {
    private String title;
    private String description;
 
-   public enum Status {
+    public void start() {
+        if (status != BacklogItem.Status.CREATED) {
+            throw new IllegalStateException("Item already started");
+        }
+        this.status = Status.STARTED;
+    }
+
+    public enum Status {
       CREATED,
       STARTED,
       DONE
