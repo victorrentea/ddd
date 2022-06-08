@@ -29,9 +29,9 @@ public class Release {
 
    @OneToMany
    @JoinColumn
-   private List<BacklogItem> releasedItems; // only used for release notes
+   private List<SprintItem> releasedItems; // only used for release notes
 
    public String getReleaseNotes() {
-      return releasedItems.stream().map(BacklogItem::getTitle).collect(joining("\n"));
+      return releasedItems.stream().map(SprintItem::getTitle).collect(joining("\n"));
    }
 }

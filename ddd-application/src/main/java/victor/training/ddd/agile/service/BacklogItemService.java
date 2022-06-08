@@ -1,11 +1,13 @@
 package victor.training.ddd.agile.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.event.EventListener;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import victor.training.ddd.agile.entity.BacklogItem;
 import victor.training.ddd.agile.entity.Product;
 import victor.training.ddd.agile.dto.BacklogItemDto;
+import victor.training.ddd.agile.events.BacklogItemAddedToSprintEvent;
 import victor.training.ddd.agile.repo.BacklogItemRepo;
 import victor.training.ddd.agile.repo.ProductRepo;
 
@@ -36,6 +38,11 @@ public class BacklogItemService {
       dto.title = backlogItem.getTitle();
       dto.version = backlogItem.getVersion();
       return dto;
+   }
+
+   @EventListener
+   public void itemAddedToSprint(BacklogItemAddedToSprintEvent event) {
+      backlogItemRepo.findOneById(event.getBacklogId()).startDevelopment();
    }
 
    @PutMapping("backlog")

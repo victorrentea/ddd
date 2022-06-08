@@ -47,7 +47,7 @@ public class IntegrationTest extends SystemTestBase {
              backlogItems.updateBacklogItem(backlogDto2);
           }).describedAs("title null should be rejected");
 
-      Long itemId = sprints.addItem(sprintId, new AddBacklogItemRequest()
+      String itemId = sprints.addItem(sprintId, new AddBacklogItemRequest()
           .setFpEstimation(2)
           .setBacklogId(backlogItemId));
 
@@ -70,8 +70,8 @@ public class IntegrationTest extends SystemTestBase {
           .extracting(SprintMetrics::getConsumedHours, SprintMetrics::getDoneFP, SprintMetrics::getHoursConsumedForNotDone)
           .containsExactly(10, 2, 0);
 
-      Release release = releases.createRelease(productId, sprintId);
-
+//      Release release = releases.createRelease(productId, sprintId);
+//
 //      assertThat(release.getReleaseNotes()).contains("::item1::");
 //      assertThat(release.getVersion()).isEqualTo("1.0");
 //

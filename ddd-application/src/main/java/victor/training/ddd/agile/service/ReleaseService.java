@@ -6,10 +6,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
-import victor.training.ddd.agile.entity.BacklogItem;
-import victor.training.ddd.agile.entity.Product;
-import victor.training.ddd.agile.entity.Release;
-import victor.training.ddd.agile.entity.Sprint;
+import victor.training.ddd.agile.entity.*;
 import victor.training.ddd.agile.repo.ProductRepo;
 import victor.training.ddd.agile.repo.ReleaseRepo;
 import victor.training.ddd.agile.repo.SprintRepo;
@@ -39,7 +36,7 @@ public class ReleaseService {
           .max().orElse(0);
       int releasedIteration = sprint.getIteration();
 
-      List<BacklogItem> releasedItems = product.getSprints().stream()
+      List<SprintItem> releasedItems = product.getSprints().stream()
           .sorted(Comparator.comparing(Sprint::getIteration))
           .filter(s -> s.getIteration() > previouslyReleasedIteration
                        && s.getIteration() <= releasedIteration)

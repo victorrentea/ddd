@@ -1,16 +1,15 @@
 package victor.training.ddd.agile.entity;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.AbstractAggregateRoot;
 import victor.training.ddd.agile.common.DomainEvents;
+import victor.training.ddd.agile.events.BacklogItemAddedToSprintEvent;
 import victor.training.ddd.agile.events.SprintFinishedEvent;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static javax.persistence.EnumType.STRING;
@@ -29,8 +28,6 @@ public class Sprint extends AbstractAggregateRoot<Sprint> {
    @GeneratedValue
    private Long id;
    private int iteration;
-//   @ManyToOne
-//   private Product product;
    private Long productId;
 
    private LocalDate startDate;
@@ -40,10 +37,18 @@ public class Sprint extends AbstractAggregateRoot<Sprint> {
    @Enumerated(STRING)
    private Status status = Status.CREATED;
 
-   @OneToMany(mappedBy = "sprint")
-   private List<BacklogItem> items = new ArrayList<>();
+   // typical for AggregateRoot- child entity relation
+   @JoinColumn
+   @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+   private List<SprintItem> items = new ArrayList<>();
 
    public Sprint() {
+   }
+
+   public Sprint(int iteration, Long productId, LocalDate plannedEndDate) {
+      this.iteration = iteration;
+      this.productId = productId;
+      this.plannedEndDate = plannedEndDate;
    }
 
    public Long getProductId() {
@@ -83,8 +88,20 @@ public class Sprint extends AbstractAggregateRoot<Sprint> {
       return this.status;
    }
 
-   public List<BacklogItem> getItems() {
-      return this.items;
+   public List<SprintItem> getItems() {
+      return Collections.unmodifiableList(this.items);
+   }
+
+
+   public SprintItem addItem(BacklogItem backlogItem, int fpEstimation) {
+      if (status != Status.CREATED) {
+         throw new IllegalStateException("Can only add items to Sprint before it starts");
+      }
+      SprintItem sprintItem = new SprintItem(backlogItem.getTitle(), backlogItem.getDescription(), fpEstimation);
+      items.add(sprintItem);
+      BacklogItemAddedToSprintEvent event = new BacklogItemAddedToSprintEvent(backlogItem.getId());
+      DomainEvents.publishEvent(event);
+      return sprintItem;
    }
 
    public Sprint setId(Long id) {
@@ -142,29 +159,33 @@ public class Sprint extends AbstractAggregateRoot<Sprint> {
    // s = new Sprint(); s.start(); s.end();
    // Idea: TestData.aStartedSprint()
 
-   public Sprint setItems(List<BacklogItem> items) {
-      this.items = items;
-      return this;
-   }
    public boolean isFinished() {
       return status == Status.FINISHED;
    }
 
-   public void startItem(long backlogId) {
+
+   public void logHours(String sprintItemId, int hours) {
       if (status != Status.STARTED) {
          throw new IllegalStateException("Sprint not started");
       }
-      BacklogItem backlogItem = itemById(backlogId);
-      backlogItem.start();
+      SprintItem sprintItem = itemById(sprintItemId);
+      sprintItem.logHours(hours);
+   }
+   public void startItem(String sprintItemId) {
+      if (status != Status.STARTED) {
+         throw new IllegalStateException("Sprint not started");
+      }
+      SprintItem sprintItem = itemById(sprintItemId);
+      sprintItem.start();
    }
 
-   public void completeItem(long backlogId) {
+   public void completeItem(String sprintItemId) {
       if (status != Status.STARTED) {
          throw new IllegalStateException("Sprint not started");
       }
-      BacklogItem backlogItem = itemById(backlogId);
-      backlogItem.completeItem();
-      if (items.stream().allMatch(BacklogItem::isDone)) {
+      SprintItem sprintItem = itemById(sprintItemId);
+      sprintItem.completeItem();
+      if (items.stream().allMatch(SprintItem::isDone)) {
 //         DomainEvents.publishEvent(new SprintFinishedEvent(id)); //>50%
          registerEvent(new SprintFinishedEvent(id));
       }
@@ -181,12 +202,12 @@ public class Sprint extends AbstractAggregateRoot<Sprint> {
 //   @Autowired
 //   ApplicationEventPublisher publisher;
    public boolean allItemsAreDone() {
-      return this.items.stream().allMatch(BacklogItem::isDone);
+      return this.items.stream().allMatch(SprintItem::isDone);
    }
 
-   private BacklogItem itemById(long backlogId) {
+   private SprintItem itemById(String sprintItemId) {
       return items.stream()
-              .filter(item -> item.getId().equals(backlogId))
+              .filter(item -> item.getId().equals(sprintItemId))
               .findFirst()
               .orElseThrow();
    }
