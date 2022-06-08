@@ -73,10 +73,11 @@ public class SprintService {
     }
 
     @PostMapping("sprint/{sprintId}/complete-item/{sprintItemId}")
+    @Transactional
     public void completeItem(@PathVariable long sprintId, @PathVariable String sprintItemId) {
         Sprint sprint = sprintRepo.findOneById(sprintId);
         sprint.completeItem(sprintItemId);
-        sprintRepo.save(sprint); // WARNING: needed to publish the Domain Events from org.springframework.data.domain.AbstractAggregateRoot
+//        sprintRepo.save(sprint); // WARNING: needed to publish the Domain Events from org.springframework.data.domain.AbstractAggregateRoot
 //      Product product = productRepo.findOneById(sprint.getProductId());
 //      if (sprint.allItemsAreDone()) {
 //         System.out.println("Sending CONGRATS email to team of product " + product.getCode() + ": They finished the items earlier. They have time to refactor! (OMG!)");
