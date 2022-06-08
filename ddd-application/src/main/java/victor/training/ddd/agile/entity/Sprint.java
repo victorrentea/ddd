@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import static javax.persistence.EnumType.STRING;
 
@@ -42,58 +43,48 @@ public class Sprint extends AbstractAggregateRoot<Sprint> {
    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
    private List<SprintItem> items = new ArrayList<>();
 
-   public Sprint() {
+   protected Sprint() {
    }
 
-   public Sprint(int iteration, Long productId, LocalDate plannedEndDate) {
+   public Sprint(long productId, int iteration, LocalDate plannedEndDate) {
       this.iteration = iteration;
       this.productId = productId;
-      this.plannedEndDate = plannedEndDate;
+      this.plannedEndDate = Objects.requireNonNull(plannedEndDate);
    }
 
    public Long getProductId() {
       return productId;
    }
 
-   public Sprint setProductId(Long productId) {
-      this.productId = productId;
-      return this;
-   }
-
    public Long getId() {
-      return this.id;
+      return id;
    }
 
    public int getIteration() {
-      return this.iteration;
+      return iteration;
    }
 
-//   public Product getProduct() {
-//      return this.product;
-//   }
-
    public LocalDate getStartDate() {
-      return this.startDate;
+      return startDate;
    }
 
    public LocalDate getPlannedEndDate() {
-      return this.plannedEndDate;
+      return plannedEndDate;
    }
 
    public LocalDate getEndDate() {
-      return this.endDate;
+      return endDate;
    }
 
    public Status getStatus() {
-      return this.status;
+      return status;
    }
 
    public List<SprintItem> getItems() {
-      return Collections.unmodifiableList(this.items);
+      return Collections.unmodifiableList(items);
    }
 
-
-   public SprintItem addItem(BacklogItem backlogItem, int fpEstimation) {
+   public String addItem(BacklogItem backlogItem, int fpEstimation) {
       if (status != Status.CREATED) {
          throw new IllegalStateException("Can only add items to Sprint before it starts");
       }
@@ -101,37 +92,7 @@ public class Sprint extends AbstractAggregateRoot<Sprint> {
       items.add(sprintItem);
       BacklogItemAddedToSprintEvent event = new BacklogItemAddedToSprintEvent(backlogItem.getId());
       DomainEvents.publishEvent(event);
-      return sprintItem;
-   }
-
-   public Sprint setId(Long id) {
-      this.id = id;
-      return this;
-   }
-
-   public Sprint setIteration(int iteration) {
-      this.iteration = iteration;
-      return this;
-   }
-
-//   public Sprint setProduct(Product product) {
-//      this.product = product;
-//      return this;
-//   }
-
-   public Sprint setStartDate(LocalDate startDate) {
-      this.startDate = startDate;
-      return this;
-   }
-
-   public Sprint setPlannedEndDate(LocalDate plannedEndDate) {
-      this.plannedEndDate = plannedEndDate;
-      return this;
-   }
-
-   public Sprint setEndDate(LocalDate endDate) {
-      this.endDate = endDate;
-      return this;
+      return sprintItem.getId();
    }
 
    public void start() { // a simple state machine checking the preconditions of the transition
@@ -171,6 +132,7 @@ public class Sprint extends AbstractAggregateRoot<Sprint> {
       SprintItem sprintItem = itemById(sprintItemId);
       sprintItem.logHours(hours);
    }
+
    public void startItem(String sprintItemId) {
       if (status != Status.STARTED) {
          throw new IllegalStateException("Sprint not started");
@@ -185,24 +147,10 @@ public class Sprint extends AbstractAggregateRoot<Sprint> {
       }
       SprintItem sprintItem = itemById(sprintItemId);
       sprintItem.completeItem();
-      if (items.stream().allMatch(SprintItem::isDone)) {
+      if (items.stream().allMatch(SprintItem::isCompleted)) {
 //         DomainEvents.publishEvent(new SprintFinishedEvent(id)); //>50%
          registerEvent(new SprintFinishedEvent(id));
       }
-      log.debug("AFter event fired");
-//         System.out.println("Sending CONGRATS email to team of product " + product.getCode()
-//                            + ": They finished the items earlier. They have time to refactor! (OMG!)");
-//         if (product.getTeamMailingList().isPresent()) {
-//            List<String> emails = mailingListClient.retrieveEmails(product.getTeamMailingList().get()); //2
-//            emailService.sendCongratsEmail(emails); //3
-//         }
-//      }
-   }
-
-//   @Autowired
-//   ApplicationEventPublisher publisher;
-   public boolean allItemsAreDone() {
-      return this.items.stream().allMatch(SprintItem::isDone);
    }
 
    private SprintItem itemById(String sprintItemId) {

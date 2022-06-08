@@ -1,6 +1,7 @@
 package victor.training.ddd.agile.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import victor.training.ddd.agile.dto.AddBacklogItemRequest;
@@ -10,7 +11,6 @@ import victor.training.ddd.agile.dto.SprintMetrics;
 import victor.training.ddd.agile.entity.BacklogItem;
 import victor.training.ddd.agile.entity.Product;
 import victor.training.ddd.agile.entity.Sprint;
-import victor.training.ddd.agile.entity.SprintItem;
 import victor.training.ddd.agile.repo.BacklogItemRepo;
 import victor.training.ddd.agile.repo.ProductRepo;
 import victor.training.ddd.agile.repo.SprintRepo;
@@ -28,9 +28,9 @@ public class SprintService {
     public Long createSprint(@RequestBody CreateSprintRequest dto) {
         Product product = productRepo.findOneById(dto.productId);
         Sprint sprint = new Sprint(
-                product.incrementAndGetIteration()
-                , product.getId()
-                , dto.plannedEnd);
+                product.getId(), product.incrementAndGetIteration()
+                ,
+                dto.plannedEnd);
         return sprintRepo.save(sprint).getId();
     }
 
@@ -52,18 +52,18 @@ public class SprintService {
     }
 
     /*****************************  ITEMS IN SPRINT *******************************************/
-//   @Transactional(propagation = Propagation.NOT_SUPPORTED) // TODO debate: auto-flush or no transaction?
+   @Transactional(propagation = Propagation.NOT_SUPPORTED) // TODO debate: auto-flush or no transaction?
     @PostMapping("sprint/{sprintId}/add-item")
     public String addItem(@PathVariable long sprintId, @RequestBody AddBacklogItemRequest request) {
 //      Long id=sprintRepo.getNextId(); //select next val from sequence > also a nice option
         BacklogItem backlogItem = backlogItemRepo.findOneById(request.backlogId);
         Sprint sprint = sprintRepo.findOneById(sprintId);
 
-        SprintItem sprintItem = sprint.addItem(backlogItem, request.fpEstimation);
+        String sprintItemId = sprint.addItem(backlogItem, request.fpEstimation);
 
-//      sprintRepo.save(sprint);
-        System.out.println("does my item have an id ? " + sprintItem.getId());
-        return sprintItem.getId(); // Hint: if you have JPA issues getting the new ID, consider using UUID instead of sequence
+        sprintRepo.save(sprint);
+        System.out.println("does my item have an id ? " + sprintItemId);
+        return sprintItemId; // Hint: if you have JPA issues getting the new ID, consider using UUID instead of sequence
     }
 
 
@@ -73,11 +73,11 @@ public class SprintService {
     }
 
     @PostMapping("sprint/{sprintId}/complete-item/{sprintItemId}")
-    @Transactional
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public void completeItem(@PathVariable long sprintId, @PathVariable String sprintItemId) {
         Sprint sprint = sprintRepo.findOneById(sprintId);
         sprint.completeItem(sprintItemId);
-//        sprintRepo.save(sprint); // WARNING: needed to publish the Domain Events from org.springframework.data.domain.AbstractAggregateRoot
+        sprintRepo.save(sprint); // WARNING: needed to publish the Domain Events from org.springframework.data.domain.AbstractAggregateRoot
 //      Product product = productRepo.findOneById(sprint.getProductId());
 //      if (sprint.allItemsAreDone()) {
 //         System.out.println("Sending CONGRATS email to team of product " + product.getCode() + ": They finished the items earlier. They have time to refactor! (OMG!)");

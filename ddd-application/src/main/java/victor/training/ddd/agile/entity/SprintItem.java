@@ -22,7 +22,6 @@ import static javax.persistence.EnumType.STRING;
 
 @Entity // child entity of the  Sprint Aggregate
 public class SprintItem {
-
     public enum Status {
         CREATED,
         STARTED,
@@ -72,7 +71,7 @@ public class SprintItem {
         return hoursConsumed;
     }
 
-    public void logHours(int hours) {
+    void logHours(int hours) {
         if (status != Status.STARTED) {
             throw new IllegalStateException("Item not started");
         }
@@ -93,7 +92,7 @@ public class SprintItem {
         status = Status.COMPLETED;
     }
 
-    public boolean isDone() {
+    public boolean isCompleted() {
         return getStatus() == Status.COMPLETED;
     }
 
