@@ -15,23 +15,24 @@ import static java.util.stream.Collectors.joining;
 @Setter
 @NoArgsConstructor
 @Entity
-public class Release {
+public class Release { // Aggregate with 1 class
    @Id
    @GeneratedValue
    private Long id;
    @ManyToOne
-   private Product product;
+   private Product product; // TODO remove
 
    private String version;  // eg 1.0, 2.0 ...
    private LocalDate date;
    @ManyToOne
-   private Sprint sprint;
+   private Sprint sprint; // TODO remove
 
-   @OneToMany
-   @JoinColumn
-   private List<SprintItem> releasedItems; // only used for release notes
-
-   public String getReleaseNotes() {
-      return releasedItems.stream().map(SprintItem::getTitle).collect(joining("\n"));
-   }
+   private String releaseNotes;
+//   @OneToMany
+//   @JoinColumn
+//   private List<SprintItem> releasedItems; // only used for release notes illegal from DDD
+//
+//   public String getReleaseNotes() {
+//      return releasedItems.stream().map(SprintItem::getTitle).collect(joining("\n"));
+//   }
 }

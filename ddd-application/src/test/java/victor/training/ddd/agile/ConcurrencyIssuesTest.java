@@ -15,15 +15,16 @@ public class ConcurrencyIssuesTest extends SystemTestBase{
 
       Long itemId = backlogItems.createBacklogItem(new BacklogItemDto()
           .setProductId(productId)
-          .setTitle("Vreau ceva da nu stiu ce"));
+          .setTitle("TO produce money")
+           .setDescription("print some money"));
 
 
       /* joe */ BacklogItemDto dataSentToBrowser1 = backlogItems.getBacklogItem(itemId);
-      /* joe */ dataSentToBrowser1.description ="sa faca inghetata";
+      /* joe */ dataSentToBrowser1.description ="buy a printer";
       /* joe */ // leaves for lunch without saving
 
       /* bob */ BacklogItemDto dataSentToBrowser2 = backlogItems.getBacklogItem(itemId);
-      /* bob */ dataSentToBrowser2.description="rachete!";
+      /* bob */ dataSentToBrowser2.title="TO make me rich";
       /* bob */ backlogItems.updateBacklogItem(dataSentToBrowser2);
 
       /* joe */ // returns from lunch

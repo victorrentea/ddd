@@ -1,7 +1,12 @@
 package victor.training.ddd.agile.entity;
 
+import lombok.Builder;
+import lombok.Value;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.executable.ValidateOnExecution;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 
@@ -28,12 +33,22 @@ public class BacklogItem {
     private boolean underDevelopment;
     @Version // optimistic locking to detect cases when the same item is changed in parallel by 2 users.
     private Long version;
+    private LocalDateTime createDate = LocalDateTime.now();
 
     public BacklogItem() {
     }
 
     public Long getId() {
         return this.id;
+    }
+
+    public LocalDateTime getCreateDate() {
+        return createDate;
+    }
+
+    public BacklogItem setCreateDate(LocalDateTime createDate) {
+        this.createDate = createDate;
+        return this;
     }
 
     public Product getProduct() {

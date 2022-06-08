@@ -36,10 +36,10 @@ public class Product { // PRODUCT
 
     @OneToMany
     @JoinColumn
-    private List<Sprint> sprints = new ArrayList<>();
+    private List<Sprint> sprints = new ArrayList<>(); // TODO remove
 
     @OneToMany(mappedBy = "product")
-    private List<Release> releases = new ArrayList<>();
+    private List<Release> releases = new ArrayList<>(); // TODO remove
 
     protected Product() { // only by hibernate should never be called by developers
     }

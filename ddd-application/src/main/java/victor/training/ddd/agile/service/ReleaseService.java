@@ -16,6 +16,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
+
 @Transactional
 @RestController
 @RequiredArgsConstructor
@@ -41,12 +44,13 @@ public class ReleaseService {
           .filter(s -> s.getIteration() > previouslyReleasedIteration
                        && s.getIteration() <= releasedIteration)
           .flatMap(s -> s.getItems().stream())
-          .collect(Collectors.toList());
+           .filter( SprintItem::isCompleted)
+          .collect(toList());
 
       Release release = new Release()
           .setProduct(product)
           .setSprint(sprint)
-          .setReleasedItems(releasedItems)
+          .setReleaseNotes(releasedItems.stream().map(SprintItem::getTitle).collect(joining("\n")))
           .setDate(LocalDate.now())
           .setVersion(product.incrementAndGetVersion() + ".0");
       product.getReleases().add(release);

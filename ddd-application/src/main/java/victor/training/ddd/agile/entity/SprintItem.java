@@ -37,7 +37,6 @@ public class SprintItem {
     private Integer fpEstimation;
     private int hoursConsumed;
 
-
     protected SprintItem() { // for Hibernate only
     }
     public SprintItem(String title, String description, int fpEstimation) {

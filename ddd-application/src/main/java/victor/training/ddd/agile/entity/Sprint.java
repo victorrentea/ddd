@@ -38,6 +38,7 @@ public class Sprint extends AbstractAggregateRoot<Sprint> {
    @Enumerated(STRING)
    private Status status = Status.CREATED;
 
+
    // typical for AggregateRoot- child entity relation
    @JoinColumn
    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
