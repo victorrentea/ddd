@@ -1,6 +1,7 @@
 package victor.training.ddd.agile.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
+@Slf4j
 @Transactional
 @RestController
 @RequiredArgsConstructor
@@ -39,13 +41,15 @@ public class ReleaseService {
           .max().orElse(0);
       int releasedIteration = sprint.getIteration();
 
-      List<SprintItem> releasedItems = product.getSprints().stream()
+      List<SprintItem> releasedItems = sprintRepo.getAllByProductId(productId).stream()
+              .peek(s -> System.out.println("SELECTED " + s))
           .sorted(Comparator.comparing(Sprint::getIteration))
           .filter(s -> s.getIteration() > previouslyReleasedIteration
                        && s.getIteration() <= releasedIteration)
           .flatMap(s -> s.getItems().stream())
            .filter( SprintItem::isCompleted)
           .collect(toList());
+      log.debug("Selected items to export: " + releasedItems);
 
       Release release = new Release()
           .setProduct(product)

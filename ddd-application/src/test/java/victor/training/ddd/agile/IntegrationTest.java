@@ -2,6 +2,7 @@ package victor.training.ddd.agile;
 
 import org.junit.jupiter.api.Test;
 import victor.training.ddd.agile.dto.*;
+import victor.training.ddd.agile.entity.Release;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -69,14 +70,14 @@ public class IntegrationTest extends SystemTestBase {
           .extracting(SprintMetrics::getConsumedHours, SprintMetrics::getDoneFP, SprintMetrics::getHoursConsumedForNotDone)
           .containsExactly(10, 2, 0);
 
-//      Release release = releases.createRelease(productId, sprintId);
-//
-//      assertThat(release.getReleaseNotes()).contains("::item1::");
-//      assertThat(release.getVersion()).isEqualTo("1.0");
-//
-//      // try to update a done backlog item
-//      BacklogItemDto backlogDto2 = backlogItems.getBacklogItem(backlogItemId);
-//      backlogDto2.description += "IllegalChange";
+      Release release = releases.createRelease(productId, sprintId);
+
+      assertThat(release.getReleaseNotes()).contains("::item1::");
+      assertThat(release.getVersion()).isEqualTo("1.0");
+
+      // try to update a done backlog item
+      BacklogItemDto backlogDto2 = backlogItems.getBacklogItem(backlogItemId);
+      backlogDto2.description += "IllegalChange";
 
       // TODO new feature: uncomment below: should fail
       // assertThatThrownBy(() -> backlogItems.updateBacklogItem(backlogDto2)).describedAs("cannot edit done item");

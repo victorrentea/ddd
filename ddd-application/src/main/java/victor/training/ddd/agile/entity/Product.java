@@ -34,9 +34,6 @@ public class Product { // PRODUCT
 
     private String teamMailingList;
 
-    @OneToMany
-    @JoinColumn
-    private List<Sprint> sprints = new ArrayList<>(); // TODO remove
 
     @OneToMany(mappedBy = "product")
     private List<Release> releases = new ArrayList<>(); // TODO remove
@@ -88,10 +85,6 @@ public class Product { // PRODUCT
     public Product setTeamMailingList(String teamMailingList) {
         this.teamMailingList = teamMailingList;
         return this;
-    }
-
-    public List<Sprint> getSprints() {
-        return sprints;
     }
 
     public List<Release> getReleases() {
