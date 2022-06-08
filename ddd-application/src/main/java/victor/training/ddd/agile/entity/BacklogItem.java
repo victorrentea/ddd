@@ -2,6 +2,7 @@ package victor.training.ddd.agile.entity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Objects;
 
 
 /// JOIN inheritance strategy is the most inefficient from performance. Vlad Mihalcea and Thorben Janssen both say never to use it.
@@ -19,9 +20,8 @@ public class BacklogItem {
     @GeneratedValue
     private Long id;
     @ManyToOne
-    private Product product;
+    private Product product; // illegal > replace with long productId
 
-    @NotNull
     private String title;
     private String description;
     // once you estimate an item, title and descr cannot change
@@ -40,7 +40,7 @@ public class BacklogItem {
         return this.product;
     }
 
-    public @NotNull String getTitle() {
+    public String getTitle() {
         return this.title;
     }
 
@@ -69,13 +69,13 @@ public class BacklogItem {
 
     public BacklogItem setTitle(@NotNull String title) {
         if(underDevelopment) throw new IllegalArgumentException("Cannot edit");
-        this.title = title;
+        this.title = Objects.requireNonNull(title);
         return this;
     }
 
     public BacklogItem setDescription(String description) {
         if(underDevelopment) throw new IllegalArgumentException("Cannot edit");
-        this.description = description;
+        this.description = Objects.requireNonNull(description);
         return this;
     }
 

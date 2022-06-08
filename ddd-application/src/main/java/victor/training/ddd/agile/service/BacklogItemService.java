@@ -48,13 +48,15 @@ public class BacklogItemService {
    @PutMapping("backlog")
    public void updateBacklogItem(@RequestBody BacklogItemDto dto) {
       // TODO if Backlog Item is COMPLETED, reject the update
+
       BacklogItem backlogItem = new BacklogItem()
           .setId(dto.id)
           .setProduct(productRepo.findOneById(dto.productId))
           .setDescription(dto.description)
           .setTitle(dto.title)
           .setVersion(dto.version);
-      backlogItemRepo.save(backlogItem);
+
+      backlogItemRepo.save(backlogItem); // dangerous practice
    }
 
    @DeleteMapping("backlog/{id}")
