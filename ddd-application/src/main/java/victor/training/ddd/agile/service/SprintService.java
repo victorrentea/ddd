@@ -53,8 +53,8 @@ public class SprintService {
 
     /*****************************  ITEMS IN SPRINT *******************************************/
    @Transactional(propagation = Propagation.NOT_SUPPORTED) // TODO debate: auto-flush or no transaction?
-    @PostMapping("sprint/{sprintId}/add-item")
-    public String addItem(@PathVariable long sprintId, @RequestBody AddBacklogItemRequest request) {
+    @PostMapping("sprint/{sprintId}/commit-item")
+    public String commitItem(@PathVariable long sprintId, @RequestBody AddBacklogItemRequest request) {
 //      Long id=sprintRepo.getNextId(); //select next val from sequence > also a nice option
         BacklogItem backlogItem = backlogItemRepo.findOneById(request.backlogId);
         Sprint sprint = sprintRepo.findOneById(sprintId);

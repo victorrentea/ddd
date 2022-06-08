@@ -2,7 +2,6 @@ package victor.training.ddd.agile;
 
 import org.junit.jupiter.api.Test;
 import victor.training.ddd.agile.dto.*;
-import victor.training.ddd.agile.entity.Release;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -47,7 +46,7 @@ public class IntegrationTest extends SystemTestBase {
              backlogItems.updateBacklogItem(backlogDto2);
           }).describedAs("title null should be rejected");
 
-      String itemId = sprints.addItem(sprintId, new AddBacklogItemRequest()
+      String itemId = sprints.commitItem(sprintId, new AddBacklogItemRequest()
           .setFpEstimation(2)
           .setBacklogId(backlogItemId));
 
