@@ -20,24 +20,37 @@ public class Sprint {
    private LocalDate plannedEndDate;
    private LocalDate endDate;
 
+   @Enumerated(STRING)
+   private SprintStatus status = SprintStatus.CREATED;
+
+   @OneToMany(mappedBy = "sprint")
+   private List<BacklogItem> items = new ArrayList<>();
+
+
+   public enum SprintStatus {
+      CREATED,
+      STARTED,
+      FINISHED
+   }
+
    public void end() {
-      if (this.status != Status.STARTED) {
+      if (this.status != SprintStatus.STARTED) {
          throw new IllegalStateException();
       }
       this.endDate = LocalDate.now();
-      this.status = Status.FINISHED;
+      this.status = SprintStatus.FINISHED;
    }
 
    public void start() {
-      if (status != Status.CREATED) {
+      if (status != SprintStatus.CREATED) {
          throw new IllegalStateException();
       }
       this.startDate = LocalDate.now();
-      this.status = Status.STARTED;
+      this.status = SprintStatus.STARTED;
    }
 
    public void startItem(long backlogId) {
-      if (status != Status.STARTED) {
+      if (status != SprintStatus.STARTED) {
          throw new IllegalStateException();
       }
       BacklogItem item = items.stream()
@@ -47,18 +60,6 @@ public class Sprint {
       item.start();
    }
 
-
-   public enum Status {
-      CREATED,
-      STARTED,
-      FINISHED
-   }
-
-   @Enumerated(STRING)
-   private Status status = Status.CREATED;
-
-   @OneToMany(mappedBy = "sprint")
-   private List<BacklogItem> items = new ArrayList<>();
 
    public Sprint() {
    }
@@ -87,7 +88,7 @@ public class Sprint {
       return this.endDate;
    }
 
-   public Status getStatus() {
+   public SprintStatus getStatus() {
       return this.status;
    }
 
@@ -110,23 +111,8 @@ public class Sprint {
       return this;
    }
 
-   public Sprint setStartDate(LocalDate startDate) {
-      this.startDate = startDate;
-      return this;
-   }
-
    public Sprint setPlannedEndDate(LocalDate plannedEndDate) {
       this.plannedEndDate = plannedEndDate;
-      return this;
-   }
-
-   public Sprint setEndDate(LocalDate endDate) {
-      this.endDate = endDate;
-      return this;
-   }
-
-   public Sprint setItems(List<BacklogItem> items) {
-      this.items = items;
       return this;
    }
 

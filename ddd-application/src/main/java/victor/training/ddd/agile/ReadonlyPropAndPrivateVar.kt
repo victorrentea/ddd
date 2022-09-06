@@ -1,24 +1,24 @@
 package victor.training.ddd.agile.entity
 
-import victor.training.ddd.agile.entity.Sprint.Status
+import victor.training.ddd.agile.entity.Sprint.SprintStatus
 
 class ReadonlyPropAndPrivateVar(val someBLO:SomeBLO) {
 //    val couponId: CouponId = 2L
     val couponId: CouponId = CouponId(1L)
 
-    var status: Status = Status.CREATED
+    var status: SprintStatus = SprintStatus.CREATED
          private set
 
     fun start() {
         someBLO.f()
-        status = Status.STARTED
+        status = SprintStatus.STARTED
     }
 
     public class SomeBLO {
-        var status: Status = Status.CREATED
+        var status: SprintStatus = SprintStatus.CREATED
             private set
         internal fun f() {
-            status = Status.STARTED
+            status = SprintStatus.STARTED
         }
     }
 }

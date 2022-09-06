@@ -10,7 +10,7 @@ import victor.training.ddd.agile.dto.SprintMetrics;
 import victor.training.ddd.agile.entity.BacklogItem;
 import victor.training.ddd.agile.entity.Product;
 import victor.training.ddd.agile.entity.Sprint;
-import victor.training.ddd.agile.entity.Sprint.Status;
+import victor.training.ddd.agile.entity.Sprint.SprintStatus;
 import victor.training.ddd.agile.repo.BacklogItemRepo;
 import victor.training.ddd.agile.repo.ProductRepo;
 import victor.training.ddd.agile.repo.SprintRepo;
@@ -60,7 +60,7 @@ public class SprintService {
    public Long addItem(@PathVariable long sprintId, @RequestBody AddBacklogItemRequest request) {
       BacklogItem backlogItem = backlogItemRepo.findOneById(request.getBacklogId());
       Sprint sprint = sprintRepo.findOneById(sprintId);
-      if (sprint.getStatus() != Status.CREATED) {
+      if (sprint.getStatus() != SprintStatus.CREATED) {
          throw new IllegalStateException("Can only add items to Sprint before it starts");
       }
       backlogItem.setSprint(sprint);
@@ -90,7 +90,7 @@ public class SprintService {
 
 
       Sprint sprint = sprintRepo.findOneById(id);
-      if (sprint.getItems().stream().allMatch(item -> item.getStatus() == BacklogItem.Status.DONE)) {
+      if (sprint.getItems().stream().allMatch(item -> item.getStatus() == BacklogItem.ItemStatus.DONE)) {
          System.out.println("Sending CONGRATS email to team of product " + sprint.getProduct().getCode() + ": They finished the items earlier. They have time to refactor! (OMG!)");
          List<String> emails = mailingListClient.retrieveEmails(sprint.getProduct().getTeamMailingList());
          emailService.sendCongratsEmail(emails);
@@ -102,7 +102,7 @@ public class SprintService {
          throw new IllegalArgumentException("item not in sprint");
       }
       Sprint sprint = sprintRepo.findOneById(id);
-      if (sprint.getStatus() != Status.STARTED) {
+      if (sprint.getStatus() != SprintStatus.STARTED) {
          throw new IllegalStateException("Sprint not started");
       }
    }
@@ -112,7 +112,7 @@ public class SprintService {
    public void logHours(@PathVariable long id, @RequestBody LogHoursRequest request) {
       BacklogItem backlogItem = backlogItemRepo.findOneById(request.getBacklogId());
       checkSprintMatchesAndStarted(id, backlogItem);
-      if (backlogItem.getStatus() != BacklogItem.Status.STARTED) {
+      if (backlogItem.getStatus() != BacklogItem.ItemStatus.STARTED) {
          throw new IllegalStateException("Item not started");
       }
       backlogItem.addHours(request.getHours());

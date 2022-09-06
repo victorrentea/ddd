@@ -12,12 +12,12 @@ class BacklogItem(
     @Version val version: Long?,
     @GeneratedValue @Id val id: Long?
 ) {
-    enum class Status {
+    enum class ItemStatus {
         CREATED, STARTED, DONE
     }
 
     @Enumerated(EnumType.STRING)
-    var status = Status.CREATED
+    var status = ItemStatus.CREATED
 
     @ManyToOne
     // ⚠ not NULL when assigned to a sprint
@@ -29,14 +29,14 @@ class BacklogItem(
 
 
     fun complete() {
-        check(status == Status.STARTED) { "Cannot complete an Item before starting it" }
-        status = Status.DONE
+        check(status == ItemStatus.STARTED) { "Cannot complete an Item before starting it" }
+        status = ItemStatus.DONE
     }
 
     fun start() {
-        check(sprint!!.status == Sprint.Status.STARTED)
-        check(status == Status.CREATED) { "Item already started" }
-        status = Status.STARTED
+        check(sprint!!.status == Sprint.SprintStatus.STARTED)
+        check(status == ItemStatus.CREATED) { "Item already started" }
+        status = ItemStatus.STARTED
     }
 
     fun getHoursConsumed() = hoursConsumed
