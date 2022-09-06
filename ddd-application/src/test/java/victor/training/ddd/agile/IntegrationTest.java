@@ -64,7 +64,7 @@ public class IntegrationTest extends SystemTestBase {
       System.out.println("Metrics: " + sprints.getSprintMetrics(sprintId));
 
       assertThat(sprints.getSprintMetrics(sprintId))
-          .extracting(SprintMetrics::getConsumedHours, SprintMetrics::getDoneFP, SprintMetrics::getHoursConsumedForNotDone)
+          .extracting(sprintMetrics -> sprintMetrics.getConsumedHours(), sprintMetrics1 -> sprintMetrics1.getDoneFP(), sprintMetrics2 -> sprintMetrics2.getHoursConsumedForNotDone())
           .containsExactly(10, 2, 0);
 
       Release release = releases.createRelease(productId, sprintId);

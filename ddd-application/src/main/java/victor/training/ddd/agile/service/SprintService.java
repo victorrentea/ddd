@@ -141,15 +141,15 @@ class SpringMetricsService {
               .filter(item -> item.getStatus() == BacklogItem.Status.DONE)
               .collect(Collectors.toList());
       SprintMetrics dto = new SprintMetrics();
-      dto.consumedHours = sprint.getItems().stream().mapToInt(BacklogItem::getHoursConsumed).sum();
-      dto.calendarDays = sprint.getStartDate().until(sprint.getEndDate()).getDays();
-      dto.doneFP = doneItems.stream().mapToInt(BacklogItem::getFpEstimation).sum();
-      dto.fpVelocity = 1.0 * dto.doneFP / dto.consumedHours;
-      dto.hoursConsumedForNotDone = sprint.getItems().stream()
+      dto.setConsumedHours(sprint.getItems().stream().mapToInt(BacklogItem::getHoursConsumed).sum());
+      dto.setCalendarDays(sprint.getStartDate().until(sprint.getEndDate()).getDays());
+      dto.setDoneFP(doneItems.stream().mapToInt(BacklogItem::getFpEstimation).sum());
+      dto.setFpVelocity(1.0 * dto.getDoneFP() / dto.getConsumedHours());
+      dto.setHoursConsumedForNotDone(sprint.getItems().stream()
               .filter(item -> item.getStatus() != BacklogItem.Status.DONE)
-              .mapToInt(BacklogItem::getHoursConsumed).sum();
+              .mapToInt(BacklogItem::getHoursConsumed).sum());
       if (sprint.getEndDate().isAfter(sprint.getPlannedEndDate())) {
-         dto.delayDays = sprint.getPlannedEndDate().until(sprint.getEndDate()).getDays();
+         dto.setDelayDays(sprint.getPlannedEndDate().until(sprint.getEndDate()).getDays());
       }
       return dto;
    }
