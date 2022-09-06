@@ -1,7 +1,6 @@
 package victor.training.ddd.agile.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import victor.training.ddd.agile.dto.AddBacklogItemRequest;
@@ -17,7 +16,6 @@ import victor.training.ddd.agile.repo.ProductRepo;
 import victor.training.ddd.agile.repo.SprintRepo;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Transactional
 @RestController
@@ -122,35 +120,9 @@ public class SprintService {
 
    @GetMapping("sprint/{id}/metrics")
    public SprintMetrics getSprintMetrics(@PathVariable long id) {
-      return springMetricsService.getSprintMetrics(id);
+      return sprintMetricsService.getSprintMetrics(id);
    }
-   private final SpringMetricsService springMetricsService;
+   private final SprintMetricsService sprintMetricsService;
 
 }
 
-@Service
-@RequiredArgsConstructor
-class SpringMetricsService {
-   private final  SprintRepo sprintRepo;
-   public SprintMetrics getSprintMetrics(@PathVariable long id) {
-      Sprint sprint = sprintRepo.findOneById(id);
-      if (sprint.getStatus() != Status.FINISHED) {
-         throw new IllegalStateException();
-      }
-      List<BacklogItem> doneItems = sprint.getItems().stream()
-              .filter(item -> item.getStatus() == BacklogItem.Status.DONE)
-              .collect(Collectors.toList());
-      SprintMetrics dto = new SprintMetrics();
-      dto.setConsumedHours(sprint.getItems().stream().mapToInt(BacklogItem::getHoursConsumed).sum());
-      dto.setCalendarDays(sprint.getStartDate().until(sprint.getEndDate()).getDays());
-      dto.setDoneFP(doneItems.stream().mapToInt(BacklogItem::getFpEstimation).sum());
-      dto.setFpVelocity(1.0 * dto.getDoneFP() / dto.getConsumedHours());
-      dto.setHoursConsumedForNotDone(sprint.getItems().stream()
-              .filter(item -> item.getStatus() != BacklogItem.Status.DONE)
-              .mapToInt(BacklogItem::getHoursConsumed).sum());
-      if (sprint.getEndDate().isAfter(sprint.getPlannedEndDate())) {
-         dto.setDelayDays(sprint.getPlannedEndDate().until(sprint.getEndDate()).getDays());
-      }
-      return dto;
-   }
-}
