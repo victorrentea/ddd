@@ -18,23 +18,20 @@ public class BacklogItemService {
    @PostMapping("backlog")
    @Transactional
    public Long createBacklogItem(@RequestBody BacklogItemDto dto) {
-      Product product = productRepo.findOneById(dto.productId);
+      Product product = productRepo.findOneById(dto.getProductId());
       BacklogItem backlogItem = new BacklogItem()
           .setProduct(product)
-          .setDescription(dto.description)
-          .setTitle(dto.title);
+          .setDescription(dto.getDescription())
+          .setTitle(dto.getTitle());
       return backlogItemRepo.save(backlogItem).getId();
    }
 
    @GetMapping("backlog/{id}")
    public BacklogItemDto getBacklogItem(@PathVariable long id) {
       BacklogItem backlogItem = backlogItemRepo.findOneById(id);
-      BacklogItemDto dto = new BacklogItemDto();
-      dto.id = backlogItem.getId();
-      dto.productId = backlogItem.getProduct().getId();
-      dto.description = backlogItem.getDescription();
-      dto.title = backlogItem.getTitle();
-      dto.version = backlogItem.getVersion();
+      BacklogItemDto dto = new BacklogItemDto(backlogItem.getProduct().getId(), backlogItem.getTitle(), backlogItem.getDescription());
+      dto.setId(backlogItem.getId());
+      dto.setVersion(backlogItem.getVersion());
       return dto;
    }
 
@@ -42,11 +39,11 @@ public class BacklogItemService {
    public void updateBacklogItem(@RequestBody BacklogItemDto dto) {
       // TODO if Backlog Item is COMPLETED, reject the update
       BacklogItem backlogItem = new BacklogItem()
-          .setId(dto.id)
-          .setProduct(productRepo.findOneById(dto.productId))
-          .setDescription(dto.description)
-          .setTitle(dto.title)
-          .setVersion(dto.version);
+          .setId(dto.getId())
+          .setProduct(productRepo.findOneById(dto.getProductId()))
+          .setDescription(dto.getDescription())
+          .setTitle(dto.getTitle())
+          .setVersion(dto.getVersion());
       backlogItemRepo.save(backlogItem);
    }
 

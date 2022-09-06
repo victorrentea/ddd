@@ -8,22 +8,17 @@ public class ConcurrencyIssuesTest extends SystemTestBase{
 
    @Test
    void lazyUser() {
-      Long productId = products.createProduct(new ProductDto()
-          .setName("::name::")
-          .setCode("PNM")
-          .setMailingList("a"));
+      Long productId = products.createProduct(new ProductDto("PNM", "::name::", "a"));
 
-      Long itemId = backlogItems.createBacklogItem(new BacklogItemDto()
-          .setProductId(productId)
-          .setTitle("Vreau ceva da nu stiu ce"));
+      Long itemId = backlogItems.createBacklogItem(new BacklogItemDto(productId,"Title", "Descr"));
 
 
       /* joe */ BacklogItemDto dataSentToBrowser1 = backlogItems.getBacklogItem(itemId);
-      /* joe */ dataSentToBrowser1.description ="sa faca inghetata";
+      /* joe */ dataSentToBrowser1.setDescription("sa faca inghetata");
       /* joe */ // leaves for lunch without saving
 
       /* bob */ BacklogItemDto dataSentToBrowser2 = backlogItems.getBacklogItem(itemId);
-      /* bob */ dataSentToBrowser2.description="rachete!";
+      /* bob */ dataSentToBrowser2.setDescription("rachete!");
       /* bob */ backlogItems.updateBacklogItem(dataSentToBrowser2);
 
       /* joe */ // returns from lunch

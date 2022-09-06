@@ -14,15 +14,12 @@ public class IntegrationTest extends SystemTestBase {
 
    @Test
    void longWorkflow() {
-      ProductDto productDto = new ProductDto()
-          .setCode("PNM")
-          .setName("::ProductName::")
-          .setMailingList("::MailList::");
+      ProductDto productDto = new ProductDto("PNM","::ProductName::","::MailList::");
       Long productId = products.createProduct(productDto);
       assertThatThrownBy(() -> products.createProduct(productDto)).describedAs("cannot create with same code");
 
       assertThat(products.getProduct(productId))
-          .extracting(ProductDto::getCode, ProductDto::getName, ProductDto::getMailingList)
+          .extracting(productDto1 -> productDto1.getCode(), productDto2 -> productDto2.getName(), productDto3 -> productDto3.getMailingList())
           .isEqualTo(List.of("PNM", "::ProductName::", "::MailList::"));
 
       Long sprintId = sprints.createSprint(new CreateSprintRequest(productId,
@@ -33,16 +30,15 @@ public class IntegrationTest extends SystemTestBase {
           .matches(s -> s.getPlannedEndDate().isAfter(LocalDate.now().plusDays(13)));
 
 
-      Long backlogItemId = backlogItems.createBacklogItem(new BacklogItemDto()
-          .setProductId(productId).setTitle("::item1::").setDescription("::descr::"));
+      Long backlogItemId = backlogItems.createBacklogItem(new BacklogItemDto(productId,"::item1::","::descr::"));
 
       BacklogItemDto backlogDto = backlogItems.getBacklogItem(backlogItemId);
-      backlogDto.description += "More Text";
+      backlogDto.setDescription(backlogDto.getDescription() + "More Text");
       backlogItems.updateBacklogItem(backlogDto);
 
       assertThatThrownBy(() -> {
              BacklogItemDto backlogDto2 = backlogItems.getBacklogItem(backlogItemId);
-             backlogDto2.title = null;
+             backlogDto2.setTitle(null);
              backlogItems.updateBacklogItem(backlogDto2);
           }).describedAs("title null should be rejected");
 
@@ -74,7 +70,7 @@ public class IntegrationTest extends SystemTestBase {
 
       // try to update a done backlog item
       BacklogItemDto backlogDto2 = backlogItems.getBacklogItem(backlogItemId);
-      backlogDto2.description += "IllegalChange";
+      backlogDto2.setDescription(backlogDto2.getDescription() + "IllegalChange");
 
       // TODO new feature: uncomment below: should fail
       // assertThatThrownBy(() -> backlogItems.updateBacklogItem(backlogDto2)).describedAs("cannot edit done item");

@@ -15,27 +15,22 @@ public class ProductService {
 
    @PostMapping("products")
    public Long createProduct(@RequestBody ProductDto dto) {
-      if (productRepo.existsByCode(dto.code)) {
+      if (productRepo.existsByCode(dto.getCode())) {
          throw new IllegalArgumentException("Code already defined");
       }
       Product product = new Product()
-          .setCode(dto.code)
-          .setName(dto.name)
-          .setTeamMailingList(dto.mailingList)
-          .setOwnerEmail(dto.poEmail)
-          .setOwnerName(dto.poName)
-          .setOwnerPhone(dto.poPhone);
+          .setCode(dto.getCode())
+          .setName(dto.getName())
+          .setTeamMailingList(dto.getMailingList())
+          .setOwnerEmail(dto.getPoEmail())
+          .setOwnerName(dto.getPoName())
+          .setOwnerPhone(dto.getPoPhone());
       return productRepo.save(product).getId();
    }
 
    @GetMapping("products/{id}")
    public ProductDto getProduct(@PathVariable long id) {
       Product product = productRepo.findOneById(id);
-      ProductDto dto = new ProductDto();
-      dto.id = product.getId();
-      dto.name = product.getName();
-      dto.code = product.getCode();
-      dto.mailingList = product.getTeamMailingList();
-      return dto;
+      return new ProductDto(product.getId(), product.getCode(), product.getName(), product.getTeamMailingList());
    }
 }
