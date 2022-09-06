@@ -16,11 +16,8 @@ class Sprint(
     private var status:SprintStatus = SprintStatus.CREATED,
     @OneToMany(mappedBy = "sprint")
     val items: MutableList<BacklogItem> = ArrayList(),
-
-
     @Id @GeneratedValue var id: Long? = null
 ) {
-
 
     enum class SprintStatus {
         CREATED, STARTED, FINISHED

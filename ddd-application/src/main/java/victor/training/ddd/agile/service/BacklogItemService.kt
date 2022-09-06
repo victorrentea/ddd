@@ -14,7 +14,7 @@ class BacklogItemService(private val backlogItemRepo: BacklogItemRepo,
     @Transactional
     fun createBacklogItem(@RequestBody dto: BacklogItemDto): Long? {
         val product = productRepo.findOneById(dto.productId)
-        val backlogItem = BacklogItem(product, dto.description, dto.title, null, null)
+        val backlogItem = BacklogItem(product, dto.description, dto.title)
         return backlogItemRepo.save(backlogItem).id
     }
 
