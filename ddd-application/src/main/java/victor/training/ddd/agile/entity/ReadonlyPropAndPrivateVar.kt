@@ -2,16 +2,19 @@ package victor.training.ddd.agile.entity
 
 import victor.training.ddd.agile.entity.Sprint.Status
 
-class ReadonlyPropAndPrivateVar(var some:Some) {
+class ReadonlyPropAndPrivateVar(val someBLO:SomeBLO) {
+//    val couponId: CouponId = 2L
+    val couponId: CouponId = CouponId(1L)
+
     var status: Status = Status.CREATED
          private set
 
     fun start() {
-        some.f()
+        someBLO.f()
         status = Status.STARTED
     }
 
-    class Some {
+    public class SomeBLO {
         var status: Status = Status.CREATED
             private set
         internal fun f() {
@@ -20,10 +23,13 @@ class ReadonlyPropAndPrivateVar(var some:Some) {
     }
 }
 
+//typealias CouponId = Long
+@JvmInline
+value class CouponId(val id:Long) {}
 
 
 fun main() {
-//    val r = ReadonlyPropAndPrivateVar(Some());
+    val r = ReadonlyPropAndPrivateVar(someBLO = ReadonlyPropAndPrivateVar.SomeBLO())
 
 //    println(r.status)
 //    r.status = Status.FINISHED
