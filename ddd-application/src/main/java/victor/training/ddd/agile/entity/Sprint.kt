@@ -1,120 +1,53 @@
-package victor.training.ddd.agile.entity;
+package victor.training.ddd.agile.entity
 
-import javax.persistence.*;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDate
+import javax.persistence.*
 
-import static javax.persistence.EnumType.STRING;
+@Entity // DDD AggregateRoot
 
-@Entity
-// DDD AggregateRoot
-public class Sprint {
-   @Id
-   @GeneratedValue
-   private Long id;
-   private int iteration;
-   @ManyToOne
-   private Product product;
-   private LocalDate startDate;
-   private LocalDate plannedEndDate;
-   private LocalDate endDate;
-
-   @Enumerated(STRING)
-   private SprintStatus status = SprintStatus.CREATED;
-
-   @OneToMany(mappedBy = "sprint")
-   private List<BacklogItem> items = new ArrayList<>();
+class Sprint(
+    @ManyToOne
+    val product: Product? = null,
+    val iteration:Int = 0,
+    val plannedEndDate: LocalDate? = null,
+    private var startDate: LocalDate? = null,
+    private var endDate: LocalDate? = null,
+    @Enumerated(EnumType.STRING)
+    private var status:SprintStatus = SprintStatus.CREATED,
+    @OneToMany(mappedBy = "sprint")
+    val items: MutableList<BacklogItem> = ArrayList(),
 
 
-   public enum SprintStatus {
-      CREATED,
-      STARTED,
-      FINISHED
-   }
-
-   public void end() {
-      if (this.status != SprintStatus.STARTED) {
-         throw new IllegalStateException();
-      }
-      this.endDate = LocalDate.now();
-      this.status = SprintStatus.FINISHED;
-   }
-
-   public void start() {
-      if (status != SprintStatus.CREATED) {
-         throw new IllegalStateException();
-      }
-      this.startDate = LocalDate.now();
-      this.status = SprintStatus.STARTED;
-   }
-
-   public void startItem(long backlogId) {
-      if (status != SprintStatus.STARTED) {
-         throw new IllegalStateException();
-      }
-      BacklogItem item = items.stream()
-              .filter(it -> it.getId().equals(backlogId))
-              .findFirst()
-              .orElseThrow();
-      item.start();
-   }
+    @Id @GeneratedValue var id: Long? = null
+) {
 
 
-   public Sprint() {
-   }
+    enum class SprintStatus {
+        CREATED, STARTED, FINISHED
+    }
 
-   public Long getId() {
-      return this.id;
-   }
+    fun end() {
+        check(status == SprintStatus.STARTED)
+        endDate = LocalDate.now()
+        status = SprintStatus.FINISHED
+    }
 
-   public int getIteration() {
-      return this.iteration;
-   }
+    fun start() {
+        check(status == SprintStatus.CREATED)
+        startDate = LocalDate.now()
+        status = SprintStatus.STARTED
+    }
 
-   public Product getProduct() {
-      return this.product;
-   }
+    fun status() = status
+    fun startDate() = startDate
+    fun endDate() = endDate
 
-   public LocalDate getStartDate() {
-      return this.startDate;
-   }
-
-   public LocalDate getPlannedEndDate() {
-      return this.plannedEndDate;
-   }
-
-   public LocalDate getEndDate() {
-      return this.endDate;
-   }
-
-   public SprintStatus getStatus() {
-      return this.status;
-   }
-
-   public List<BacklogItem> getItems() {
-      return this.items;
-   }
-
-   public Sprint setId(Long id) {
-      this.id = id;
-      return this;
-   }
-
-   public Sprint setIteration(int iteration) {
-      this.iteration = iteration;
-      return this;
-   }
-
-   public Sprint setProduct(Product product) {
-      this.product = product;
-      return this;
-   }
-
-   public Sprint setPlannedEndDate(LocalDate plannedEndDate) {
-      this.plannedEndDate = plannedEndDate;
-      return this;
-   }
-
+    fun startItem(backlogId: Long) {
+        check(status == SprintStatus.STARTED)
+        val item = items.stream()
+            .filter { it: BacklogItem -> it.id == backlogId }
+            .findFirst()
+            .orElseThrow()
+        item.start()
+    }
 }
-

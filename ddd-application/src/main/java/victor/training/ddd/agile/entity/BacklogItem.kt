@@ -34,7 +34,7 @@ class BacklogItem(
     }
 
     fun start() {
-        check(sprint!!.status == Sprint.SprintStatus.STARTED)
+        check(sprint!!.status() == Sprint.SprintStatus.STARTED)
         check(status == ItemStatus.CREATED) { "Item already started" }
         status = ItemStatus.STARTED
     }
