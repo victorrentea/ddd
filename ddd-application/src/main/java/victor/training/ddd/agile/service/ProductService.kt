@@ -1,36 +1,23 @@
-package victor.training.ddd.agile.service;
+package victor.training.ddd.agile.service
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
-import victor.training.ddd.agile.entity.Product;
-import victor.training.ddd.agile.dto.ProductDto;
-import victor.training.ddd.agile.repo.ProductRepo;
+import org.springframework.web.bind.annotation.*
+import victor.training.ddd.agile.dto.ProductDto
+import victor.training.ddd.agile.entity.Product
+import victor.training.ddd.agile.repo.ProductRepo
 
-@Slf4j
 @RestController
-@RequiredArgsConstructor
-public class ProductService {
-   private final ProductRepo productRepo;
+class ProductService(private val productRepo: ProductRepo) {
 
-   @PostMapping("products")
-   public Long createProduct(@RequestBody ProductDto dto) {
-      if (productRepo.existsByCode(dto.getCode())) {
-         throw new IllegalArgumentException("Code already defined");
-      }
-      Product product = new Product()
-          .setCode(dto.getCode())
-          .setName(dto.getName())
-          .setTeamMailingList(dto.getMailingList())
-          .setOwnerEmail(dto.getPoEmail())
-          .setOwnerName(dto.getPoName())
-          .setOwnerPhone(dto.getPoPhone());
-      return productRepo.save(product).getId();
-   }
+    @PostMapping("products")
+    fun createProduct(@RequestBody dto: ProductDto): Long? {
+        require(!productRepo.existsByCode(dto.code)) { "Code already defined" }
+        val product = Product(dto.code, dto.name, dto.mailingList)
+        return productRepo.save(product).id
+    }
 
-   @GetMapping("products/{id}")
-   public ProductDto getProduct(@PathVariable long id) {
-      Product product = productRepo.findOneById(id);
-      return new ProductDto(product.getId(), product.getCode(), product.getName(), product.getTeamMailingList());
-   }
+    @GetMapping("products/{id}")
+    fun getProduct(@PathVariable id: Long): ProductDto {
+        val product = productRepo.findOneById(id)
+        return ProductDto(product.id, product.code, product.name, product.teamMailingList)
+    }
 }
