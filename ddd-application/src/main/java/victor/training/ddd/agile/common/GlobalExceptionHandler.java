@@ -1,7 +1,6 @@
 package victor.training.ddd.agile.common;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 import org.springframework.context.MessageSource;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -11,13 +10,16 @@ import victor.training.ddd.agile.common.MyException.ErrorCode;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Locale;
 
-@Slf4j
-@RequiredArgsConstructor
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-   private final MessageSource messageSource;
+    private static final Logger log = org.slf4j.LoggerFactory.getLogger(GlobalExceptionHandler.class);
+    private final MessageSource messageSource;
 
-   @ExceptionHandler(MyException.class)
+    public GlobalExceptionHandler(MessageSource messageSource) {
+        this.messageSource = messageSource;
+    }
+
+    @ExceptionHandler(MyException.class)
    @ResponseStatus //500
    public String handleMyException(HttpServletRequest request, MyException myException) {
       return translateError(myException, myException.getErrorCode(), myException.getParameters(), request);

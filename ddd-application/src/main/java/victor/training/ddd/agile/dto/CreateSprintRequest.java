@@ -1,11 +1,29 @@
 package victor.training.ddd.agile.dto;
 
-import lombok.Data;
-
 import java.time.LocalDate;
 
-@Data
 public class CreateSprintRequest {
    public Long productId;
    public LocalDate plannedEnd;
+
+    public CreateSprintRequest() {
+    }
+
+    public Long getProductId() {
+        return this.productId;
+    }
+
+    public LocalDate getPlannedEnd() {
+        return this.plannedEnd;
+    }
+
+    public CreateSprintRequest setProductId(Long productId) {
+        this.productId = productId;
+        return this;
+    }
+
+    public CreateSprintRequest setPlannedEnd(LocalDate plannedEnd) {
+        this.plannedEnd = plannedEnd;
+        return this;
+    }
 }

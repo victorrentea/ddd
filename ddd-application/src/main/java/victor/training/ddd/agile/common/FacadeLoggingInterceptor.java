@@ -3,11 +3,11 @@ package victor.training.ddd.agile.common;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -22,11 +22,12 @@ import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import static java.util.stream.Collectors.joining;
 
-@Slf4j
 @Aspect
 @Component
 public class FacadeLoggingInterceptor {
-	@Target(METHOD)
+    private static final Logger log = org.slf4j.LoggerFactory.getLogger(FacadeLoggingInterceptor.class);
+
+    @Target(METHOD)
 	@Retention(RUNTIME)
 	public @interface NotLogged {
 	}

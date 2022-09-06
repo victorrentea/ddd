@@ -1,6 +1,7 @@
 package victor.training.ddd.agile.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import victor.training.ddd.agile.dto.AddBacklogItemRequest;
@@ -15,7 +16,6 @@ import victor.training.ddd.agile.repo.BacklogItemRepo;
 import victor.training.ddd.agile.repo.ProductRepo;
 import victor.training.ddd.agile.repo.SprintRepo;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,21 +46,14 @@ public class SprintService {
    @PostMapping("sprint/{id}/start")
    public void startSprint(@PathVariable long id) {
       Sprint sprint = sprintRepo.findOneById(id);
-      if (sprint.getStatus() != Status.CREATED) {
-         throw new IllegalStateException();
-      }
-      sprint.setStartDate(LocalDate.now());
-      sprint.setStatus(Status.STARTED);
+      sprint.start();
+      sprintRepo.save(sprint); // in your case when worlking with BL objects.
    }
 
    @PostMapping("sprint/{id}/end")
    public void endSprint(@PathVariable long id) {
       Sprint sprint = sprintRepo.findOneById(id);
-      if (sprint.getStatus() != Status.STARTED) {
-         throw new IllegalStateException();
-      }
-      sprint.setEndDate(LocalDate.now());
-      sprint.setStatus(Status.FINISHED);
+      sprint.end();
    }
 
    /*****************************  ITEMS IN SPRINT *******************************************/
@@ -81,12 +74,10 @@ public class SprintService {
 
    @PostMapping("sprint/{id}/start-item/{backlogId}")
    public void startItem(@PathVariable long id, @PathVariable long backlogId) {
-      BacklogItem backlogItem = backlogItemRepo.findOneById(backlogId);
-      checkSprintMatchesAndStarted(id, backlogItem);
-      if (backlogItem.getStatus() != BacklogItem.Status.CREATED) {
-         throw new IllegalStateException("Item already started");
-      }
-      backlogItem.setStatus(BacklogItem.Status.STARTED);
+      Sprint sprint = sprintRepo.findOneById(id);
+      sprint.startItem(backlogId);
+      sprintRepo.save(sprint); // the repo within should map and save Sprint + all child BacklogItems
+      // DELETE THE BacklogItemRepo !!!
    }
 
    private final MailingListClient mailingListClient;
@@ -94,11 +85,12 @@ public class SprintService {
    @PostMapping("sprint/{id}/complete-item/{backlogId}")
    public void completeItem(@PathVariable long id, @PathVariable long backlogId) {
       BacklogItem backlogItem = backlogItemRepo.findOneById(backlogId);
+
       checkSprintMatchesAndStarted(id, backlogItem);
-      if (backlogItem.getStatus() != BacklogItem.Status.STARTED) {
-         throw new IllegalStateException("Cannot complete an Item before starting it");
-      }
-      backlogItem.setStatus(BacklogItem.Status.DONE);
+
+      backlogItem.complete();
+
+
       Sprint sprint = sprintRepo.findOneById(id);
       if (sprint.getItems().stream().allMatch(item -> item.getStatus() == BacklogItem.Status.DONE)) {
          System.out.println("Sending CONGRATS email to team of product " + sprint.getProduct().getCode() + ": They finished the items earlier. They have time to refactor! (OMG!)");
@@ -128,29 +120,37 @@ public class SprintService {
       backlogItem.addHours(request.hours);
    }
 
-   /*****************************  METRICS *******************************************/
-
    @GetMapping("sprint/{id}/metrics")
+   public SprintMetrics getSprintMetrics(@PathVariable long id) {
+      return springMetricsService.getSprintMetrics(id);
+   }
+   private final SpringMetricsService springMetricsService;
+
+}
+
+@Service
+@RequiredArgsConstructor
+class SpringMetricsService {
+   private final  SprintRepo sprintRepo;
    public SprintMetrics getSprintMetrics(@PathVariable long id) {
       Sprint sprint = sprintRepo.findOneById(id);
       if (sprint.getStatus() != Status.FINISHED) {
          throw new IllegalStateException();
       }
       List<BacklogItem> doneItems = sprint.getItems().stream()
-          .filter(item -> item.getStatus() == BacklogItem.Status.DONE)
-          .collect(Collectors.toList());
+              .filter(item -> item.getStatus() == BacklogItem.Status.DONE)
+              .collect(Collectors.toList());
       SprintMetrics dto = new SprintMetrics();
       dto.consumedHours = sprint.getItems().stream().mapToInt(BacklogItem::getHoursConsumed).sum();
       dto.calendarDays = sprint.getStartDate().until(sprint.getEndDate()).getDays();
       dto.doneFP = doneItems.stream().mapToInt(BacklogItem::getFpEstimation).sum();
       dto.fpVelocity = 1.0 * dto.doneFP / dto.consumedHours;
       dto.hoursConsumedForNotDone = sprint.getItems().stream()
-          .filter(item -> item.getStatus() != BacklogItem.Status.DONE)
-          .mapToInt(BacklogItem::getHoursConsumed).sum();
+              .filter(item -> item.getStatus() != BacklogItem.Status.DONE)
+              .mapToInt(BacklogItem::getHoursConsumed).sum();
       if (sprint.getEndDate().isAfter(sprint.getPlannedEndDate())) {
          dto.delayDays = sprint.getPlannedEndDate().until(sprint.getEndDate()).getDays();
       }
       return dto;
    }
-
 }
