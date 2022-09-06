@@ -39,7 +39,7 @@ class SprintService(
     fun startSprint(@PathVariable id: Long) {
         val sprint = sprintRepo.findOneById(id)
         sprint.start()
-        sprintRepo.save(sprint) // in your case when worlking with BL objects.
+        sprintRepo.save(sprint) // in your case when working with BL objects.
     }
 
     @PostMapping("sprint/{id}/end")
@@ -84,7 +84,7 @@ class SprintService(
     private fun checkSprintMatchesAndStarted(id: Long, backlogItem: BacklogItem) {
         require(backlogItem.sprint!!.id == id) { "item not in sprint" }
         val sprint = sprintRepo.findOneById(id)
-        check(!(sprint.status() !== SprintStatus.STARTED)) { "Sprint not started" }
+        check(sprint.status() === SprintStatus.STARTED) { "Sprint not started" }
     }
 
     @PostMapping("sprint/{id}/log-hours")
