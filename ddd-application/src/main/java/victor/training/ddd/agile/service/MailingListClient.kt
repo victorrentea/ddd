@@ -1,18 +1,12 @@
-package victor.training.ddd.agile.service;
+package victor.training.ddd.agile.service
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-
-import java.util.List;
+import org.springframework.stereotype.Service
+import org.springframework.web.client.RestTemplate
 
 @Service
-@RequiredArgsConstructor
-public class MailingListClient {
-   private final RestTemplate rest;
-
-   public List<String> retrieveEmails(String mailingList) {
-      String[] emails = rest.getForObject("http://localhost:8989/mailing-list/" + mailingList, String[].class);
-      return List.of(emails);
-   }
+class MailingListClient(val rest: RestTemplate) {
+    fun retrieveEmails(mailingList: String): List<String> {
+        val emails = rest.getForObject("http://localhost:8989/mailing-list/$mailingList", Array<String>::class.java)
+        return java.util.List.of(*emails)
+    }
 }

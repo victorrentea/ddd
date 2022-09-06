@@ -1,14 +1,16 @@
-package victor.training.ddd.agile.service;
+package victor.training.ddd.agile.service
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
+import org.slf4j.LoggerFactory
+import org.springframework.stereotype.Service
 
-@Slf4j
 @Service
-public class EmailSender {
-	
-	public void sendEmail(String from, String to, String subject, String message) {
-		// implementation goes here. connect to SMTP...
-		log.debug("Pretend send email with title " + subject);
-	}
+class EmailSender {
+    fun sendEmail(from: String?, to: String?, subject: String, message: String?) {
+        // implementation goes here. connect to SMTP...
+        log.debug("Pretend send email with title $subject")
+    }
+
+    companion object {
+        private val log = LoggerFactory.getLogger(EmailSender::class.java)
+    }
 }
