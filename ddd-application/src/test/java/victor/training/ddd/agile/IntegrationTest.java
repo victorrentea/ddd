@@ -47,9 +47,7 @@ public class IntegrationTest extends SystemTestBase {
              backlogItems.updateBacklogItem(backlogDto2);
           }).describedAs("title null should be rejected");
 
-      Long itemId = sprints.addItem(sprintId, new AddBacklogItemRequest()
-          .setFpEstimation(2)
-          .setBacklogId(backlogItemId));
+      Long itemId = sprints.addItem(sprintId, new AddBacklogItemRequest(backlogItemId, 2));
 
       sprints.startSprint(sprintId);
       assertThatThrownBy(() -> sprints.startSprint(sprintId)).describedAs("cannot start again");

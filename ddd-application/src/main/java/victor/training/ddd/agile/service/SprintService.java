@@ -60,14 +60,14 @@ public class SprintService {
 
    @PostMapping("sprint/{sprintId}/add-item")
    public Long addItem(@PathVariable long sprintId, @RequestBody AddBacklogItemRequest request) {
-      BacklogItem backlogItem = backlogItemRepo.findOneById(request.backlogId);
+      BacklogItem backlogItem = backlogItemRepo.findOneById(request.getBacklogId());
       Sprint sprint = sprintRepo.findOneById(sprintId);
       if (sprint.getStatus() != Status.CREATED) {
          throw new IllegalStateException("Can only add items to Sprint before it starts");
       }
       backlogItem.setSprint(sprint);
       sprint.getItems().add(backlogItem);
-      backlogItem.setFpEstimation(request.fpEstimation);
+      backlogItem.setFpEstimation(request.getFpEstimation());
       return backlogItem.getId(); // Hint: if you have JPA issues getting the new ID, consider using UUID instead of sequence
    }
 

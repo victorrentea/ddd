@@ -25,7 +25,7 @@ class ReadonlyPropAndPrivateVar(val someBLO:SomeBLO) {
 
 //typealias CouponId = Long
 @JvmInline
-value class CouponId(val id:Long) {}
+value class CouponId(val id:Long)
 
 
 fun main() {
