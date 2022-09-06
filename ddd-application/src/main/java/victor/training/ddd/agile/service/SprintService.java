@@ -112,12 +112,12 @@ public class SprintService {
 
    @PostMapping("sprint/{id}/log-hours")
    public void logHours(@PathVariable long id, @RequestBody LogHoursRequest request) {
-      BacklogItem backlogItem = backlogItemRepo.findOneById(request.backlogId);
+      BacklogItem backlogItem = backlogItemRepo.findOneById(request.getBacklogId());
       checkSprintMatchesAndStarted(id, backlogItem);
       if (backlogItem.getStatus() != BacklogItem.Status.STARTED) {
          throw new IllegalStateException("Item not started");
       }
-      backlogItem.addHours(request.hours);
+      backlogItem.addHours(request.getHours());
    }
 
    @GetMapping("sprint/{id}/metrics")
