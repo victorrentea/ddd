@@ -30,11 +30,11 @@ public class SprintService {
 
    @PostMapping("sprint")
    public Long createSprint(@RequestBody CreateSprintRequest dto) {
-      Product product = productRepo.findOneById(dto.productId);
+      Product product = productRepo.findOneById(dto.getProductId());
       Sprint sprint = new Sprint()
           .setIteration(product.incrementAndGetIteration())
           .setProduct(product)
-          .setPlannedEndDate(dto.plannedEnd);
+          .setPlannedEndDate(dto.getPlannedEnd());
       return sprintRepo.save(sprint).getId();
    }
 

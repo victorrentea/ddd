@@ -25,9 +25,8 @@ public class IntegrationTest extends SystemTestBase {
           .extracting(ProductDto::getCode, ProductDto::getName, ProductDto::getMailingList)
           .isEqualTo(List.of("PNM", "::ProductName::", "::MailList::"));
 
-      Long sprintId = sprints.createSprint(new CreateSprintRequest()
-          .setProductId(productId)
-          .setPlannedEnd(LocalDate.now().plusDays(14)));
+      Long sprintId = sprints.createSprint(new CreateSprintRequest(productId,
+              LocalDate.now().plusDays(14)));
 
       assertThat(sprints.getSprint(sprintId))
           .matches(s -> s.getIteration() == 1)
