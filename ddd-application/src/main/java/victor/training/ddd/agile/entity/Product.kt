@@ -13,9 +13,9 @@ class Product(
     private var currentIteration: Int = 0,
     private var currentVersion: Int = 0,
     @OneToMany(mappedBy = "product")
-    val sprints: List<Sprint> = ArrayList(),
+    val sprints: MutableList<Sprint> = ArrayList(),
     @OneToMany(mappedBy = "product")
-    val releases: List<Release> = ArrayList(),
+    val releases: MutableList<Release> = ArrayList(),
     @Id
     @GeneratedValue
     var id: Long? = null

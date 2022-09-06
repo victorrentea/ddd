@@ -1,60 +1,51 @@
-package victor.training.ddd.agile.service;
+package victor.training.ddd.agile.service
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
-import victor.training.ddd.agile.entity.BacklogItem;
-import victor.training.ddd.agile.entity.Product;
-import victor.training.ddd.agile.entity.Release;
-import victor.training.ddd.agile.entity.Sprint;
-import victor.training.ddd.agile.repo.ProductRepo;
-import victor.training.ddd.agile.repo.ReleaseRepo;
-import victor.training.ddd.agile.repo.SprintRepo;
-
-import java.time.LocalDate;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
+import org.springframework.transaction.annotation.Transactional
+import org.springframework.validation.annotation.Validated
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RestController
+import victor.training.ddd.agile.entity.Release
+import victor.training.ddd.agile.entity.Sprint
+import victor.training.ddd.agile.repo.ProductRepo
+import victor.training.ddd.agile.repo.ReleaseRepo
+import victor.training.ddd.agile.repo.SprintRepo
+import java.time.LocalDate
+import java.util.stream.Collectors
 
 @Transactional
 @RestController
-@RequiredArgsConstructor
 @Validated // needed as tests call directly these methods
-public class ReleaseService {
-   private final ReleaseRepo releaseRepo;
-   private final ProductRepo productRepo;
-   private final SprintRepo sprintRepo;
-
-   @PostMapping("product/{productId}/release/{sprintId}")
-   public Release createRelease(@PathVariable long productId, @PathVariable long sprintId) {
-      Product product = productRepo.findOneById(productId);
-      Sprint sprint = sprintRepo.findOneById(sprintId);
-
-      int previouslyReleasedIteration = product.getReleases().stream()
-          .map(Release::getSprint)
-          .mapToInt(Sprint::getIteration)
-          .max().orElse(0);
-      int releasedIteration = sprint.getIteration();
-
-      List<BacklogItem> releasedItems = product.getSprints().stream()
-          .sorted(Comparator.comparing(Sprint::getIteration))
-          .filter(s -> s.getIteration() > previouslyReleasedIteration
-                       && s.getIteration() <= releasedIteration)
-          .flatMap(s -> s.getItems().stream())
-          .collect(Collectors.toList());
-
-      Release release = new Release()
-          .setProduct(product)
-          .setSprint(sprint)
-          .setReleasedItems(releasedItems)
-          .setDate(LocalDate.now())
-          .setVersion(product.incrementAndGetVersion() + ".0");
-      product.getReleases().add(release);
-
-      releaseRepo.save(release);
-      return release;
-   }
+class ReleaseService(
+    private val releaseRepo: ReleaseRepo,
+    private val productRepo: ProductRepo,
+    private val sprintRepo: SprintRepo
+) {
+    @PostMapping("product/{productId}/release/{sprintId}")
+    fun createRelease(@PathVariable productId: Long, @PathVariable sprintId: Long): Release {
+        val product = productRepo.findOneById(productId)
+        val sprint = sprintRepo.findOneById(sprintId)
+        val previouslyReleasedIteration = product.releases.stream()
+            .map(Release::sprint)
+            .mapToInt { obj: Sprint -> obj.iteration }
+            .max().orElse(0)
+        val releasedIteration = sprint.iteration
+        val releasedItems = product.sprints.stream()
+            .sorted(Comparator.comparing { obj: Sprint -> obj.iteration })
+            .filter { s: Sprint ->
+                (s.iteration in (previouslyReleasedIteration + 1)..releasedIteration)
+            }
+            .flatMap { s: Sprint -> s.items.stream() }
+            .collect(Collectors.toList())
+        val release = Release(
+            product,
+            sprint,
+            releasedItems,
+            LocalDate.now(),
+            product.incrementAndGetVersion().toString() + ".0", null
+        )
+        product.releases.add(release)
+        releaseRepo.save(release)
+        return release
+    }
 }
