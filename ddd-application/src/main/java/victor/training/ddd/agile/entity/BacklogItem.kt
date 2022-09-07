@@ -13,9 +13,10 @@ class BacklogItem(
 
     @Version val version: Long? = null,
 
-    var frozen: Boolean,
-
     @GeneratedValue @Id val id: Long? = null,
+
+    var frozen: Boolean =false,
+
   ) {
 
 

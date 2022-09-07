@@ -43,7 +43,7 @@ public class IntegrationTest extends SystemTestBase {
              backlogItems.updateBacklogItem(backlogDto2);
           }).describedAs("title null should be rejected");
 
-      Long itemId = sprints.addItem(sprintId, new AddBacklogItemRequest(backlogItemId, 2));
+      String itemId = sprints.addItem(sprintId, new AddBacklogItemRequest(backlogItemId, 2));
 
       sprints.startSprint(sprintId);
       assertThatThrownBy(() -> sprints.startSprint(sprintId)).describedAs("cannot start again");
@@ -66,7 +66,7 @@ public class IntegrationTest extends SystemTestBase {
 
       Release release = releases.createRelease(productId, sprintId);
 
-      assertThat(release.getReleaseNotes()).contains("::item1::");
+      assertThat(release.getReleaseNotes()).contains("::descr::");
       assertThat(release.getVersion()).isEqualTo("1.0");
 
       // try to update a done backlog item

@@ -14,14 +14,14 @@ class BacklogItemService(private val backlogItemRepo: BacklogItemRepo,
     @Transactional
     fun createBacklogItem(@RequestBody dto: BacklogItemDto): Long? {
         val product = productRepo.findOneById(dto.productId)
-        val backlogItem = BacklogItem(product, dto.description, dto.title)
+        val backlogItem = BacklogItem(product,dto.title, dto.description)
         return backlogItemRepo.save(backlogItem).id
     }
 
     @GetMapping("backlog/{id}")
     fun getBacklogItem(@PathVariable id: Long): BacklogItemDto {
         val backlogItem = backlogItemRepo.findOneById(id)
-        val dto = BacklogItemDto(backlogItem.product.id!!, backlogItem.title!!, backlogItem.description)
+        val dto = BacklogItemDto(backlogItem.product.id!!, backlogItem.title, backlogItem.description)
         dto.id = backlogItem.id
         dto.version = backlogItem.version
         return dto

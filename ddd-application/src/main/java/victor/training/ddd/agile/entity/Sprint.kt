@@ -3,7 +3,6 @@ package victor.training.ddd.agile.entity
 import org.springframework.data.domain.AbstractAggregateRoot
 import java.time.LocalDate
 import javax.persistence.*
-import kotlin.math.PI
 
 @Entity // DDD AggregateRoot
 
@@ -27,13 +26,13 @@ class Sprint(
     }
 
     fun items() = items
-    fun addItem(backlogItem: BacklogItem, fpEstimation: Int) {
+    fun addItem(backlogItem: BacklogItem, fpEstimation: Int): SprintItem {
         require(backlogItem.product.id == product.id)
         check(status === SprintStatus.CREATED) { "Can only add items to Sprint before it starts" }
         val sprintItem = SprintItem(backlogItem.id!!, this, fpEstimation)
         sprintItem.sprint = this
         items.add(sprintItem)
-
+        return sprintItem
     }
 
     fun end() {
@@ -52,27 +51,27 @@ class Sprint(
     fun startDate() = startDate
     fun endDate() = endDate
 
-    fun startItem(backlogId: Long) {
+    fun startItem(sprintItemId: String) {
         check(status == SprintStatus.STARTED)
-        itemById(backlogId).start()
+        itemById(sprintItemId).start()
     }
 
-    private fun itemById(backlogId: Long) = items.stream()
-        .filter { it.id == backlogId }
+    private fun itemById(sprintItemId: String) = items.stream()
+        .filter { it.id == sprintItemId }
         .findFirst()
         .orElseThrow()
 
-    fun completeItem(backlogId: Long) {
+    fun completeItem(sprintItemId: String) {
         check(status == SprintStatus.STARTED)
-        itemById(backlogId).complete()
+        itemById(sprintItemId).complete()
         if (items.all { it.isDone() }) {
             registerEvent(SprintItemsFinishedEvent(id!!))
         }
     }
 
-    fun logHours(backlogId: Long, hours: Int) {
+    fun logHours(sprintItemId: String, hours: Int) {
         check(status == SprintStatus.STARTED)
-        itemById(backlogId).logHours(hours)
+        itemById(sprintItemId).logHours(hours)
     }
 
 

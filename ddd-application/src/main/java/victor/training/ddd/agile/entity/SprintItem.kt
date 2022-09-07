@@ -1,5 +1,6 @@
 package victor.training.ddd.agile.entity
 
+import java.util.*
 import javax.persistence.*
 
 @Entity
@@ -17,7 +18,7 @@ class SprintItem(
 
     @Enumerated(EnumType.STRING)
     var status: ItemStatus = ItemStatus.CREATED, // always = CREATED until added to a sprint
-    @GeneratedValue @Id val id: Long? = null,
+    @Id val id: String = UUID.randomUUID().toString(),
     ) {
     enum class ItemStatus {
         CREATED, STARTED, DONE

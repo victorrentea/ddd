@@ -1,8 +1,5 @@
 package victor.training.ddd.agile.service
 
-import org.springframework.context.event.EventListener
-import org.springframework.core.annotation.Order
-import org.springframework.scheduling.annotation.Async
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.PathVariable
@@ -10,10 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RestController
 import victor.training.ddd.agile.entity.Release
 import victor.training.ddd.agile.entity.Sprint
-import victor.training.ddd.agile.entity.SprintItemsFinishedEvent
-import victor.training.ddd.agile.repo.ProductRepo
-import victor.training.ddd.agile.repo.ReleaseRepo
-import victor.training.ddd.agile.repo.SprintRepo
+import victor.training.ddd.agile.repo.*
 import java.time.LocalDate
 import java.util.stream.Collectors
 
@@ -25,7 +19,8 @@ import java.util.stream.Collectors
 class ReleaseService(
     private val releaseRepo: ReleaseRepo,
     private val productRepo: ProductRepo,
-    private val sprintRepo: SprintRepo
+    private val sprintRepo: SprintRepo,
+    private val backlogItemRepo: BacklogItemRepo
 ) {
 
 
@@ -38,17 +33,22 @@ class ReleaseService(
             .mapToInt { obj: Sprint -> obj.iteration }
             .max().orElse(0)
         val releasedIteration = sprint.iteration
-        val releasedItems = product.sprints.stream()
+        val releasedSprintItems = product.sprints.stream()
             .sorted(Comparator.comparing { obj: Sprint -> obj.iteration })
             .filter { s: Sprint ->
                 (s.iteration in (previouslyReleasedIteration + 1)..releasedIteration)
             }
             .flatMap { s: Sprint -> s.items().stream() }
             .collect(Collectors.toList())
+
+        val backlogItems = backlogItemRepo.findAllById(releasedSprintItems.map { it.backlogItemId })
+
+        val releaseNotes = backlogItems.joinToString("\n") { it.title }
+
         val release = Release(
             product,
             sprint,
-            releasedItems,
+            releaseNotes,
             LocalDate.now(),
             product.incrementAndGetVersion().toString() + ".0", null
         )

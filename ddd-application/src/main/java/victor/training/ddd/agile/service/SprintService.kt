@@ -8,7 +8,6 @@ import victor.training.ddd.agile.dto.CreateSprintRequest
 import victor.training.ddd.agile.dto.LogHoursRequest
 import victor.training.ddd.agile.dto.SprintMetrics
 import victor.training.ddd.agile.entity.Sprint
-import victor.training.ddd.agile.entity.Sprint.SprintStatus
 import victor.training.ddd.agile.repo.BacklogItemRepo
 import victor.training.ddd.agile.repo.ProductRepo
 import victor.training.ddd.agile.repo.SprintRepo
@@ -53,30 +52,30 @@ class SprintService(
 
 
     @PostMapping("sprint/{sprintId}/add-item")
-    fun addItem(@PathVariable sprintId: Long, @RequestBody request: AddBacklogItemRequest): Long? {
+    fun addItem(@PathVariable sprintId: Long, @RequestBody request: AddBacklogItemRequest): String? {
         val backlogItem = backlogItemRepo.findOneById(request.backlogId)
         val sprint = sprintRepo.findOneById(sprintId)
 
-        sprint.addItem(backlogItem, request.fpEstimation)
+        val sprintItem = sprint.addItem(backlogItem, request.fpEstimation)
 
         sprintRepo.save(sprint)
-        return backlogItem.id // Hint: if you have JPA issues getting the new ID, consider using UUID instead of sequence
+        return sprintItem.id
     }
 
-    @PostMapping("sprint/{id}/start-item/{backlogId}")
-    fun startItem(@PathVariable id: Long, @PathVariable backlogId: Long) {
+    @PostMapping("sprint/{id}/start-item/{sprintItemId}")
+    fun startItem(@PathVariable id: Long, @PathVariable sprintItemId: String) {
         val sprint = sprintRepo.findOneById(id)
-        sprint.startItem(backlogId)
+        sprint.startItem(sprintItemId)
         sprintRepo.save(sprint) // the repo within should map and save Sprint + all child BacklogItems
         // DELETE THE BacklogItemRepo !!!
     }
 
-    @PostMapping("sprint/{id}/complete-item/{backlogId}")
+    @PostMapping("sprint/{id}/complete-item/{sprintItemId}")
     @Transactional
-    fun completeItem(@PathVariable id: Long, @PathVariable backlogId: Long) {
+    fun completeItem(@PathVariable id: Long, @PathVariable sprintItemId: String) {
         val sprint = sprintRepo.findOneById(id)
         println("1 Before sending ")
-        sprint.completeItem(backlogId)
+        sprint.completeItem(sprintItemId)
         println("2 after sending ")
         sprintRepo.save(sprint) // listener runs here
         println("3 end of method ")
@@ -88,7 +87,7 @@ class SprintService(
     @PostMapping("sprint/{id}/log-hours")
     fun logHours(@PathVariable id: Long, @RequestBody request: LogHoursRequest) {
         val sprint = sprintRepo.findOneById(id)
-        sprint.logHours(request.backlogId, request.hours)
+        sprint.logHours(request.sprintItemId, request.hours)
         sprintRepo.save(sprint)
     }
 

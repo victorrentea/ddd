@@ -8,12 +8,11 @@ import javax.persistence.*
 class Release(
     @ManyToOne val product: Product,
     @ManyToOne val sprint: Sprint, // only used for release notes
-    @JoinColumn @OneToMany private val releasedItems: List<BacklogItem>,
+    val releaseNotes: String,
     val date: LocalDate, // eg 1.0, 2.0 ...
     val version: String,
     @Id
     @GeneratedValue
     val id: Long? = null
 ) {
-    fun getReleaseNotes():String = releasedItems.stream().map { obj: BacklogItem -> obj.title }.collect(Collectors.joining("\n"))
 }
