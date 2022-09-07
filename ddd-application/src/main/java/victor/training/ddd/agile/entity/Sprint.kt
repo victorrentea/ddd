@@ -3,6 +3,7 @@ package victor.training.ddd.agile.entity
 import org.springframework.data.domain.AbstractAggregateRoot
 import java.time.LocalDate
 import javax.persistence.*
+import kotlin.math.PI
 
 @Entity // DDD AggregateRoot
 
@@ -16,7 +17,7 @@ class Sprint(
     @Enumerated(EnumType.STRING)
     private var status:SprintStatus = SprintStatus.CREATED,
     @OneToMany(mappedBy = "sprint", fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
-    private val items: MutableList<BacklogItem> = ArrayList(),
+    private val items: MutableList<SprintItem> = ArrayList(),
 //    @Version Long version,
     @Id @GeneratedValue var id: Long? = null
 ): AbstractAggregateRoot<Sprint>() {
@@ -25,6 +26,15 @@ class Sprint(
         CREATED, STARTED, FINISHED
     }
 
+    fun items() = items
+    fun addItem(backlogItem: BacklogItem, fpEstimation: Int) {
+        require(backlogItem.product.id == product.id)
+        check(status === SprintStatus.CREATED) { "Can only add items to Sprint before it starts" }
+        val sprintItem = SprintItem(backlogItem.id!!, this, fpEstimation)
+        sprintItem.sprint = this
+        items.add(sprintItem)
+
+    }
 
     fun end() {
         check(status == SprintStatus.STARTED)
@@ -65,12 +75,5 @@ class Sprint(
         itemById(backlogId).logHours(hours)
     }
 
-    fun items():List<BacklogItem> = items
-    fun addItem(backlogItem: BacklogItem, fpEstimation: Int) {
-        check(status === SprintStatus.CREATED) { "Can only add items to Sprint before it starts" }
-        backlogItem.sprint = this
-        items.add(backlogItem)
 
-        backlogItem.fpEstimation = fpEstimation
-    }
 }
