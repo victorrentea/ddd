@@ -2,6 +2,7 @@ package victor.training.ddd.agile.service
 
 import org.springframework.context.event.EventListener
 import org.springframework.core.annotation.Order
+import org.springframework.scheduling.annotation.Async
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.PathVariable
@@ -16,6 +17,9 @@ import victor.training.ddd.agile.repo.SprintRepo
 import java.time.LocalDate
 import java.util.stream.Collectors
 
+class NewEventAfterMee(val sprintId: Long)
+
+
 @Transactional
 @RestController
 @Validated // needed as tests call directly these methods
@@ -26,9 +30,10 @@ class ReleaseService(
 ) {
 
     @EventListener
-    @Order(100)
-    fun meetoButBeforeSendingEmails(sprintItemsFinishedEvent: SprintItemsFinishedEvent) {
+//    @Order(100)
+    fun meetoButBeforeSendingEmails(sprintItemsFinishedEvent: SprintItemsFinishedEvent): NewEventAfterMee {
         println("Meeee too")
+        return NewEventAfterMee(sprintItemsFinishedEvent.sprintId)
     }
 
     @PostMapping("product/{productId}/release/{sprintId}")
