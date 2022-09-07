@@ -57,6 +57,7 @@ class SprintService(
         val sprint = sprintRepo.findOneById(sprintId)
         check(sprint.status() === SprintStatus.CREATED) { "Can only add items to Sprint before it starts" }
 
+        sprint.addItem(backlogItem)
 
         backlogItem.fpEstimation = request.fpEstimation
         sprintRepo.save(sprint)
