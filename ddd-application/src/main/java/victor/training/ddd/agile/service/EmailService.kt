@@ -20,7 +20,6 @@ class EmailService(
 
 //    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @EventListener
-
     fun onSprintFinished(event: SprintItemsFinishedEvent) {
         val sprint = sprintRepo.findOneById(event.sprintId)
         sendCongratsEmail(sprint.product.code, sprint.product.teamMailingList)

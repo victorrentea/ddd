@@ -75,9 +75,8 @@ class SprintService(
     @PostMapping("sprint/{id}/complete-item/{backlogId}")
     fun completeItem(@PathVariable id: Long, @PathVariable backlogId: Long) {
         val sprint = sprintRepo.findOneById(id)
-        sprint.completeItem(backlogId, emailService)
+        sprint.completeItem(backlogId, applicationEventPublisher)
 
-        applicationEventPublisher.publishEvent(SprintItemsFinishedEvent(sprint.id!!))
 //        if (items.all { it.isDone() }) {
 //            emailService.sendCongratsEmail(product.code, product.teamMailingList)
 //        }
