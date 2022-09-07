@@ -58,9 +58,6 @@ class SprintService(
         check(sprint.status() === SprintStatus.CREATED) { "Can only add items to Sprint before it starts" }
 
 
-        sprint.addItem(backlogItem)
-        backlogItem.sprint = sprint
-
         backlogItem.fpEstimation = request.fpEstimation
         sprintRepo.save(sprint)
         return backlogItem.id // Hint: if you have JPA issues getting the new ID, consider using UUID instead of sequence
