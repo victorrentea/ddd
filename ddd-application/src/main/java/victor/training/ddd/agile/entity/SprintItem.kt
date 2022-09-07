@@ -1,5 +1,6 @@
 package victor.training.ddd.agile.entity
 
+import victor.training.ddd.agile.repo.BacklogItemRepo
 import java.util.*
 import javax.persistence.*
 
@@ -8,9 +9,6 @@ class SprintItem(
 //    @ManyToOne
 //    val backlogItem: BacklogItem,
     val backlogItemId: Long,
-
-    @ManyToOne
-    var sprint: Sprint,
 
     var fpEstimation: Int,
 
@@ -30,6 +28,7 @@ class SprintItem(
 
     fun complete() {
         check(status == ItemStatus.STARTED) { "Cannot complete an Item before starting it" }
+//        registerEvent(SprintItemCompletedEvent(id!!)) // choreography>
         status = ItemStatus.DONE
     }
 

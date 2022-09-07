@@ -7,6 +7,7 @@ import javax.validation.constraints.NotNull
 @Entity
 class BacklogItem(
     @ManyToOne val product: Product, // at least an id because the BI is linked to the project BEFORE it is asigned to a Spring
+// TODO victorrentea 2022-09-07: val productId
 
     var title: String,
     var description: String,

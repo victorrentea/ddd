@@ -25,7 +25,7 @@ class SprintService(
     @PostMapping("sprint")
     fun createSprint(@RequestBody dto: CreateSprintRequest): Long? {
         val product = productRepo.findOneById(dto.productId)
-        val sprint = Sprint(product, product.incrementAndGetIteration(), dto.plannedEnd)
+        val sprint = Sprint(product.id!!, product.incrementAndGetIteration(), dto.plannedEnd)
         return sprintRepo.save(sprint).id
     }
 

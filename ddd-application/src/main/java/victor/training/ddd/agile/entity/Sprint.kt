@@ -7,15 +7,17 @@ import javax.persistence.*
 @Entity // DDD AggregateRoot
 
 class Sprint(
-    @ManyToOne
-    val product: Product,
+//    @ManyToOne
+//    val product: Product,
+    val productId: Long,
     val iteration:Int = 0,
     val plannedEndDate: LocalDate? = null,
     private var startDate: LocalDate? = null,
     private var endDate: LocalDate? = null,
     @Enumerated(EnumType.STRING)
     private var status:SprintStatus = SprintStatus.CREATED,
-    @OneToMany(mappedBy = "sprint", fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
+    @JoinColumn
+    @OneToMany(fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
     private val items: MutableList<SprintItem> = ArrayList(),
 //    @Version Long version,
     @Id @GeneratedValue var id: Long? = null
@@ -27,10 +29,9 @@ class Sprint(
 
     fun items() = items
     fun addItem(backlogItem: BacklogItem, fpEstimation: Int): SprintItem {
-        require(backlogItem.product.id == product.id)
+        require(backlogItem.product.id == productId)
         check(status === SprintStatus.CREATED) { "Can only add items to Sprint before it starts" }
-        val sprintItem = SprintItem(backlogItem.id!!, this, fpEstimation)
-        sprintItem.sprint = this
+        val sprintItem = SprintItem(backlogItem.id!!,  fpEstimation)
         items.add(sprintItem)
         return sprintItem
     }

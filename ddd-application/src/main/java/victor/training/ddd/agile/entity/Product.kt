@@ -3,6 +3,7 @@ package victor.training.ddd.agile.entity
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
 import javax.persistence.Id
+import javax.persistence.JoinColumn
 import javax.persistence.OneToMany
 
 @Entity
@@ -12,8 +13,9 @@ class Product(
     val teamMailingList: String,
     private var currentIteration: Int = 0,
     private var currentVersion: Int = 0,
-    @OneToMany(mappedBy = "product")
-    val sprints: MutableList<Sprint> = ArrayList(),
+//    @OneToMany
+//    @JoinColumn
+//    val sprints: MutableList<Sprint> = ArrayList(),
     @OneToMany(mappedBy = "product")
     val releases: MutableList<Release> = ArrayList(),
     @Id

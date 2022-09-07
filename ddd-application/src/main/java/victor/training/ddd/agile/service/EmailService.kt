@@ -8,6 +8,7 @@ import org.springframework.transaction.event.TransactionPhase
 import org.springframework.transaction.event.TransactionalEventListener
 import victor.training.ddd.agile.entity.BacklogItem
 import victor.training.ddd.agile.entity.SprintItemsFinishedEvent
+import victor.training.ddd.agile.repo.ProductRepo
 import victor.training.ddd.agile.repo.SprintRepo
 import java.util.stream.Collectors
 
@@ -15,20 +16,22 @@ import java.util.stream.Collectors
 class EmailService(
     private val emailSender: EmailSender,
     private val mailingListClient: MailingListClient,
-    private val sprintRepo: SprintRepo
-    ) {
+    private val sprintRepo: SprintRepo,
+    private val productRepo: ProductRepo
+) {
 
     private val log = LoggerFactory.getLogger(EmailService::class.java)
 
     // FatEvent + exception after > listener works on a copy , but what if the tx gets rolled back > the listener running still works on a CHANGED COPY of the entity.
 
-//    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    //    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     fun onSprintFinished(event: SprintItemsFinishedEvent) {
-    println("Would the following line cause a SELECT?")
+        println("Would the following line cause a SELECT?")
         val sprint = sprintRepo.findOneById(event.sprintId) //
-    println("Lets see")
-        sendCongratsEmail(sprint.product.code, sprint.product.teamMailingList)
+        println("Lets see")
+        val product = productRepo.findOneById(sprint.productId) //
+        sendCongratsEmail(product.code, product.teamMailingList)
     }
 
     fun sendCongratsEmail(productCode: String, teamMailingList: String) {

@@ -14,14 +14,14 @@ public class ConcurrencyIssuesTest extends SystemTestBase{
 
 
       /* joe */ BacklogItemDto dataSentToBrowser1 = backlogItems.getBacklogItem(itemId);
-      /* joe */ dataSentToBrowser1.setDescription("sa faca inghetata");
+      /* joe */ dataSentToBrowser1.setDescription("to make icecream");
       /* joe */ // leaves for lunch without saving
 
       /* bob */ BacklogItemDto dataSentToBrowser2 = backlogItems.getBacklogItem(itemId);
-      /* bob */ dataSentToBrowser2.setDescription("rachete!");
+      /* bob */ dataSentToBrowser2.setDescription("rockets!");
       /* bob */ backlogItems.updateBacklogItem(dataSentToBrowser2);
 
       /* joe */ // returns from lunch
-      /* joe */ backlogItems.updateBacklogItem(dataSentToBrowser1);
+//      /* joe */ backlogItems.updateBacklogItem(dataSentToBrowser1);
    }
 }

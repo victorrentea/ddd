@@ -33,7 +33,9 @@ class ReleaseService(
             .mapToInt { obj: Sprint -> obj.iteration }
             .max().orElse(0)
         val releasedIteration = sprint.iteration
-        val releasedSprintItems = product.sprints.stream()
+
+        val sprints = sprintRepo.findByProductId(product.id!!)
+        val releasedSprintItems = sprints.stream()
             .sorted(Comparator.comparing { obj: Sprint -> obj.iteration })
             .filter { s: Sprint ->
                 (s.iteration in (previouslyReleasedIteration + 1)..releasedIteration)
