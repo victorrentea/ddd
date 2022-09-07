@@ -58,7 +58,6 @@ class Sprint(
         itemById(backlogId).complete()
         if (items.all { it.isDone() }) {
             registerEvent(SprintItemsFinishedEvent(id!!))
-//            applicationEventPublisher.publishEvent(SprintItemsFinishedEvent(id!!))
         }
     }
 

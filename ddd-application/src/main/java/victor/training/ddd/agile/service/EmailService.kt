@@ -1,6 +1,8 @@
 package victor.training.ddd.agile.service
 
+import org.slf4j.LoggerFactory
 import org.springframework.context.event.EventListener
+import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Service
 import victor.training.ddd.agile.entity.BacklogItem
 import victor.training.ddd.agile.entity.SprintItemsFinishedEvent
@@ -14,19 +16,22 @@ class EmailService(
     private val sprintRepo: SprintRepo
     ) {
 
-
+    private val log = LoggerFactory.getLogger(EmailService::class.java)
 
     // FatEvent + exception after > listener works on a copy , but what if the tx gets rolled back > the listener running still works on a CHANGED COPY of the entity.
 
 //    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @EventListener
+@Order(200)
     fun onSprintFinished(event: SprintItemsFinishedEvent) {
         val sprint = sprintRepo.findOneById(event.sprintId)
         sendCongratsEmail(sprint.product.code, sprint.product.teamMailingList)
     }
 
     fun sendCongratsEmail(productCode: String, teamMailingList: String) {
-        println("Sending CONGRATS email to team of product " + productCode + ": You finished the sprint. They have time to refactor! (OMG!)")
+        log.debug("Sending CONGRATS email to team of product " + productCode + ": You finished the sprint. They have time to refactor! (OMG!)")
+
+        log.debug("in the same tx: " + sprintRepo.count())
 
         val emails = mailingListClient.retrieveEmails(teamMailingList)
         emailSender.sendEmail(

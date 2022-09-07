@@ -1,5 +1,7 @@
 package victor.training.ddd.agile.service
 
+import org.springframework.context.event.EventListener
+import org.springframework.core.annotation.Order
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.PathVariable
@@ -7,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RestController
 import victor.training.ddd.agile.entity.Release
 import victor.training.ddd.agile.entity.Sprint
+import victor.training.ddd.agile.entity.SprintItemsFinishedEvent
 import victor.training.ddd.agile.repo.ProductRepo
 import victor.training.ddd.agile.repo.ReleaseRepo
 import victor.training.ddd.agile.repo.SprintRepo
@@ -21,6 +24,13 @@ class ReleaseService(
     private val productRepo: ProductRepo,
     private val sprintRepo: SprintRepo
 ) {
+
+    @EventListener
+    @Order(100)
+    fun meetoButBeforeSendingEmails(sprintItemsFinishedEvent: SprintItemsFinishedEvent) {
+        println("Meeee too")
+    }
+
     @PostMapping("product/{productId}/release/{sprintId}")
     fun createRelease(@PathVariable productId: Long, @PathVariable sprintId: Long): Release {
         val product = productRepo.findOneById(productId)
