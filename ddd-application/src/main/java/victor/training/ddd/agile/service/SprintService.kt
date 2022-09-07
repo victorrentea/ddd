@@ -1,5 +1,6 @@
 package victor.training.ddd.agile.service
 
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.web.bind.annotation.*
 import victor.training.ddd.agile.dto.AddBacklogItemRequest
 import victor.training.ddd.agile.dto.CreateSprintRequest
@@ -7,6 +8,7 @@ import victor.training.ddd.agile.dto.LogHoursRequest
 import victor.training.ddd.agile.dto.SprintMetrics
 import victor.training.ddd.agile.entity.Sprint
 import victor.training.ddd.agile.entity.Sprint.SprintStatus
+import victor.training.ddd.agile.entity.SprintItemsFinishedEvent
 import victor.training.ddd.agile.repo.BacklogItemRepo
 import victor.training.ddd.agile.repo.ProductRepo
 import victor.training.ddd.agile.repo.SprintRepo
@@ -18,7 +20,8 @@ class SprintService(
     private val backlogItemRepo: BacklogItemRepo,
     private val emailService: EmailService,
     private val mailingListClient: MailingListClient,
-    private val sprintMetricsService: SprintMetricsService
+    private val sprintMetricsService: SprintMetricsService,
+    private val applicationEventPublisher: ApplicationEventPublisher
 ) {
     @PostMapping("sprint")
     fun createSprint(@RequestBody dto: CreateSprintRequest): Long? {
@@ -74,9 +77,13 @@ class SprintService(
         val sprint = sprintRepo.findOneById(id)
         sprint.completeItem(backlogId, emailService)
 
-
+        applicationEventPublisher.publishEvent(SprintItemsFinishedEvent(sprint.id!!))
+//        if (items.all { it.isDone() }) {
+//            emailService.sendCongratsEmail(product.code, product.teamMailingList)
+//        }
         sprintRepo.save(sprint)
     }
+
 
 
     @PostMapping("sprint/{id}/log-hours")

@@ -54,7 +54,12 @@ class Sprint(
         check(status == SprintStatus.STARTED)
         itemById(backlogId).complete()
         if (items.all { it.isDone() }) {
-            emailService.sendCongratsEmail(product.code, product.teamMailingList)
+
+            SprintItemsFinishedEvent(id!!)
+        // passing the entire BL inside an Event is A BAD practice if the BL object is mutable !
+
+
+//            emailService.sendCongratsEmail(product.code, product.teamMailingList) // couping me to the EmailService  / or a door of another module
         }
     }
 

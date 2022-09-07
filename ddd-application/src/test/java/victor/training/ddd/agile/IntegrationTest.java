@@ -13,7 +13,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public class IntegrationTest extends SystemTestBase {
 
    @Test
-   void longWorkflow() {
+@CaptureSystemOutput
+   void longWorkflow(CaptureSystemOutput.OutputCapture capture) {
       ProductDto productDto = new ProductDto("PNM","::ProductName::","::MailList::");
       Long productId = products.createProduct(productDto);
       assertThatThrownBy(() -> products.createProduct(productDto)).describedAs("cannot create with same code");
@@ -71,6 +72,8 @@ public class IntegrationTest extends SystemTestBase {
       // try to update a done backlog item
       BacklogItemDto backlogDto2 = backlogItems.getBacklogItem(backlogItemId);
       backlogDto2.setDescription(backlogDto2.getDescription() + "IllegalChange");
+
+      assertThat(capture.toString()).contains("Sending CONGR");
 
       // TODO new feature: uncomment below: should fail
       // assertThatThrownBy(() -> backlogItems.updateBacklogItem(backlogDto2)).describedAs("cannot edit done item");
