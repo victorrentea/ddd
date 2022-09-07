@@ -23,7 +23,6 @@ class BacklogItem(
     }
 
     fun start() {
-        check(sprint!!.status() == Sprint.SprintStatus.STARTED)
         check(status == ItemStatus.CREATED) { "Item already started" }
         status = ItemStatus.STARTED
     }
@@ -34,7 +33,11 @@ class BacklogItem(
     }
 
     fun hoursConsumed() = hoursConsumed
-    fun addHours(hours: Int) {
+    fun logHours(hours: Int) {
+        require(hours >= 0) {"cannot substract hours"}
+        check(status === ItemStatus.STARTED) { "Item not started" }
         hoursConsumed += hours
     }
+
+    fun isDone() = status === ItemStatus.DONE
 }

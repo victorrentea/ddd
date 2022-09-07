@@ -1,5 +1,6 @@
 package victor.training.ddd.agile.entity
 
+import victor.training.ddd.agile.service.EmailService
 import java.time.LocalDate
 import javax.persistence.*
 
@@ -7,14 +8,14 @@ import javax.persistence.*
 
 class Sprint(
     @ManyToOne
-    val product: Product? = null,
+    val product: Product,
     val iteration:Int = 0,
     val plannedEndDate: LocalDate? = null,
     private var startDate: LocalDate? = null,
     private var endDate: LocalDate? = null,
     @Enumerated(EnumType.STRING)
     private var status:SprintStatus = SprintStatus.CREATED,
-    @OneToMany(mappedBy = "sprint")
+    @OneToMany(mappedBy = "sprint", fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
     val items: MutableList<BacklogItem> = ArrayList(),
     @Id @GeneratedValue var id: Long? = null
 ) {
@@ -41,10 +42,24 @@ class Sprint(
 
     fun startItem(backlogId: Long) {
         check(status == SprintStatus.STARTED)
-        val item = items.stream()
-            .filter { it: BacklogItem -> it.id == backlogId }
-            .findFirst()
-            .orElseThrow()
-        item.start()
+        itemById(backlogId).start()
+    }
+
+    private fun itemById(backlogId: Long) = items.stream()
+        .filter { it.id == backlogId }
+        .findFirst()
+        .orElseThrow()
+
+    fun completeItem(backlogId: Long, emailService: EmailService) {
+        check(status == SprintStatus.STARTED)
+        itemById(backlogId).complete()
+        if (items.all { it.isDone() }) {
+            emailService.sendCongratsEmail(product.code, product.teamMailingList)
+        }
+    }
+
+    fun logHours(backlogId: Long, hours: Int) {
+        check(status == SprintStatus.STARTED)
+        itemById(backlogId).logHours(hours)
     }
 }

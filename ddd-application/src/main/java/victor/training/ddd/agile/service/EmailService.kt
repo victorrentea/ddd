@@ -5,8 +5,14 @@ import victor.training.ddd.agile.entity.BacklogItem
 import java.util.stream.Collectors
 
 @Service
-class EmailService(private val emailSender: EmailSender) {
-    fun sendCongratsEmail(emails: List<String?>?) {
+class EmailService(
+    private val emailSender: EmailSender,
+    private val mailingListClient: MailingListClient
+    ) {
+    fun sendCongratsEmail(productCode: String, teamMailingList: String) {
+        println("Sending CONGRATS email to team of product " + productCode + ": You finished the sprint. They have time to refactor! (OMG!)")
+
+        val emails = mailingListClient.retrieveEmails(teamMailingList)
         emailSender.sendEmail(
             "happy@corp.intra",
             java.lang.String.join(";", emails),
