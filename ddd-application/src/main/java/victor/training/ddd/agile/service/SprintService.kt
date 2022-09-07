@@ -1,6 +1,7 @@
 package victor.training.ddd.agile.service
 
 import org.springframework.context.ApplicationEventPublisher
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
 import victor.training.ddd.agile.dto.AddBacklogItemRequest
 import victor.training.ddd.agile.dto.CreateSprintRequest
@@ -73,6 +74,7 @@ class SprintService(
     }
 
     @PostMapping("sprint/{id}/complete-item/{backlogId}")
+    @Transactional
     fun completeItem(@PathVariable id: Long, @PathVariable backlogId: Long) {
         val sprint = sprintRepo.findOneById(id)
         println("1 Before sending ")
