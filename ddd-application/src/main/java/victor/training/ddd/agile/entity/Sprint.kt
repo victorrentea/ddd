@@ -66,8 +66,9 @@ class Sprint(
     }
 
     fun items():List<BacklogItem> = items
-    fun addItem(backlogItem: BacklogItem) {
+    fun addItem(backlogItem: BacklogItem, fpEstimation: Int) {
         backlogItem.sprint = this
         items.add(backlogItem)
+        backlogItem.fpEstimation = fpEstimation
     }
 }
