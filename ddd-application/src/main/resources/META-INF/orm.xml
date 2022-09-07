@@ -10,4 +10,5 @@
             </entity-listeners>
         </persistence-unit-defaults>
     </persistence-unit-metadata>
+    <!--look here magic !-->
 </entity-mappings>

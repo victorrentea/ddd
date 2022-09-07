@@ -75,12 +75,13 @@ class SprintService(
     @PostMapping("sprint/{id}/complete-item/{backlogId}")
     fun completeItem(@PathVariable id: Long, @PathVariable backlogId: Long) {
         val sprint = sprintRepo.findOneById(id)
+        println("1 Before sending ")
         sprint.completeItem(backlogId, applicationEventPublisher)
+        println("2 after sending ")
+        sprintRepo.save(sprint) // listener runs here
+        println("3 end of method ")
 
-//        if (items.all { it.isDone() }) {
-//            emailService.sendCongratsEmail(product.code, product.teamMailingList)
-//        }
-        sprintRepo.save(sprint)
+        //listener could also run here IF the method was @Transactional
     }
 
 

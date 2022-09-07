@@ -1,6 +1,7 @@
 package victor.training.ddd.agile.entity
 
 import org.springframework.context.ApplicationEventPublisher
+import org.springframework.data.domain.AbstractAggregateRoot
 import victor.training.ddd.agile.common.DomainEvents
 import victor.training.ddd.agile.service.EmailService
 import java.time.LocalDate
@@ -20,7 +21,7 @@ class Sprint(
     @OneToMany(mappedBy = "sprint", fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
     val items: MutableList<BacklogItem> = ArrayList(),
     @Id @GeneratedValue var id: Long? = null
-) {
+): AbstractAggregateRoot<Sprint>() {
 
     enum class SprintStatus {
         CREATED, STARTED, FINISHED
@@ -56,14 +57,8 @@ class Sprint(
         check(status == SprintStatus.STARTED)
         itemById(backlogId).complete()
         if (items.all { it.isDone() }) {
-            DomainEvents.publishEvent(SprintItemsFinishedEvent(id!!))
+            registerEvent(SprintItemsFinishedEvent(id!!))
 //            applicationEventPublisher.publishEvent(SprintItemsFinishedEvent(id!!))
-
-            SprintItemsFinishedEvent(id!!)
-        // passing the entire BL inside an Event is A BAD practice if the BL object is mutable !
-
-
-//            emailService.sendCongratsEmail(product.code, product.teamMailingList) // couping me to the EmailService  / or a door of another module
         }
     }
 
