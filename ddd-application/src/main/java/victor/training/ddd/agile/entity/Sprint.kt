@@ -1,9 +1,6 @@
 package victor.training.ddd.agile.entity
 
-import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.domain.AbstractAggregateRoot
-import victor.training.ddd.agile.common.DomainEvents
-import victor.training.ddd.agile.service.EmailService
 import java.time.LocalDate
 import javax.persistence.*
 
@@ -20,6 +17,7 @@ class Sprint(
     private var status:SprintStatus = SprintStatus.CREATED,
     @OneToMany(mappedBy = "sprint", fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
     val items: MutableList<BacklogItem> = ArrayList(),
+//    @Version Long version,
     @Id @GeneratedValue var id: Long? = null
 ): AbstractAggregateRoot<Sprint>() {
 
@@ -53,7 +51,7 @@ class Sprint(
         .findFirst()
         .orElseThrow()
 
-    fun completeItem(backlogId: Long, applicationEventPublisher: ApplicationEventPublisher) {
+    fun completeItem(backlogId: Long) {
         check(status == SprintStatus.STARTED)
         itemById(backlogId).complete()
         if (items.all { it.isDone() }) {

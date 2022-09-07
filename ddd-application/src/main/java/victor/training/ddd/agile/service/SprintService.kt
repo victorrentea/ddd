@@ -9,7 +9,6 @@ import victor.training.ddd.agile.dto.LogHoursRequest
 import victor.training.ddd.agile.dto.SprintMetrics
 import victor.training.ddd.agile.entity.Sprint
 import victor.training.ddd.agile.entity.Sprint.SprintStatus
-import victor.training.ddd.agile.entity.SprintItemsFinishedEvent
 import victor.training.ddd.agile.repo.BacklogItemRepo
 import victor.training.ddd.agile.repo.ProductRepo
 import victor.training.ddd.agile.repo.SprintRepo
@@ -78,7 +77,7 @@ class SprintService(
     fun completeItem(@PathVariable id: Long, @PathVariable backlogId: Long) {
         val sprint = sprintRepo.findOneById(id)
         println("1 Before sending ")
-        sprint.completeItem(backlogId, applicationEventPublisher)
+        sprint.completeItem(backlogId)
         println("2 after sending ")
         sprintRepo.save(sprint) // listener runs here
         println("3 end of method ")

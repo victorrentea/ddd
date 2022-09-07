@@ -22,9 +22,10 @@ class EmailService(
 
 //    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @EventListener
-//@Order(200)
-    fun onSprintFinished(event: NewEventAfterMee) {
-        val sprint = sprintRepo.findOneById(event.sprintId)
+    fun onSprintFinished(event: SprintItemsFinishedEvent) {
+    println("Would the following line cause a SELECT?")
+        val sprint = sprintRepo.findOneById(event.sprintId) //
+    println("Lets see")
         sendCongratsEmail(sprint.product.code, sprint.product.teamMailingList)
     }
 
@@ -32,6 +33,7 @@ class EmailService(
         log.debug("Sending CONGRATS email to team of product " + productCode + ": You finished the sprint. They have time to refactor! (OMG!)")
 
         log.debug("in the same tx: " + sprintRepo.count())
+
 
         val emails = mailingListClient.retrieveEmails(teamMailingList)
         emailSender.sendEmail(

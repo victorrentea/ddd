@@ -17,7 +17,6 @@ import victor.training.ddd.agile.repo.SprintRepo
 import java.time.LocalDate
 import java.util.stream.Collectors
 
-class NewEventAfterMee(val sprintId: Long)
 
 
 @Transactional
@@ -29,12 +28,6 @@ class ReleaseService(
     private val sprintRepo: SprintRepo
 ) {
 
-    @EventListener
-//    @Order(100)
-    fun meetoButBeforeSendingEmails(sprintItemsFinishedEvent: SprintItemsFinishedEvent): NewEventAfterMee {
-        println("Meeee too")
-        return NewEventAfterMee(sprintItemsFinishedEvent.sprintId)
-    }
 
     @PostMapping("product/{productId}/release/{sprintId}")
     fun createRelease(@PathVariable productId: Long, @PathVariable sprintId: Long): Release {
