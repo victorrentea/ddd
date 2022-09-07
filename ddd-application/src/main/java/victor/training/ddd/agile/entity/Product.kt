@@ -13,9 +13,6 @@ class Product(
     val teamMailingList: String,
     private var currentIteration: Int = 0,
     private var currentVersion: Int = 0,
-//    @OneToMany
-//    @JoinColumn
-//    val sprints: MutableList<Sprint> = ArrayList(),
     @OneToMany(mappedBy = "product")
     val releases: MutableList<Release> = ArrayList(),
     @Id
