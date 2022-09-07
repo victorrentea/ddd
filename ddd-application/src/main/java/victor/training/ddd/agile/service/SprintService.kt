@@ -50,12 +50,12 @@ class SprintService(
     }
 
     /*****************************  ITEMS IN SPRINT  */
-//@Transactional
+
+
     @PostMapping("sprint/{sprintId}/add-item")
     fun addItem(@PathVariable sprintId: Long, @RequestBody request: AddBacklogItemRequest): Long? {
         val backlogItem = backlogItemRepo.findOneById(request.backlogId)
         val sprint = sprintRepo.findOneById(sprintId)
-        check(sprint.status() === SprintStatus.CREATED) { "Can only add items to Sprint before it starts" }
 
         sprint.addItem(backlogItem, request.fpEstimation)
 

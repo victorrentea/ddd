@@ -67,8 +67,10 @@ class Sprint(
 
     fun items():List<BacklogItem> = items
     fun addItem(backlogItem: BacklogItem, fpEstimation: Int) {
+        check(status === SprintStatus.CREATED) { "Can only add items to Sprint before it starts" }
         backlogItem.sprint = this
         items.add(backlogItem)
+
         backlogItem.fpEstimation = fpEstimation
     }
 }
