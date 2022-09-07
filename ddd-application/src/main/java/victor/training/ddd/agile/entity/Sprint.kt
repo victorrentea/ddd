@@ -1,6 +1,7 @@
 package victor.training.ddd.agile.entity
 
 import org.springframework.context.ApplicationEventPublisher
+import victor.training.ddd.agile.common.DomainEvents
 import victor.training.ddd.agile.service.EmailService
 import java.time.LocalDate
 import javax.persistence.*
@@ -55,7 +56,8 @@ class Sprint(
         check(status == SprintStatus.STARTED)
         itemById(backlogId).complete()
         if (items.all { it.isDone() }) {
-            applicationEventPublisher.publishEvent(SprintItemsFinishedEvent(id!!))
+            DomainEvents.publishEvent(SprintItemsFinishedEvent(id!!))
+//            applicationEventPublisher.publishEvent(SprintItemsFinishedEvent(id!!))
 
             SprintItemsFinishedEvent(id!!)
         // passing the entire BL inside an Event is A BAD practice if the BL object is mutable !
