@@ -57,8 +57,10 @@ class SprintService(
         val sprint = sprintRepo.findOneById(sprintId)
         check(sprint.status() === SprintStatus.CREATED) { "Can only add items to Sprint before it starts" }
 
+
+        sprint.addItem(backlogItem)
         backlogItem.sprint = sprint
-        sprint.items.add(backlogItem)
+
         backlogItem.fpEstimation = request.fpEstimation
         sprintRepo.save(sprint)
         return backlogItem.id // Hint: if you have JPA issues getting the new ID, consider using UUID instead of sequence
@@ -81,8 +83,7 @@ class SprintService(
         println("2 after sending ")
         sprintRepo.save(sprint) // listener runs here
         println("3 end of method ")
-
-        //listener could also run here IF the method was @Transactional
+         //listener could also run here IF the method was @Transactional
     }
 
 

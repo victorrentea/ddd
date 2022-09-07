@@ -43,7 +43,7 @@ class ReleaseService(
             .filter { s: Sprint ->
                 (s.iteration in (previouslyReleasedIteration + 1)..releasedIteration)
             }
-            .flatMap { s: Sprint -> s.items.stream() }
+            .flatMap { s: Sprint -> s.items().stream() }
             .collect(Collectors.toList())
         val release = Release(
             product,

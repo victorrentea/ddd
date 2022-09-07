@@ -16,7 +16,7 @@ class Sprint(
     @Enumerated(EnumType.STRING)
     private var status:SprintStatus = SprintStatus.CREATED,
     @OneToMany(mappedBy = "sprint", fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
-    val items: MutableList<BacklogItem> = ArrayList(),
+    private val items: MutableList<BacklogItem> = ArrayList(),
 //    @Version Long version,
     @Id @GeneratedValue var id: Long? = null
 ): AbstractAggregateRoot<Sprint>() {
@@ -24,6 +24,7 @@ class Sprint(
     enum class SprintStatus {
         CREATED, STARTED, FINISHED
     }
+
 
     fun end() {
         check(status == SprintStatus.STARTED)
@@ -62,5 +63,11 @@ class Sprint(
     fun logHours(backlogId: Long, hours: Int) {
         check(status == SprintStatus.STARTED)
         itemById(backlogId).logHours(hours)
+    }
+
+    fun items():List<BacklogItem> = items
+    fun addItem(backlogItem: BacklogItem) {
+        backlogItem.sprint = this
+        items.add(backlogItem)
     }
 }
