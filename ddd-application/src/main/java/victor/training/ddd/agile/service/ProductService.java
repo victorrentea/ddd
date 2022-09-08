@@ -31,11 +31,15 @@ public class ProductService {
     @GetMapping("products/{id}")
     public ProductDto getProduct(@PathVariable long id) {
         Product product = productRepo.findOneById(id);
-        ProductDto dto = new ProductDto();
-        dto.setId(product.getId());
-        dto.setName(product.getName());
-        dto.setCode(product.getCode());
-        dto.setMailingList(product.getTeamMailingList());
+        ProductDto dto = new ProductDto()
+                .setId(product.getId())
+                .setName(product.getName())
+                .setCode(product.getCode())
+                .setMailingList(product.getTeamMailingList())
+                .setPoEmail(product.getOwnerEmail())
+                .setPoName(product.getOwnerName())
+                .setPoPhone(product.getOwnerPhone())
+                ;
         return dto;
     }
 }

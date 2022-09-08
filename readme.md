@@ -45,14 +45,15 @@ Tip for accidental reader: see the branches for how the code evolves.
 ## Refactoring Steps
 At every stage try to ask as many design and domain questions you can
 1. SprintService: Declutter: move out SprintService.getSprintMetrics
-2. SprintService: Sprint.start()
-3. SprintService: BacklogItem.activate()
-4. SprintService: Aggregate Sprint-BacklogItem to move checkSprintMatchesAndStarted() inside Sprint
-5. Sprint = > BacklogItem: move to unidirectional JPA link.
-6. Aggregates should not have direct links to other aggregates
-7. Send emails from Sprint.complete() via events; techniques for publishing events
-8. BacklogItem -> split in ProductBacklogItem + SprintBacklogItem
-9. Aggregate Design: how to draw consistency boundaries
-10. Freeze ProductBacklogItem after the SprintBacklogItem is DONE; look for domain questions to ask
-11. Layers: domain/application/infra + Dep Inversion via a) separate module or b) ArchUnit
-12. Release.notes: can they change after creation?
+2. ProductService: Declutter: Introduce a new Value Object for PO
+3. SprintService: Sprint.start()
+4. SprintService: BacklogItem.activate()
+5. SprintService: Aggregate Sprint-BacklogItem to move checkSprintMatchesAndStarted() inside Sprint
+6. Sprint = > BacklogItem: move to unidirectional JPA link.
+7. Aggregates should not have direct links to other aggregates
+8. Send emails from Sprint.complete() via events; techniques for publishing events
+9. BacklogItem -> split in ProductBacklogItem + SprintBacklogItem
+10. Aggregate Design: how to draw consistency boundaries
+11. Freeze ProductBacklogItem after the SprintBacklogItem is DONE; look for domain questions to ask
+12. Layers: domain/application/infra + Dep Inversion via a) separate module or b) ArchUnit
+13. Release.notes: can they change after creation?

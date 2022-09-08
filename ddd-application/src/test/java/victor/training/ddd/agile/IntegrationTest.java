@@ -20,13 +20,19 @@ public class IntegrationTest extends AbstractSystemTestBase {
         ProductDto productDto = new ProductDto()
                 .setCode("PNM")
                 .setName("::ProductName::")
-                .setMailingList("::MailList::");
+                .setMailingList("::MailList::")
+                .setPoEmail("boss@corp.intra")
+                .setPoPhone("123DONTCALLME")
+                .setPoName("Za bo$$");
         Long productId = products.createProduct(productDto);
         assertThatThrownBy(() -> products.createProduct(productDto)).describedAs("cannot create with same code");
 
         assertThat(products.getProduct(productId))
                 .extracting(ProductDto::getCode, ProductDto::getName, ProductDto::getMailingList)
                 .isEqualTo(List.of("PNM", "::ProductName::", "::MailList::"));
+        assertThat(products.getProduct(productId))
+                .extracting(ProductDto::getPoName, ProductDto::getPoEmail, ProductDto::getPoPhone)
+                .isEqualTo(List.of("Za bo$$", "boss@corp.intra", "123DONTCALLME"));
 
         Long sprintId = sprints.createSprint(new CreateSprintRequest()
                 .setProductId(productId)
