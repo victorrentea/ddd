@@ -1,5 +1,6 @@
 package victor.training.ddd.agile.entity
 
+import javax.persistence.Embedded
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
 import javax.persistence.Id
@@ -11,6 +12,8 @@ class Product(
     val code: String,
     val name: String,
     val teamMailingList: String,
+    @Embedded
+    val productOwner:ProductOwner,
     private var currentIteration: Int = 0,
     private var currentVersion: Int = 0,
     @OneToMany(mappedBy = "product")

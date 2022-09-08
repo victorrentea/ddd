@@ -30,7 +30,7 @@ class EmailService(
         println("Would the following line cause a SELECT?")
         val sprint = sprintRepo.findOneById(event.sprintId) //
         println("Lets see")
-        val product = productRepo.findOneById(sprint.productId) //
+        val product = productRepo.findOneById(sprint.productId) // + 1 SELECT
         sendCongratsEmail(product.code, product.teamMailingList)
     }
 
