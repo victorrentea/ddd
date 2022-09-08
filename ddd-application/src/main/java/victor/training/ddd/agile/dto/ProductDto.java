@@ -4,11 +4,12 @@ import lombok.Data;
 
 @Data
 public class ProductDto {
-   public Long id;
-   public String code;
-   public String name;
-   public String mailingList;
-   public String poEmail;
-   public String poName;
-   public String poPhone;
+   private Long id;
+   private String code;
+   private String name;
+   private String mailingList;
+   private String poEmail;
+   private String poName;
+   private String poPhone;
+
 }

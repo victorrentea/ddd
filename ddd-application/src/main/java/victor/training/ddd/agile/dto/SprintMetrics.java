@@ -4,10 +4,11 @@ import lombok.Data;
 
 @Data
 public class SprintMetrics {
-   public int consumedHours;
-   public int doneFP;
-   public double fpVelocity;
-   public int hoursConsumedForNotDone;
-   public int calendarDays;
-   public int delayDays;
+   private int consumedHours;
+   private int doneFP;
+   private double fpVelocity;
+   private int hoursConsumedForNotDone;
+   private int calendarDays;
+   private int delayDays;
+
 }

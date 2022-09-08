@@ -6,6 +6,6 @@ import java.time.LocalDate;
 
 @Data
 public class CreateSprintRequest {
-   public Long productId;
-   public LocalDate plannedEnd;
+   private Long productId;
+   private LocalDate plannedEnd;
 }

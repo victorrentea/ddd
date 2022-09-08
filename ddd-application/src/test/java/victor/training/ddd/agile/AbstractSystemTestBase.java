@@ -6,7 +6,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import victor.training.ddd.agile.service.*;
 
 @SpringBootTest
-public abstract class SystemTestBase {
+public abstract class AbstractSystemTestBase {
    @Autowired
    ProductService products;
    @Autowired
@@ -16,5 +16,7 @@ public abstract class SystemTestBase {
    @Autowired
    ReleaseService releases;
    @MockBean
-   MailingListClient mailingListClient;
+   MailingListClient mailingListClientMock;
+   @MockBean
+   EmailSender emailSenderMock;
 }

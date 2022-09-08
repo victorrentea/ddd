@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AddBacklogItemRequest {
-   public long backlogId;
-   public int fpEstimation;
+   private long backlogId;
+   private int fpEstimation;
 }

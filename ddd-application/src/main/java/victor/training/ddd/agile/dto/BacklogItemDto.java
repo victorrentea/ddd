@@ -4,9 +4,9 @@ import lombok.Data;
 
 @Data
 public class BacklogItemDto {
-   public Long id;
-   public Long productId;
-   public String title;
-   public String description;
-   public Long version;
+   private Long id;
+   private Long productId;
+   private String title;
+   private String description;
+   private Long version;
 }
