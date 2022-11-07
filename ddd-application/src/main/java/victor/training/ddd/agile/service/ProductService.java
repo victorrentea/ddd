@@ -14,6 +14,14 @@ import victor.training.ddd.agile.repo.ProductRepo;
 public class ProductService {
     private final ProductRepo productRepo;
 
+    @PutMapping("products/${productId}/poPhone/${newPhone}")
+    public void updatePOPhone(long productId, String newPhone) {
+        Product product = productRepo.findOneById(productId);
+        ProductOwner po = product.getProductOwner();
+        ProductOwner newPo = po.withOwnerPhone(newPhone);
+        product.setProductOwner(newPo);
+    }
+    // if you want @Valid on EVERY SINGLE PARAM > write a custom @Aspect invoking the spring validator
     @PostMapping("products")
     public Long createProduct(@RequestBody ProductDto dto) {
         if (productRepo.existsByCode(dto.getCode())) {

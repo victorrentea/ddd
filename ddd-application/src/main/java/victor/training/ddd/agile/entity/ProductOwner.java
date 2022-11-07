@@ -13,8 +13,11 @@ public class ProductOwner {
     }
 
     public ProductOwner(String ownerEmail, String ownerName, String ownerPhone) {
-        this.ownerEmail = ownerEmail;
         this.ownerName = ownerName;
+        if (ownerEmail == null && ownerPhone == null) {
+            throw new IllegalArgumentException("Not valid!");
+        }
+        this.ownerEmail = ownerEmail;
         this.ownerPhone = ownerPhone;
     }
 
@@ -41,5 +44,9 @@ public class ProductOwner {
     @Override
     public int hashCode() {
         return Objects.hash(ownerEmail, ownerName, ownerPhone);
+    }
+
+    public ProductOwner withOwnerPhone(String ownerPhone) {
+        return this.ownerPhone == ownerPhone ? this : new ProductOwner(this.ownerEmail, this.ownerName, ownerPhone);
     }
 }

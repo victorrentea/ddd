@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.apache.commons.lang.StringUtils;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -49,7 +50,10 @@ public class Product {
 
 
    public Product setName(String name) {
-      this.name = requireNonNull(name);
+      if (StringUtils.isBlank(name)) {
+         throw new IllegalArgumentException("Illegal name");
+      }
+      this.name = name;
       return this;
    }
 

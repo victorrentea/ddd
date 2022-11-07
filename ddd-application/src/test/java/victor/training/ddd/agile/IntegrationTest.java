@@ -21,9 +21,10 @@ public class IntegrationTest extends AbstractSystemTestBase {
                 .setCode("PNM")
                 .setName("::ProductName::")
                 .setMailingList("::MailList::")
-                .setPoEmail("boss@corp.intra")
-                .setPoPhone("123DONTCALLME")
-                .setPoName("Za bo$$");
+//                .setPoEmail("boss@corp.intra")
+//                .setPoPhone("123DONTCALLME")
+                .setPoName("Za bo$$")
+                ;
         Long productId = products.createProduct(productDto);
         assertThatThrownBy(() -> products.createProduct(productDto)).describedAs("cannot create with same code");
 
