@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.*;
 import victor.training.ddd.agile.dto.AddBacklogItemRequest;
 import victor.training.ddd.agile.dto.CreateSprintRequest;
 import victor.training.ddd.agile.dto.LogHoursRequest;
-import victor.training.ddd.agile.dto.SprintMetrics;
 import victor.training.ddd.agile.entity.BacklogItem;
 import victor.training.ddd.agile.entity.Product;
 import victor.training.ddd.agile.entity.Sprint;
@@ -17,7 +16,6 @@ import victor.training.ddd.agile.repo.SprintRepo;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Transactional
 @RestController
@@ -83,20 +81,16 @@ public class SprintService {
     public void startItem(@PathVariable long sprintId, @PathVariable long backlogId) {
         BacklogItem backlogItem = backlogItemRepo.findOneById(backlogId);
         checkSprintMatchesAndStarted(sprintId, backlogItem);
-        if (backlogItem.getStatus() != BacklogItem.Status.CREATED) {
-            throw new IllegalStateException("Item already started");
-        }
-        backlogItem.setStatus(BacklogItem.Status.STARTED);
+        backlogItem.start();
     }
 
     @PostMapping("sprint/{sprintId}/item/{backlogId}/complete")
     public void completeItem(@PathVariable long sprintId, @PathVariable long backlogId) {
         BacklogItem backlogItem = backlogItemRepo.findOneById(backlogId);
         checkSprintMatchesAndStarted(sprintId, backlogItem);
-        if (backlogItem.getStatus() != BacklogItem.Status.STARTED) {
-            throw new IllegalStateException("Cannot complete an Item before starting it");
-        }
-        backlogItem.setStatus(BacklogItem.Status.DONE);
+
+        backlogItem.complete();
+
         Sprint sprint = sprintRepo.findOneById(sprintId);
         if (sprint.getItems().stream().allMatch(item -> item.getStatus() == BacklogItem.Status.DONE)) {
             System.out.println("Sending CONGRATS email to team of product " + sprint.getProduct().getCode() + ": They finished the items earlier. They have time to refactor! (OMG!)");
