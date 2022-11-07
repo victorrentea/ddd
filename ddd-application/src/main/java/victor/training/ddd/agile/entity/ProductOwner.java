@@ -5,6 +5,7 @@ import java.util.Objects;
 
 @Embeddable
 public class ProductOwner {
+
     private String ownerEmail;
     private String ownerName;
     private String ownerPhone;

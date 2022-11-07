@@ -39,7 +39,8 @@ public class ReleaseService {
           .max().orElse(0);
       int releasedIteration = sprint.getIteration();
 
-      List<BacklogItem> releasedItems = product.getSprints().stream()
+      List<Sprint> sprintsForProduct = sprintRepo.findByProductId(product.getId());
+      List<BacklogItem> releasedItems = sprintsForProduct.stream()
           .sorted(Comparator.comparing(Sprint::getIteration))
           .filter(s -> s.getIteration() > previouslyReleasedIteration
                        && s.getIteration() <= releasedIteration)

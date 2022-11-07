@@ -24,7 +24,9 @@ public class Product {
    private int currentIteration = 0;
    private int currentVersion = 0;
    @Setter(AccessLevel.NONE)
+   @Column(nullable = false) // NOT NULL
    private String code;
+   @Column(nullable = false) // NOT NULL
    private String name;
 
    @Embedded
@@ -32,9 +34,9 @@ public class Product {
 
    private String teamMailingList;
 
-   @ToString.Exclude
-   @OneToMany(mappedBy = "product")
-   private List<Sprint> sprints = new ArrayList<>();
+//   @ToString.Exclude
+//   @OneToMany(mappedBy = "product")
+//   private List<Sprint> sprints = new ArrayList<>();
 
    @ToString.Exclude
    @OneToMany(mappedBy = "product")

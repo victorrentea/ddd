@@ -32,7 +32,7 @@ public class SprintService {
         Product product = productRepo.findOneById(dto.getProductId());
         Sprint sprint = new Sprint()
                 .setIteration(product.incrementAndGetIteration())
-                .setProduct(product)
+                .setProductId(product.getId())
                 .setPlannedEndDate(dto.getPlannedEnd());
         return sprintRepo.save(sprint).getId();
     }
@@ -79,9 +79,24 @@ public class SprintService {
 
     @PostMapping("sprint/{sprintId}/item/{backlogId}/start")
     public void startItem(@PathVariable long sprintId, @PathVariable long backlogId) {
-        BacklogItem backlogItem = backlogItemRepo.findOneById(backlogId);
-        checkSprintMatchesAndStarted(sprintId, backlogItem);
-        backlogItem.start();
+        Sprint sprint = sprintRepo.findOneById(sprintId);
+        sprint.startItem(backlogId);
+        // the magic of the Repository pattern:
+        // the illusion of an in-memory store.
+        // there is no SAVE 😨: ORM auto-flushes the dirty entities (Item.status)
+
+        // option1: rely on magic and have everyone understand it
+            // risk: anInnocentMethod(sprint); //
+
+        // option2: reject/ban the magic, burn the witches . Dark Ages *inquision*
+//        sprintRepo.save(sprint); // + delete the @Transactional on the top
+        //#1 + #2 : if you change just the name, hibernate will still update the entire row (all the columns)
+
+        // option3: flag hibernate to track down individual fields
+
+        // option4: dedicated: = NO HIBERNATE : JdbcTemplate or JPQL @Modifying
+        // sprintRepo.updateName(sprintId, "newName");
+
     }
 
     @PostMapping("sprint/{sprintId}/item/{backlogId}/complete")
@@ -93,13 +108,23 @@ public class SprintService {
 
         Sprint sprint = sprintRepo.findOneById(sprintId);
         if (sprint.getItems().stream().allMatch(item -> item.getStatus() == BacklogItem.Status.DONE)) {
-            System.out.println("Sending CONGRATS email to team of product " + sprint.getProduct().getCode() + ": They finished the items earlier. They have time to refactor! (OMG!)");
-            List<String> emails = mailingListClient.retrieveEmails(sprint.getProduct().getTeamMailingList());
+            Product product = productRepo.findOneById(sprint.getProductId());
+            System.out.println("Sending CONGRATS email to team of product " + product.getCode() + ": They finished the items earlier. They have time to refactor! (OMG!)");
+            List<String> emails = mailingListClient.retrieveEmails(product.getTeamMailingList());
             emailService.sendCongratsEmail(emails);
         }
     }
 
     private void checkSprintMatchesAndStarted(long id, BacklogItem backlogItem) {
+        // more efficient way to do: SQL/jqpl
+        // SELECT 1 FROM Backlog_item bi WHERE bi.id = ?1 AND bi.sprint.id=?2 AND bi.sprint.status=?3
+        // I never load the Agg in memory at all.
+//        if (1!=backlogItemRepo.countByIdAndSprintIdAndSprintStatus(backlogItem.getId(), id, Status.STARTED))  {
+//            throw new IllegalStateException("Sprint not started");
+//        }
+        // Should I do logic in SQL
+
+
         if (!backlogItem.getSprint().getId().equals(id)) {
             throw new IllegalArgumentException("item not in sprint");
         }
