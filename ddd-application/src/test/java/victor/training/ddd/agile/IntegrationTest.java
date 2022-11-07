@@ -78,9 +78,9 @@ public class IntegrationTest extends AbstractSystemTestBase {
 
         sprints.endSprint(sprintId);
 
-        System.out.println("Metrics: " + sprints.getSprintMetrics(sprintId));
+        System.out.println("Metrics: " + metricsController.getSprintMetrics(sprintId));
 
-        assertThat(sprints.getSprintMetrics(sprintId))
+        assertThat(metricsController.getSprintMetrics(sprintId))
                 .extracting(SprintMetrics::getConsumedHours, SprintMetrics::getDoneFP, SprintMetrics::getHoursConsumedForNotDone)
                 .containsExactly(10, 2, 0);
 

@@ -14,35 +14,36 @@ import static javax.persistence.EnumType.STRING;
 @NoArgsConstructor
 @Entity
 public class BacklogItem {
-   @Id
-   @GeneratedValue
-   private Long id;
-   @ManyToOne
-   private Product product;
+    @Id
+    @GeneratedValue
+    private Long id;
+    @ManyToOne
+    private Product product;
 
-@NotNull
-   private String title;
-   private String description;
+    @NotNull
+    private String title;
+    private String description;
 
-   public enum Status {
-      CREATED,
-      STARTED,
-      DONE
-   }
-   @Enumerated(STRING)
-   private Status status = Status.CREATED;
+    public enum Status {
+        CREATED,
+        STARTED,
+        DONE
+    }
 
-   @ManyToOne
-   private Sprint sprint; // ⚠ not NULL when assigned to a sprint
-   private Integer fpEstimation; // ⚠ not NULL when assigned to a sprint
+    @Enumerated(STRING)
+    private Status status = Status.CREATED;
 
-   private int hoursConsumed;
+    @ManyToOne
+    private Sprint sprint; // ⚠ not NULL when assigned to a sprint
+    private Integer fpEstimation; // ⚠ not NULL when assigned to a sprint
 
-   @Version
-   private Long version;
+    private int hoursConsumed;
 
-   public void addHours(int hours) {
-      hoursConsumed += hours;
-   }
+    @Version
+    private Long version;
+
+    public void addHours(int hours) {
+        hoursConsumed += hours;
+    }
 
 }

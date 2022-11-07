@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import victor.training.ddd.agile.entity.Product;
 import victor.training.ddd.agile.dto.ProductDto;
+import victor.training.ddd.agile.entity.ProductOwner;
 import victor.training.ddd.agile.repo.ProductRepo;
 
 @Slf4j
@@ -18,13 +19,9 @@ public class ProductService {
         if (productRepo.existsByCode(dto.getCode())) {
             throw new IllegalArgumentException("Code already defined");
         }
-        Product product = new Product()
-                .setCode(dto.getCode())
-                .setName(dto.getName())
+        Product product = new Product(dto.getCode(), dto.getName())
                 .setTeamMailingList(dto.getMailingList())
-                .setOwnerEmail(dto.getPoEmail())
-                .setOwnerName(dto.getPoName())
-                .setOwnerPhone(dto.getPoPhone());
+                .setProductOwner(new ProductOwner(dto.getPoEmail(), dto.getPoName(), dto.getPoPhone()));
         return productRepo.save(product).getId();
     }
 
@@ -36,9 +33,9 @@ public class ProductService {
                 .setName(product.getName())
                 .setCode(product.getCode())
                 .setMailingList(product.getTeamMailingList())
-                .setPoEmail(product.getOwnerEmail())
-                .setPoName(product.getOwnerName())
-                .setPoPhone(product.getOwnerPhone())
+                .setPoEmail(product.getProductOwner().getOwnerEmail())
+                .setPoName(product.getProductOwner().getOwnerName())
+                .setPoPhone(product.getProductOwner().getOwnerPhone())
                 ;
         return dto;
     }

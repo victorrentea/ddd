@@ -126,29 +126,5 @@ public class SprintService {
         backlogItem.addHours(request.getHours());
     }
 
-    /*****************************  METRICS *******************************************/
-
-    @GetMapping("sprint/{sprintId}/metrics")
-    public SprintMetrics getSprintMetrics(@PathVariable long sprintId) {
-        Sprint sprint = sprintRepo.findOneById(sprintId);
-        if (sprint.getStatus() != Status.FINISHED) {
-            throw new IllegalStateException();
-        }
-        List<BacklogItem> doneItems = sprint.getItems().stream()
-                .filter(item -> item.getStatus() == BacklogItem.Status.DONE)
-                .collect(Collectors.toList());
-        SprintMetrics dto = new SprintMetrics();
-        dto.setConsumedHours(sprint.getItems().stream().mapToInt(BacklogItem::getHoursConsumed).sum());
-        dto.setCalendarDays(sprint.getStartDate().until(sprint.getEndDate()).getDays());
-        dto.setDoneFP(doneItems.stream().mapToInt(BacklogItem::getFpEstimation).sum());
-        dto.setFpVelocity(1.0 * dto.getDoneFP() / dto.getConsumedHours());
-        dto.setHoursConsumedForNotDone(sprint.getItems().stream()
-                .filter(item -> item.getStatus() != BacklogItem.Status.DONE)
-                .mapToInt(BacklogItem::getHoursConsumed).sum());
-        if (sprint.getEndDate().isAfter(sprint.getPlannedEndDate())) {
-            dto.setDelayDays(sprint.getPlannedEndDate().until(sprint.getEndDate()).getDays());
-        }
-        return dto;
-    }
 
 }

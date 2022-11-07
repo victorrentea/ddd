@@ -10,6 +10,8 @@ public abstract class AbstractSystemTestBase {
    @Autowired
    ProductService products;
    @Autowired
+   SprintMetricsController metricsController;
+   @Autowired
    BacklogItemService backlogItems;
    @Autowired
    SprintService sprints;

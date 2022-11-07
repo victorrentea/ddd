@@ -1,5 +1,6 @@
 package victor.training.ddd.agile.entity;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,10 +12,9 @@ import java.util.List;
 
 import static javax.persistence.EnumType.STRING;
 
-@Getter
-@Setter
 @NoArgsConstructor
 @Entity
+@Data
 public class Sprint {
    @Id
    @GeneratedValue

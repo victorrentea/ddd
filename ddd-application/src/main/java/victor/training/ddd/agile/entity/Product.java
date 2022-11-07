@@ -1,16 +1,20 @@
 package victor.training.ddd.agile.entity;
 
-import lombok.Data;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
+import static java.util.Objects.requireNonNull;
 
-@Data
+@ToString
+@Setter// consider encapsulating changes
+@Getter
 @Entity
 public class Product {
    @Id
@@ -18,20 +22,36 @@ public class Product {
    private Long id;
    private int currentIteration = 0;
    private int currentVersion = 0;
+   @Setter(AccessLevel.NONE)
    private String code;
    private String name;
 
-   private String ownerEmail;
-   private String ownerName;
-   private String ownerPhone;
+   @Embedded
+   private ProductOwner productOwner;
 
    private String teamMailingList;
 
+   @ToString.Exclude
    @OneToMany(mappedBy = "product")
    private List<Sprint> sprints = new ArrayList<>();
 
+   @ToString.Exclude
    @OneToMany(mappedBy = "product")
    private List<Release> releases = new ArrayList<>();
+
+   protected Product() { // for the eyes of Hibernate only
+   }
+
+   public Product(String code, String name) {
+      this.code = requireNonNull(code);
+      setName(name);
+   }
+
+
+   public Product setName(String name) {
+      this.name = requireNonNull(name);
+      return this;
+   }
 
    public int incrementAndGetIteration() {
       currentIteration++;
