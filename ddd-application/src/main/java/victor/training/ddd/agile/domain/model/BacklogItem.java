@@ -118,7 +118,7 @@ public class BacklogItem {
         return this;
     }
 
-    public BacklogItem setSprint(Sprint sprint) {
+    BacklogItem setSprint(Sprint sprint) {
         this.sprint = sprint;
         return this;
     }

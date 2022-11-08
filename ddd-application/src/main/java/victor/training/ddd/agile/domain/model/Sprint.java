@@ -56,6 +56,11 @@ public class Sprint {
       return Collections.unmodifiableList(items);
    }
 
+   public void addItem(BacklogItem item) {
+      items.add(item);
+      item.setSprint(this);
+   }
+
    //   public Sprint(CreateSprintRequest dto) { // you just won a face 2 face code review // Depenency Rule>: Agnostic Domain
       // inside my holy Domain Model
       // date.parse

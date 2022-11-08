@@ -72,8 +72,8 @@ public class SprintApplicationService {
             throw new IllegalStateException("Can only add items to Sprint before it starts");
         }
 
-        backlogItem.setSprint(sprint);
-//        sprint.getItems().add(backlogItem);
+//        backlogItem.setSprint(sprint);// not visible anymore
+        sprint.addItem(backlogItem);
 
         backlogItem.setFpEstimation(request.getFpEstimation());
         return backlogItem.getId(); // Hint: if you have JPA issues getting the new ID, consider using UUID instead of sequence
