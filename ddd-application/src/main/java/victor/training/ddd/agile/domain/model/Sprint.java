@@ -3,6 +3,8 @@ package victor.training.ddd.agile.domain.model;
 import lombok.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import victor.training.ddd.agile.common.DomainEvents;
+import victor.training.ddd.agile.domain.events.SprintCompletedEvent;
 import victor.training.ddd.agile.domain.model.SprintItem.Status;
 import victor.training.ddd.agile.domain.repo.SprintItemRepo;
 
@@ -43,6 +45,26 @@ public class Sprint {
    private LocalDate startDate;
    private LocalDate plannedEndDate;
    private LocalDate endDate;
+
+   public boolean allItemsDone() {
+       return getItems().stream().allMatch(SprintItem::isDone);
+   }
+
+   public void end() {
+       if (getStatus() != Status.STARTED) {
+           throw new IllegalStateException();
+       }
+       setEndDate(LocalDate.now());
+       setStatus(Status.FINISHED);
+   }
+
+   public void start() {
+       if (getStatus() != Status.CREATED) {
+           throw new IllegalStateException();
+       }
+       setStartDate(LocalDate.now());
+       setStatus(Status.STARTED);
+   }
 
    public enum Status {
       CREATED,
@@ -178,6 +200,9 @@ public class Sprint {
    public void completeItem(long backlogId) {
       checkSprintStarted();
       findItemById(backlogId).complete();
+      if (allItemsDone()) {
+         DomainEvents.publishEvent(new SprintCompletedEvent(id));
+      }
    }
 
    public void logHoursForItem(long backlogId, int hours) {

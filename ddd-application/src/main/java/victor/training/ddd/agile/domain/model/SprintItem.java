@@ -14,6 +14,11 @@ public class SprintItem {
     private Integer fpEstimation; // ⚠ not NULL when assigned to a sprint
     @Enumerated(STRING)
     private Status status = Status.CREATED;
+
+    public boolean isDone() {
+        return getStatus() == Status.DONE;
+    }
+
     public enum Status {
         CREATED,
         STARTED,
