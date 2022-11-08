@@ -44,7 +44,7 @@ public class IntegrationTest extends AbstractSystemTestBase {
                 .matches(s -> s.getPlannedEndDate().isAfter(LocalDate.now().plusDays(13)));
 
 
-        Long backlogItemId = backlogItems.createBacklogItem(new BacklogItemDto(backlogItem)
+        Long backlogItemId = backlogItems.createBacklogItem(new BacklogItemDto()
                 .setProductId(productId)
                 .setTitle("::itemTitle::")
                 .setDescription("::itemDescription::"));

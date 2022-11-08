@@ -11,6 +11,7 @@ public class BacklogItemDto {
     private String description;
     private Long version;
 
+    public BacklogItemDto() {}
     public BacklogItemDto(BacklogItem backlogItem) {
         setId(backlogItem.getId());
         setProductId(backlogItem.getProduct().getId());

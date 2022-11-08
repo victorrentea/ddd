@@ -47,9 +47,12 @@ public class Sprint {
    @Enumerated(STRING)
    private Status status = Status.CREATED;
 
+
+   // JPA2.1 introduced OneToMany UNIDIRECTIONAL
    @OneToMany(mappedBy = "sprint",
            cascade = CascadeType.ALL,
            fetch = FetchType.EAGER)
+   @JoinColumn // otherwise a new weird table appears
    private List<BacklogItem> items = new ArrayList<>();
 
    public List<BacklogItem> getItems() {
@@ -58,7 +61,6 @@ public class Sprint {
 
    public void addItem(BacklogItem item) {
       items.add(item);
-      item.setSprint(this);
    }
 
    //   public Sprint(CreateSprintRequest dto) { // you just won a face 2 face code review // Depenency Rule>: Agnostic Domain

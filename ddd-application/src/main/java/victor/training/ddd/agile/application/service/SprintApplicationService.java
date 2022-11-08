@@ -72,7 +72,6 @@ public class SprintApplicationService {
             throw new IllegalStateException("Can only add items to Sprint before it starts");
         }
 
-//        backlogItem.setSprint(sprint);// not visible anymore
         sprint.addItem(backlogItem);
 
         backlogItem.setFpEstimation(request.getFpEstimation());

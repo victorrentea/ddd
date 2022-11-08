@@ -1,5 +1,7 @@
 package victor.training.ddd.agile.domain.model;
 
+import victor.training.ddd.agile.domain.model.Sprint.Status;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
@@ -12,26 +14,38 @@ public class BacklogItem {
     private Long id;
     @ManyToOne
     private Product product;
-
     @NotNull
     private String title;
     private String description;
 
 
+    //class SprintItem {
+    // part of a new SprintItem that we'll extract from this entity.
+    // that new @Entity will them "BELONG" to the Sprint Agg.
+    @ManyToOne
+    private Sprint sprint; // ⚠ not NULL when assigned to a sprint
+    private Integer fpEstimation; // ⚠ not NULL when assigned to a sprint
+    @Enumerated(STRING)
+    private Status status = Status.CREATED;
     public enum Status {
         CREATED,
         STARTED,
         DONE
     }
-
-    @Enumerated(STRING)
-    private Status status = Status.CREATED;
-
-    @ManyToOne
-    private Sprint sprint; // ⚠ not NULL when assigned to a sprint
-    private Integer fpEstimation; // ⚠ not NULL when assigned to a sprint
-
     private int hoursConsumed;
+
+    // HOW can we link Sprint Item to the BacklogItem it represents
+    private Long backlogItemId; // +FK: opt1 + JPQL= SELECT bi.title, si.status FROM BacklogItem bi JOIN SprintItem si ON si.backlogItemId = bi.id
+
+    // SHARED PK  opt2 JPQL= SELECT bi.title, si.status FROM BacklogItem bi JOIN SprintItem si ON si.id = bi.id
+        // Pain FULL question to biz: can the same BacklogItem be assigned to 2 Sprint Items YES=> this is not an option
+            // recycle entities? => loose historical data
+
+    // private String title; // opt3: DATA DUPLICATE: risk = can the title CHANGE? .. after it was sterted? YES => keep in sync? how? Domain Events
+
+    // opt4:  extends ? "Favor composition over inheritance"
+//}
+
 
     @Version
     private Long version;
@@ -44,7 +58,13 @@ public class BacklogItem {
     }
 
 
-    public BacklogItem() {
+    protected BacklogItem() {
+    }
+
+    public BacklogItem(Product product, String title, String description) {
+        this.product = product;
+        this.title = title;
+        this.description = description;
     }
 
     public void start() {
@@ -80,10 +100,6 @@ public class BacklogItem {
 
     public Status getStatus() {
         return this.status;
-    }
-
-    public Sprint getSprint() {
-        return this.sprint;
     }
 
     public Integer getFpEstimation() {

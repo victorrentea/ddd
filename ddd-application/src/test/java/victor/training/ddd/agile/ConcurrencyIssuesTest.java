@@ -13,7 +13,7 @@ public class ConcurrencyIssuesTest extends AbstractSystemTestBase {
           .setCode("PNM")
           .setMailingList("a"));
 
-      Long itemId = backlogItems.createBacklogItem(new BacklogItemDto(backlogItem)
+      Long itemId = backlogItems.createBacklogItem(new BacklogItemDto()
           .setProductId(productId)
           .setTitle("I don't know exactly what I want..."));
 
