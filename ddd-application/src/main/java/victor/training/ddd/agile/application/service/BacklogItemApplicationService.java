@@ -32,11 +32,8 @@ public class BacklogItemApplicationService {
    public void updateBacklogItem(@RequestBody BacklogItemDto dto) {
       // TODO if Backlog Item is COMPLETED, reject the update
       Product product = productRepo.findOneById(dto.getProductId());
-      BacklogItem backlogItem = new BacklogItem()
+      BacklogItem backlogItem = new BacklogItem(product, dto.getTitle(), dto.getDescription())
           .setId(dto.getId())
-          .setProduct(product)
-          .setDescription(dto.getDescription())
-          .setTitle(dto.getTitle())
           .setVersion(dto.getVersion());
       backlogItemRepo.save(backlogItem);
 

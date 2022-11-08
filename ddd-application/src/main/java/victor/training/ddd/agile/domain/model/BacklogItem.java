@@ -21,7 +21,7 @@ public class BacklogItem {
     @Version
     private Long version;
 
-    public BacklogItem() {
+    protected BacklogItem() {
     }
 
     public BacklogItem(Product product, String title, String description) {
