@@ -3,6 +3,7 @@ package victor.training.ddd.agile.domain.model;
 import lombok.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.context.ApplicationEventPublisher;
 import victor.training.ddd.agile.common.DomainEvents;
 import victor.training.ddd.agile.domain.events.SprintCompletedEvent;
 import victor.training.ddd.agile.domain.model.SprintItem.Status;
@@ -198,8 +199,8 @@ public class Sprint {
          throw new IllegalStateException();
       }
    }
-
-
+//   @Autowired
+//ApplicationEventPublisher
    public void completeItem(long backlogId) {
       checkSprintStarted();
       findItemById(backlogId).complete();

@@ -3,6 +3,7 @@ package victor.training.ddd.agile.application.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.annotation.Order;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionPhase;
@@ -156,9 +157,10 @@ public class SprintApplicationService {
         //            }
     }
 
+    @EventListener
     // handling: sync in tx, sync after tx, async (🙏)
 //    @Async // fire-and-forget : not important side-effects
-    @TransactionalEventListener(phase = AFTER_COMMIT) // only if COMMIT was OK
+//    @TransactionalEventListener(phase = AFTER_COMMIT) // only if COMMIT was OK
     public void overTheHillsAndFarAway(SprintCompletedEvent event) {
         Sprint sprint = sprintRepo.findOneById(event.getSprintId());
         Product product = productRepo.findOneById(sprint.getProductId());
@@ -166,6 +168,11 @@ public class SprintApplicationService {
         List<String> emails = mailingListClient.retrieveEmails(product.getTeamMailingList());
         // this is NOT the core domain biz of Sprint
         emailService.sendCongratsEmail(emails);
+    }
+//    @Order(2)
+    @EventListener
+    public void meeeeToo(SprintCompletedEvent event) {
+        // who goes first ?
     }
 
 

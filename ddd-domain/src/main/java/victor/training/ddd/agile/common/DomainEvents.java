@@ -5,15 +5,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-@Service
-public class DomainEvents {
+@Component
+public class DomainEvents { /// a HACK. there is a better option
 
+   // static reference to a bean in Spring ! OMG tests
    private static ApplicationEventPublisher springPublisher = new NoopPublisher();
 
    @Autowired // method injected when Spring initializes this bean
@@ -49,6 +51,11 @@ public class DomainEvents {
    }
    private static class PublisherFakeForTests implements ApplicationEventPublisher {
       private final List<Object> publishedDomainEvents = new ArrayList<>();
+
+      public List<Object> getPublishedDomainEvents() {
+         return publishedDomainEvents;
+      }
+
       @Override
       public void publishEvent(ApplicationEvent event) {
          // not interesting to listen to framework Events
