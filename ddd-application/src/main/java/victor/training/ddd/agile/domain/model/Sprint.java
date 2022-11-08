@@ -33,6 +33,8 @@ public class Sprint {
    private LocalDate endDate;
 
 
+
+
    public enum Status {
       CREATED,
       STARTED,
@@ -87,10 +89,25 @@ public class Sprint {
    }
 
    public void startItem(long backlogId) {
+      checkSprintStarted();
+      findItemById(backlogId).start();
+   }
+
+   private void checkSprintStarted() {
       if (status != Status.STARTED) {
          throw new IllegalStateException();
       }
-      findItemById(backlogId).start();
+   }
+
+
+   public void completeItem(long backlogId) {
+      checkSprintStarted();
+      findItemById(backlogId).complete();
+   }
+
+   public void logHoursForItem(long backlogId, int hours) {
+      checkSprintStarted();
+      findItemById(backlogId).addHours(hours);
    }
 
    private BacklogItem findItemById(long backlogId) {

@@ -37,6 +37,9 @@ public class BacklogItem {
     private Long version;
 
     public void addHours(int hours) {
+        if (status != BacklogItem.Status.STARTED) {
+            throw new IllegalStateException("Item not started");
+        }
         hoursConsumed += hours;
     }
 

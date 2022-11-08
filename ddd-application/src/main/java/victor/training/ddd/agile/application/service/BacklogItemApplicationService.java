@@ -28,13 +28,7 @@ public class BacklogItemApplicationService {
 
    @GetMapping("backlog/{id}")
    public BacklogItemDto getBacklogItem(@PathVariable long id) {
-      BacklogItem backlogItem = backlogItemRepo.findOneById(id);
-      return new BacklogItemDto()
-              .setId(backlogItem.getId())
-              .setProductId(backlogItem.getProduct().getId())
-              .setDescription(backlogItem.getDescription())
-              .setTitle(backlogItem.getTitle())
-              .setVersion(backlogItem.getVersion());
+      return new BacklogItemDto(backlogItemRepo.findOneById(id));
    }
 
    @PutMapping("backlog")

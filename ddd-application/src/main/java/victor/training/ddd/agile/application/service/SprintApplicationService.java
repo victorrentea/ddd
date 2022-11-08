@@ -38,7 +38,7 @@ public class SprintApplicationService {
     }
 
     @GetMapping("sprint/{sprintId}")
-    public Sprint getSprint(@PathVariable long sprintId) {
+    public Sprint getSprint(@PathVariable long sprintId) { // TODO expose a DTO instead
         return sprintRepo.findOneById(sprintId);
     }
 
@@ -101,12 +101,9 @@ public class SprintApplicationService {
 
     @PostMapping("sprint/{sprintId}/item/{backlogId}/complete")
     public void completeItem(@PathVariable long sprintId, @PathVariable long backlogId) {
-        BacklogItem backlogItem = backlogItemRepo.findOneById(backlogId);
-        checkSprintMatchesAndStarted(sprintId, backlogItem);
-
-        backlogItem.complete();
-
         Sprint sprint = sprintRepo.findOneById(sprintId);
+        sprint.completeItem(backlogId);
+
         if (sprint.getItems().stream().allMatch(item -> item.getStatus() == BacklogItem.Status.DONE)) {
             Product product = productRepo.findOneById(sprint.getProductId());
             System.out.println("Sending CONGRATS email to team of product " + product.getCode() + ": They finished the items earlier. They have time to refactor! (OMG!)");
@@ -115,35 +112,10 @@ public class SprintApplicationService {
         }
     }
 
-    private void checkSprintMatchesAndStarted(long id, BacklogItem backlogItem) {
-        // more efficient way to do: SQL/jqpl
-        // SELECT 1 FROM Backlog_item bi WHERE bi.id = ?1 AND bi.sprint.id=?2 AND bi.sprint.status=?3
-        // I never load the Agg in memory at all.
-//        if (1!=backlogItemRepo.countByIdAndSprintIdAndSprintStatus(backlogItem.getId(), id, Status.STARTED))  {
-//            throw new IllegalStateException("Sprint not started");
-//        }
-        // Should I do logic in SQL
-
-
-        if (!backlogItem.getSprint().getId().equals(id)) {
-            throw new IllegalArgumentException("item not in sprint");
-        }
-        Sprint sprint = sprintRepo.findOneById(id);
-        if (sprint.getStatus() != Status.STARTED) {
-            throw new IllegalStateException("Sprint not started");
-        }
-    }
-
-
     @PostMapping("sprint/{sprintId}/log-hours")
     public void logHours(@PathVariable long sprintId, @RequestBody LogHoursRequest request) {
-        BacklogItem backlogItem = backlogItemRepo.findOneById(request.getBacklogId());
-        checkSprintMatchesAndStarted(sprintId, backlogItem);
-        if (backlogItem.getStatus() != BacklogItem.Status.STARTED) {
-            throw new IllegalStateException("Item not started");
-        }
-        backlogItem.addHours(request.getHours());
+        Sprint sprint = sprintRepo.findOneById(sprintId);
+        sprint.logHoursForItem(request.getBacklogId(), request.getHours());
     }
-
 
 }
