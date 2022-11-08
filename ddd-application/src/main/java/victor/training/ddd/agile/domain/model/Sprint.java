@@ -4,6 +4,7 @@ import lombok.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.AbstractAggregateRoot;
 import victor.training.ddd.agile.common.DomainEvents;
 import victor.training.ddd.agile.domain.events.SprintCompletedEvent;
 import victor.training.ddd.agile.domain.model.SprintItem.Status;
@@ -21,11 +22,10 @@ import static javax.persistence.EnumType.STRING;
 @Data
 // AggregateRoot { SprintItem }
 //@Configurable // DARK VERY DARK SPRING> don't go there @?!!?!!!
-public class Sprint {
+public class Sprint extends AbstractAggregateRoot<Sprint> {
 
 //   @Autowired
 //   transient SprintItemRepo sprintItemRepo;
-
 
    @Id
    @GeneratedValue
@@ -205,7 +205,8 @@ public class Sprint {
       checkSprintStarted();
       findItemById(backlogId).complete();
       if (allItemsDone()) {
-         DomainEvents.publishEvent(new SprintCompletedEvent(id));
+//         DomainEvents.publishEvent(new SprintCompletedEvent(id));
+         registerEvent(new SprintCompletedEvent(id));
       }
    }
 

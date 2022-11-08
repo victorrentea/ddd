@@ -122,7 +122,13 @@ public class SprintApplicationService {
     public void completeItem(@PathVariable long sprintId, @PathVariable long springItemId) {
         Sprint sprint = sprintRepo.findOneById(sprintId);
         sprint.completeItem(springItemId);
+        sprintRepo.save(sprint); // fires the @PreUpdate hibernate event -> spring -> AbstractAggregateRoot.domainEvents
+        // easier to tst : you just have to look in the agg.domainEvents list.
 
+
+
+
+        // WHF happens?!!!
 
         // When an aggregate changes need to trigger other changes in other parts (email sent, fields in other agg)
         // MORE LOGIC INSIDE THE MODEL !!
