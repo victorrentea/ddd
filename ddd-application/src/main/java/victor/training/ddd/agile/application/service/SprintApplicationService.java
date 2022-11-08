@@ -10,6 +10,8 @@ import victor.training.ddd.agile.domain.model.BacklogItem;
 import victor.training.ddd.agile.domain.model.Product;
 import victor.training.ddd.agile.domain.model.Sprint;
 import victor.training.ddd.agile.domain.model.Sprint.Status;
+import victor.training.ddd.agile.domain.model.SprintItem;
+import victor.training.ddd.agile.domain.repo.SprintItemRepo;
 import victor.training.ddd.agile.infra.EmailService;
 import victor.training.ddd.agile.infra.MailingListClient;
 import victor.training.ddd.agile.domain.repo.BacklogItemRepo;
@@ -63,19 +65,17 @@ public class SprintApplicationService {
     }
 
     /*****************************  ITEMS IN SPRINT *******************************************/
-
+private final SprintItemRepo sprintItemRepo;
     @PostMapping("sprint/{sprintId}/item")
     public Long addItem(@PathVariable long sprintId, @RequestBody AddBacklogItemRequest request) {
-        BacklogItem backlogItem = backlogItemRepo.findOneById(request.getBacklogId());
         Sprint sprint = sprintRepo.findOneById(sprintId);
         if (sprint.getStatus() != Status.CREATED) {
             throw new IllegalStateException("Can only add items to Sprint before it starts");
         }
+        SprintItem sprintItem = new SprintItem(sprintItemRepo.newId(), request.getBacklogId(), request.getFpEstimation());
 
-        sprint.addItem(backlogItem);
-
-        backlogItem.setFpEstimation(request.getFpEstimation());
-        return backlogItem.getId(); // Hint: if you have JPA issues getting the new ID, consider using UUID instead of sequence
+        sprint.addItem(sprintItem);
+        return sprintItem.getId(); // Hint: if you have JPA issues getting the new ID, consider using UUID instead of sequence
     }
 
     @PostMapping("sprint/{sprintId}/item/{backlogId}/start")
@@ -105,7 +105,7 @@ public class SprintApplicationService {
         Sprint sprint = sprintRepo.findOneById(sprintId);
         sprint.completeItem(backlogId);
 
-        if (sprint.getItems().stream().allMatch(item -> item.getStatus() == BacklogItem.Status.DONE)) {
+        if (sprint.getItems().stream().allMatch(item -> item.getStatus() == SprintItem.Status.DONE)) {
             Product product = productRepo.findOneById(sprint.getProductId());
             System.out.println("Sending CONGRATS email to team of product " + product.getCode() + ": They finished the items earlier. They have time to refactor! (OMG!)");
             List<String> emails = mailingListClient.retrieveEmails(product.getTeamMailingList());

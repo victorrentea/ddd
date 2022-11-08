@@ -31,14 +31,14 @@ public class BacklogItemApplicationService {
    @PutMapping("backlog")
    public void updateBacklogItem(@RequestBody BacklogItemDto dto) {
       // TODO if Backlog Item is COMPLETED, reject the update
-//      Product product = productRepo.findOneById(dto.getProductId());
-//      BacklogItem backlogItem = new BacklogItem(product)
-//          .setId(dto.getId())
-//          .setProduct(product)
-//          .setDescription(dto.getDescription())
-//          .setTitle(dto.getTitle())
-//          .setVersion(dto.getVersion());
-//      backlogItemRepo.save(backlogItem);
+      Product product = productRepo.findOneById(dto.getProductId());
+      BacklogItem backlogItem = new BacklogItem()
+          .setId(dto.getId())
+          .setProduct(product)
+          .setDescription(dto.getDescription())
+          .setTitle(dto.getTitle())
+          .setVersion(dto.getVersion());
+      backlogItemRepo.save(backlogItem);
 
       // TDO  merge vs update ?
    }

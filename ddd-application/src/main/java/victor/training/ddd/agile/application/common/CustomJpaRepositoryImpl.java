@@ -51,9 +51,12 @@ public class CustomJpaRepositoryImpl<E, ID> extends SimpleJpaRepository<E, ID> i
       Query nativeQuery = entityManager.createNativeQuery("SELECT HIBERNATE_SEQUENCE.NEXTVAL FROM DUAL");
       long number = ((Number) nativeQuery.getSingleResult()).longValue();
       Class<ID> idClass = (Class<ID>) extractIdClass(repositoryInformation);
-      return idClass.getConstructor(Long.class).newInstance(number);
+      if (idClass.equals(Long.class)) {
+         return (ID) Long.valueOf(number);
+      } else {
+         return idClass.getConstructor(Long.class).newInstance(number);
+      }
    }
-
 
    // ======== Spring Framework Stuff bellow ==========
    public static class FactoryBean<R extends JpaRepository<T, ID>, T, ID extends Serializable>

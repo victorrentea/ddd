@@ -18,39 +18,10 @@ public class BacklogItem {
     private String title;
     private String description;
 
-
-    private Integer fpEstimation; // ⚠ not NULL when assigned to a sprint
-    @Enumerated(STRING)
-    private Status status = Status.CREATED;
-    public enum Status {
-        CREATED,
-        STARTED,
-        DONE
-    }
-    private int hoursConsumed;
-
-    // SHARED PK  opt2 JPQL= SELECT bi.title, si.status FROM BacklogItem bi JOIN SprintItem si ON si.id = bi.id
-        // Pain FULL question to biz: can the same BacklogItem be assigned to 2 Sprint Items YES=> this is not an option
-            // recycle entities? => loose historical data
-
-    // private String title; // opt3: DATA DUPLICATE: risk = can the title CHANGE? .. after it was sterted? YES => keep in sync? how? Domain Events
-
-    // opt4:  extends ? "Favor composition over inheritance"
-//}
-
-
     @Version
     private Long version;
 
-    public void addHours(int hours) {
-        if (status != BacklogItem.Status.STARTED) {
-            throw new IllegalStateException("Item not started");
-        }
-        hoursConsumed += hours;
-    }
-
-
-    protected BacklogItem() {
+    public BacklogItem() {
     }
 
     public BacklogItem(Product product, String title, String description) {
@@ -59,19 +30,30 @@ public class BacklogItem {
         this.description = description;
     }
 
-    public void start() {
-        if (status != Status.CREATED) {
-            throw new IllegalStateException("Item already started");
-        }
-        this.status = Status.STARTED;
+
+    public BacklogItem setId(Long id) {
+        this.id = id;
+        return this;
     }
 
-    public void complete() {
-        if (status != BacklogItem.Status.STARTED) {
-            throw new IllegalStateException("Cannot complete an Item before starting it");
-        }
+    public BacklogItem setDescription(String description) {
+        this.description = description;
+        return this;
+    }
 
-        this.status = Status.DONE;
+    public BacklogItem setProduct(Product product) {
+        this.product = product;
+        return this;
+    }
+
+    public BacklogItem setTitle(String title) {
+        this.title = title;
+        return this;
+    }
+
+    public BacklogItem setVersion(Long version) {
+        this.version = version;
+        return this;
     }
 
     public Long getId() {
@@ -90,25 +72,8 @@ public class BacklogItem {
         return description;
     }
 
-    public Status getStatus() {
-        return status;
-    }
-
-    public Integer getFpEstimation() {
-        return fpEstimation;
-    }
-
-    public int getHoursConsumed() {
-        return hoursConsumed;
-    }
-
     public Long getVersion() {
         return version;
-    }
-
-    public BacklogItem setFpEstimation(Integer fpEstimation) {
-        this.fpEstimation = fpEstimation;
-        return this;
     }
 
 }

@@ -1,6 +1,7 @@
 package victor.training.ddd.agile.domain.model;
 
 import lombok.*;
+import victor.training.ddd.agile.domain.model.SprintItem.Status;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -12,18 +13,21 @@ import static javax.persistence.EnumType.STRING;
 
 @Entity
 @Data
-// AggregateRoot { BacklogItem }
+// AggregateRoot { SprintItem }
 public class Sprint {
    @Id
    @GeneratedValue
    private Long id;
+
    @Setter(AccessLevel.NONE)
    private int iteration;
+
 //   @ManyToOne
 //   private Product product; // illegal in Aggregate design = naive OOP design
    // WHY? when I call spring.startItem(id, id), I DON'T WANT TO BE AFRAID of this agg changing the Product Agg
    // less access to other data = more control of changes = better night sleep :)
    // side benefit (Hibernate): no eager fetching of the data of the product => less columns in the SELECT of a Sprint
+
    @Setter(AccessLevel.NONE)
    private Long productId; // ! keep the FK, do not sacrifice consistency prematurely
 
@@ -31,35 +35,56 @@ public class Sprint {
    private LocalDate plannedEndDate;
    private LocalDate endDate;
 
+   public enum Status {
+      CREATED,
+      STARTED,
+      FINISHED
+   }
+
+   @Enumerated(STRING)
+   private Status status = Status.CREATED;
+
+
+   // JPA2.1 introduced OneToMany UNIDIRECTIONAL
+   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+   @JoinColumn // otherwise a new weird table appears
+   private List<SprintItem> items = new ArrayList<>();
+
+   public List<SprintItem> getItems() {
+      return Collections.unmodifiableList(items);
+   }
+
+
+
    public Sprint() {
    }
 
    public Long getId() {
-      return this.id;
+      return id;
    }
 
    public int getIteration() {
-      return this.iteration;
+      return iteration;
    }
 
    public Long getProductId() {
-      return this.productId;
+      return productId;
    }
 
    public LocalDate getStartDate() {
-      return this.startDate;
+      return startDate;
    }
 
    public LocalDate getPlannedEndDate() {
-      return this.plannedEndDate;
+      return plannedEndDate;
    }
 
    public LocalDate getEndDate() {
-      return this.endDate;
+      return endDate;
    }
 
    public Status getStatus() {
-      return this.status;
+      return status;
    }
 
    public Sprint setId(Long id) {
@@ -87,37 +112,13 @@ public class Sprint {
       return this;
    }
 
-   public Sprint setItems(List<BacklogItem> items) {
+   public Sprint setItems(List<SprintItem> items) {
       this.items = items;
       return this;
    }
 
 
-   public enum Status {
-      CREATED,
-      STARTED,
-      FINISHED
-   }
-
-//   @Version
-//   private LocalDateTime lastChangeTime;
-
-   @Enumerated(STRING)
-   private Status status = Status.CREATED;
-
-
-   // JPA2.1 introduced OneToMany UNIDIRECTIONAL
-   @OneToMany(mappedBy = "sprint",
-           cascade = CascadeType.ALL,
-           fetch = FetchType.EAGER)
-   @JoinColumn // otherwise a new weird table appears
-   private List<BacklogItem> items = new ArrayList<>();
-
-   public List<BacklogItem> getItems() {
-      return Collections.unmodifiableList(items);
-   }
-
-   public void addItem(BacklogItem item) {
+   public void addItem(SprintItem item) {
       items.add(item);
    }
 
@@ -175,7 +176,7 @@ public class Sprint {
       findItemById(backlogId).addHours(hours);
    }
 
-   private BacklogItem findItemById(long backlogId) {
+   private SprintItem findItemById(long backlogId) {
       return items.stream()
               .filter(i -> i.getId().equals(backlogId)).findFirst().orElseThrow();
    }

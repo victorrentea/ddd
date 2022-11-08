@@ -20,40 +20,40 @@ public class Release {
    @ManyToOne
    private Sprint sprint;
 
-   @OneToMany
-   @JoinColumn
-   private List<BacklogItem> releasedItems; // only used for release notes
+   private String releaseNotes;
 
    public Release() { // for hibernate
    }
 
+   public Release setReleaseNotes(String releaseNotes) {
+      this.releaseNotes = releaseNotes;
+      return this;
+   }
+
    public String getReleaseNotes() {
-      return releasedItems.stream().map(BacklogItem::getTitle).collect(joining("\n"));
+      return releaseNotes;
    }
 
    public Long getId() {
-      return this.id;
+      return id;
    }
 
    public Product getProduct() {
-      return this.product;
+      return product;
    }
 
    public String getVersion() {
-      return this.version;
+      return version;
    }
 
    public LocalDate getDate() {
-      return this.date;
+      return date;
    }
 
    public Sprint getSprint() {
-      return this.sprint;
+      return sprint;
    }
 
-   public List<BacklogItem> getReleasedItems() {
-      return this.releasedItems;
-   }
 
    public Release setId(Long id) {
       this.id = id;
@@ -80,8 +80,4 @@ public class Release {
       return this;
    }
 
-   public Release setReleasedItems(List<BacklogItem> releasedItems) {
-      this.releasedItems = releasedItems;
-      return this;
-   }
 }

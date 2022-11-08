@@ -15,8 +15,8 @@ import victor.training.ddd.agile.domain.repo.ProductRepo;
 public class ProductApplicationService /*implements ProductApi*/ {
     private final ProductRepo productRepo;
 
-    @PutMapping("products/${productId}/poPhone/${newPhone}")
-    public void updatePOPhone(long productId, String newPhone) {
+    @PutMapping("products/{productId}/poPhone/{newPhone}")
+    public void updatePOPhone(@PathVariable long productId, @PathVariable String newPhone) {
         Product product = productRepo.findOneById(productId);
         product.updatePOPhone(newPhone);
     }

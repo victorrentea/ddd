@@ -16,6 +16,7 @@ public class Product {
    private Long id;
    private int currentIteration = 0;
    private int currentVersion = 0;
+
    @Column(nullable = false) // NOT NULL
    private String code;
    @Column(nullable = false) // NOT NULL

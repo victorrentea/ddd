@@ -17,16 +17,11 @@ public class IntegrationTest extends AbstractSystemTestBase {
 
     @Test
     void longWorkflow() {
-        ProductDto productDto = new ProductDto()
-                .setCode("PNM")
-                .setName("::ProductName::")
-                .setMailingList("::MailList::")
-//                .setPoEmail("boss@corp.intra")
-//                .setPoPhone("123DONTCALLME")
-                .setPoName("Za bo$$")
-                ;
-        Long productId = products.createProduct(productDto);
-        assertThatThrownBy(() -> products.createProduct(productDto)).describedAs("cannot create with same code");
+
+        assertThatThrownBy(() -> products.createProduct(validProductDto().setPoEmail(null).setPoPhone(null)));
+
+        Long productId = products.createProduct(validProductDto());
+        assertThatThrownBy(() -> products.createProduct(validProductDto())).describedAs("cannot create with same code");
 
         assertThat(products.getProduct(productId))
                 .extracting(ProductDto::getCode, ProductDto::getName, ProductDto::getMailingList)
@@ -96,5 +91,15 @@ public class IntegrationTest extends AbstractSystemTestBase {
 
         // TODO new feature: uncomment below: should fail
         // assertThatThrownBy(() -> backlogItems.updateBacklogItem(backlogDto2)).describedAs("cannot edit done item");
+    }
+
+    private static ProductDto validProductDto() {
+        return new ProductDto()
+                .setCode("PNM")
+                .setName("::ProductName::")
+                .setMailingList("::MailList::")
+                .setPoEmail("boss@corp.intra")
+                .setPoPhone("123DONTCALLME")
+                .setPoName("Za bo$$");
     }
 }
