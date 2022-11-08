@@ -11,7 +11,7 @@ import victor.training.ddd.agile.repo.ProductRepo;
 
 @RestController
 @RequiredArgsConstructor
-public class BacklogItemService {
+public class BacklogItemApplicationService {
    private final BacklogItemRepo backlogItemRepo;
    private final ProductRepo productRepo;
 

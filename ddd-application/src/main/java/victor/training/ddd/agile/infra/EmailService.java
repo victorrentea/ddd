@@ -1,4 +1,4 @@
-package victor.training.ddd.agile.service;
+package victor.training.ddd.agile.infra;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

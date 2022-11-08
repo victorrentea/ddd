@@ -1,4 +1,4 @@
-package victor.training.ddd.agile.service;
+package victor.training.ddd.agile.infra;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

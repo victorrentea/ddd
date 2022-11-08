@@ -3,20 +3,22 @@ package victor.training.ddd.agile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import victor.training.ddd.agile.infra.EmailSender;
+import victor.training.ddd.agile.infra.MailingListClient;
 import victor.training.ddd.agile.service.*;
 
 @SpringBootTest
 public abstract class AbstractSystemTestBase {
    @Autowired
-   ProductService products;
+   ProductApplicationService products;
    @Autowired
-   SprintMetricsController metricsController;
+   SprintMetricsApplicationService metricsController;
    @Autowired
-   BacklogItemService backlogItems;
+   BacklogItemApplicationService backlogItems;
    @Autowired
-   SprintService sprints;
+   SprintApplicationService sprints;
    @Autowired
-   ReleaseService releases;
+   ReleaseApplicationService releases;
    @MockBean
    MailingListClient mailingListClientMock;
    @MockBean

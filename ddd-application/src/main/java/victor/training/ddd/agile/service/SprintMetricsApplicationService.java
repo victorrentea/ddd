@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
-public class SprintMetricsController {
+public class SprintMetricsApplicationService {
     private final SprintRepo sprintRepo;
 
     @GetMapping("sprint/{sprintId}/metrics")

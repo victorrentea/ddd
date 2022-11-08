@@ -10,6 +10,8 @@ import victor.training.ddd.agile.entity.BacklogItem;
 import victor.training.ddd.agile.entity.Product;
 import victor.training.ddd.agile.entity.Sprint;
 import victor.training.ddd.agile.entity.Sprint.Status;
+import victor.training.ddd.agile.infra.EmailService;
+import victor.training.ddd.agile.infra.MailingListClient;
 import victor.training.ddd.agile.repo.BacklogItemRepo;
 import victor.training.ddd.agile.repo.ProductRepo;
 import victor.training.ddd.agile.repo.SprintRepo;
@@ -20,7 +22,7 @@ import java.util.List;
 @Transactional
 @RestController
 @RequiredArgsConstructor
-public class SprintService {
+public class SprintApplicationService {
     private final SprintRepo sprintRepo;
     private final ProductRepo productRepo;
     private final BacklogItemRepo backlogItemRepo;

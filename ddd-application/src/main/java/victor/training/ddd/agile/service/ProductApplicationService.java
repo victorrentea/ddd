@@ -11,7 +11,7 @@ import victor.training.ddd.agile.repo.ProductRepo;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-public class ProductService {
+public class ProductApplicationService {
     private final ProductRepo productRepo;
 
     @PutMapping("products/${productId}/poPhone/${newPhone}")

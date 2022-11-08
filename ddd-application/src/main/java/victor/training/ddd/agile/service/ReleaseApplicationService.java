@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor
 @Validated // needed as tests call directly these methods
-public class ReleaseService {
+public class ReleaseApplicationService {
    private final ReleaseRepo releaseRepo;
    private final ProductRepo productRepo;
    private final SprintRepo sprintRepo;
