@@ -8,6 +8,7 @@ import static javax.persistence.EnumType.STRING;
 @Entity
 public class SprintItem {
     @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private Long backlogItemId;

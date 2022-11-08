@@ -150,6 +150,9 @@ public class Sprint {
 
 
    public void addItem(SprintItem item) {
+      if (getStatus() != Status.CREATED) {
+         throw new IllegalStateException("Can only add items to Sprint before it starts");
+      }
       items.add(item);
    }
 
