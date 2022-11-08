@@ -1,8 +1,8 @@
 package victor.training.ddd.agile;
 
 import org.junit.jupiter.api.Test;
-import victor.training.ddd.agile.dto.BacklogItemDto;
-import victor.training.ddd.agile.dto.ProductDto;
+import victor.training.ddd.agile.application.dto.BacklogItemDto;
+import victor.training.ddd.agile.application.dto.ProductDto;
 
 public class ConcurrencyIssuesTest extends AbstractSystemTestBase {
 

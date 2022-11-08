@@ -1,11 +1,9 @@
-package victor.training.ddd.agile.entity;
+package victor.training.ddd.agile.domain.model;
 
 import lombok.*;
-import victor.training.ddd.agile.dto.CreateSprintRequest;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 

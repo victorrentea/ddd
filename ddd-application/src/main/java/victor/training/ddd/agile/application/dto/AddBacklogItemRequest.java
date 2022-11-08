@@ -1,13 +1,13 @@
-package victor.training.ddd.agile.dto;
+package victor.training.ddd.agile.application.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class LogHoursRequest {
+@NoArgsConstructor
+public class AddBacklogItemRequest {
    private long backlogId;
-   private int hours;
+   private int fpEstimation;
 }

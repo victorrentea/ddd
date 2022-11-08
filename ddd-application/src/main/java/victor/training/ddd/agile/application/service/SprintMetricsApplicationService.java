@@ -1,15 +1,15 @@
-package victor.training.ddd.agile.service;
+package victor.training.ddd.agile.application.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
-import victor.training.ddd.agile.dto.SprintMetrics;
-import victor.training.ddd.agile.entity.BacklogItem;
-import victor.training.ddd.agile.entity.Sprint;
-import victor.training.ddd.agile.entity.Sprint.Status;
-import victor.training.ddd.agile.repo.SprintRepo;
+import victor.training.ddd.agile.application.dto.SprintMetrics;
+import victor.training.ddd.agile.domain.model.BacklogItem;
+import victor.training.ddd.agile.domain.model.Sprint;
+import victor.training.ddd.agile.domain.model.Sprint.Status;
+import victor.training.ddd.agile.domain.repo.SprintRepo;
 
 import java.util.List;
 import java.util.stream.Collectors;

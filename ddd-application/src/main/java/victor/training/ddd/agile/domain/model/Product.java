@@ -1,4 +1,4 @@
-package victor.training.ddd.agile.entity;
+package victor.training.ddd.agile.domain.model;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -9,7 +9,6 @@ import org.apache.commons.lang.StringUtils;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
 

@@ -1,4 +1,4 @@
-package victor.training.ddd.agile.common;
+package victor.training.ddd.agile.application.common;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -6,6 +6,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import victor.training.ddd.agile.common.MyException;
 import victor.training.ddd.agile.common.MyException.ErrorCode;
 
 import javax.servlet.http.HttpServletRequest;

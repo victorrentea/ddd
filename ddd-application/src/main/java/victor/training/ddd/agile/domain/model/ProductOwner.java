@@ -1,4 +1,4 @@
-package victor.training.ddd.agile.entity;
+package victor.training.ddd.agile.domain.model;
 
 import javax.persistence.Embeddable;
 import java.util.Objects;

@@ -1,4 +1,4 @@
-package victor.training.ddd.agile.entity;
+package victor.training.ddd.agile.domain.model;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

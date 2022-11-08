@@ -1,13 +1,13 @@
-package victor.training.ddd.agile.service;
+package victor.training.ddd.agile.application.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import victor.training.ddd.agile.entity.BacklogItem;
-import victor.training.ddd.agile.entity.Product;
-import victor.training.ddd.agile.dto.BacklogItemDto;
-import victor.training.ddd.agile.repo.BacklogItemRepo;
-import victor.training.ddd.agile.repo.ProductRepo;
+import victor.training.ddd.agile.domain.model.BacklogItem;
+import victor.training.ddd.agile.domain.model.Product;
+import victor.training.ddd.agile.application.dto.BacklogItemDto;
+import victor.training.ddd.agile.domain.repo.BacklogItemRepo;
+import victor.training.ddd.agile.domain.repo.ProductRepo;
 
 @RestController
 @RequiredArgsConstructor

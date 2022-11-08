@@ -1,4 +1,4 @@
-package victor.training.ddd.agile.dto;
+package victor.training.ddd.agile.application.dto;
 
 import lombok.Data;
 

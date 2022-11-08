@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.client.RestTemplate;
-import victor.training.ddd.agile.common.CustomJpaRepositoryImpl.FactoryBean;
+import victor.training.ddd.agile.application.common.CustomJpaRepositoryImpl.FactoryBean;
 
 
 //interface AllChannels {

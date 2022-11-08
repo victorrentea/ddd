@@ -1,4 +1,4 @@
-package victor.training.ddd.agile.common;
+package victor.training.ddd.agile.application.common;
 
 import lombok.SneakyThrows;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,6 +10,7 @@ import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.core.RepositoryInformation;
 import org.springframework.data.repository.core.RepositoryMetadata;
 import org.springframework.data.repository.core.support.RepositoryFactorySupport;
+import victor.training.ddd.agile.common.CustomJpaRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;

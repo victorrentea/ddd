@@ -1,9 +1,4 @@
-package victor.training.ddd.agile.entity;
-
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import victor.training.ddd.agile.entity.Sprint.Status;
+package victor.training.ddd.agile.domain.model;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;

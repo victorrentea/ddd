@@ -2,8 +2,9 @@ package victor.training.ddd.agile;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import victor.training.ddd.agile.application.dto.*;
 import victor.training.ddd.agile.dto.*;
-import victor.training.ddd.agile.entity.Release;
+import victor.training.ddd.agile.domain.model.Release;
 
 import java.time.LocalDate;
 import java.util.List;
