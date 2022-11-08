@@ -10,7 +10,6 @@ import java.util.List;
 
 import static javax.persistence.EnumType.STRING;
 
-@NoArgsConstructor
 @Entity
 @Data
 // AggregateRoot { BacklogItem }
@@ -32,7 +31,66 @@ public class Sprint {
    private LocalDate plannedEndDate;
    private LocalDate endDate;
 
+   public Sprint() {
+   }
 
+   public Long getId() {
+      return this.id;
+   }
+
+   public int getIteration() {
+      return this.iteration;
+   }
+
+   public Long getProductId() {
+      return this.productId;
+   }
+
+   public LocalDate getStartDate() {
+      return this.startDate;
+   }
+
+   public LocalDate getPlannedEndDate() {
+      return this.plannedEndDate;
+   }
+
+   public LocalDate getEndDate() {
+      return this.endDate;
+   }
+
+   public Status getStatus() {
+      return this.status;
+   }
+
+   public Sprint setId(Long id) {
+      this.id = id;
+      return this;
+   }
+
+   public Sprint setStartDate(LocalDate startDate) {
+      this.startDate = startDate;
+      return this;
+   }
+
+   public Sprint setPlannedEndDate(LocalDate plannedEndDate) {
+      this.plannedEndDate = plannedEndDate;
+      return this;
+   }
+
+   public Sprint setEndDate(LocalDate endDate) {
+      this.endDate = endDate;
+      return this;
+   }
+
+   public Sprint setStatus(Status status) {
+      this.status = status;
+      return this;
+   }
+
+   public Sprint setItems(List<BacklogItem> items) {
+      this.items = items;
+      return this;
+   }
 
 
    public enum Status {

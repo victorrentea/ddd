@@ -1,9 +1,5 @@
 package victor.training.ddd.agile.domain.model;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
 import org.apache.commons.lang.StringUtils;
 
 import javax.persistence.*;
@@ -12,9 +8,7 @@ import java.util.List;
 
 import static java.util.Objects.requireNonNull;
 
-@ToString
-@Setter// consider encapsulating changes
-@Getter
+// consider encapsulating changes
 @Entity
 public class Product {
    @Id
@@ -22,7 +16,6 @@ public class Product {
    private Long id;
    private int currentIteration = 0;
    private int currentVersion = 0;
-   @Setter(AccessLevel.NONE)
    @Column(nullable = false) // NOT NULL
    private String code;
    @Column(nullable = false) // NOT NULL
@@ -37,7 +30,6 @@ public class Product {
 //   @OneToMany(mappedBy = "product")
 //   private List<Sprint> sprints = new ArrayList<>();
 
-   @ToString.Exclude
    @OneToMany(mappedBy = "product")
    private List<Release> releases = new ArrayList<>();
 
@@ -73,5 +65,56 @@ public class Product {
       currentVersion++;
       return currentVersion;
    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public int getCurrentIteration() {
+        return currentIteration;
+    }
+
+    public int getCurrentVersion() {
+        return currentVersion;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public ProductOwner getProductOwner() {
+        return productOwner;
+    }
+
+    public String getTeamMailingList() {
+        return teamMailingList;
+    }
+
+    public List<Release> getReleases() {
+        return releases;
+    }
+
+    public Product setId(Long id) {
+        this.id = id;
+        return this;
+    }
+
+    public Product setProductOwner(ProductOwner productOwner) {
+        this.productOwner = productOwner;
+        return this;
+    }
+
+    public Product setTeamMailingList(String teamMailingList) {
+        this.teamMailingList = teamMailingList;
+        return this;
+    }
+
+    public String toString() {
+        return "Product(id=" + getId() + ", currentIteration=" + getCurrentIteration() + ", currentVersion=" + getCurrentVersion() + ", code=" + getCode() + ", name=" + getName() + ", productOwner=" + getProductOwner() + ", teamMailingList=" + getTeamMailingList() + ")";
+    }
 }
 

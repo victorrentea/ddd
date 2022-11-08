@@ -19,11 +19,6 @@ public class BacklogItem {
     private String description;
 
 
-    //class SprintItem {
-    // part of a new SprintItem that we'll extract from this entity.
-    // that new @Entity will them "BELONG" to the Sprint Agg.
-    @ManyToOne
-    private Sprint sprint; // ⚠ not NULL when assigned to a sprint
     private Integer fpEstimation; // ⚠ not NULL when assigned to a sprint
     @Enumerated(STRING)
     private Status status = Status.CREATED;
@@ -33,9 +28,6 @@ public class BacklogItem {
         DONE
     }
     private int hoursConsumed;
-
-    // HOW can we link Sprint Item to the BacklogItem it represents
-    private Long backlogItemId; // +FK: opt1 + JPQL= SELECT bi.title, si.status FROM BacklogItem bi JOIN SprintItem si ON si.backlogItemId = bi.id
 
     // SHARED PK  opt2 JPQL= SELECT bi.title, si.status FROM BacklogItem bi JOIN SprintItem si ON si.id = bi.id
         // Pain FULL question to biz: can the same BacklogItem be assigned to 2 Sprint Items YES=> this is not an option
@@ -68,14 +60,14 @@ public class BacklogItem {
     }
 
     public void start() {
-        if (this.status != Status.CREATED) {
+        if (status != Status.CREATED) {
             throw new IllegalStateException("Item already started");
         }
         this.status = Status.STARTED;
     }
 
     public void complete() {
-        if (this.status != BacklogItem.Status.STARTED) {
+        if (status != BacklogItem.Status.STARTED) {
             throw new IllegalStateException("Cannot complete an Item before starting it");
         }
 
@@ -83,74 +75,39 @@ public class BacklogItem {
     }
 
     public Long getId() {
-        return this.id;
+        return id;
     }
 
     public Product getProduct() {
-        return this.product;
+        return product;
     }
 
     public @NotNull String getTitle() {
-        return this.title;
+        return title;
     }
 
     public String getDescription() {
-        return this.description;
+        return description;
     }
 
     public Status getStatus() {
-        return this.status;
+        return status;
     }
 
     public Integer getFpEstimation() {
-        return this.fpEstimation;
+        return fpEstimation;
     }
 
     public int getHoursConsumed() {
-        return this.hoursConsumed;
+        return hoursConsumed;
     }
 
     public Long getVersion() {
-        return this.version;
-    }
-
-    public BacklogItem setId(Long id) {
-        this.id = id;
-        return this;
-    }
-
-    public BacklogItem setProduct(Product product) {
-        this.product = product;
-        return this;
-    }
-
-    public BacklogItem setTitle(@NotNull String title) {
-        this.title = title;
-        return this;
-    }
-
-    public BacklogItem setDescription(String description) {
-        this.description = description;
-        return this;
-    }
-
-    BacklogItem setSprint(Sprint sprint) {
-        this.sprint = sprint;
-        return this;
+        return version;
     }
 
     public BacklogItem setFpEstimation(Integer fpEstimation) {
         this.fpEstimation = fpEstimation;
-        return this;
-    }
-
-    public BacklogItem setHoursConsumed(int hoursConsumed) {
-        this.hoursConsumed = hoursConsumed;
-        return this;
-    }
-
-    public BacklogItem setVersion(Long version) {
-        this.version = version;
         return this;
     }
 
