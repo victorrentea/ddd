@@ -49,8 +49,14 @@ public class Product {
       setName(name);
    }
 
+    public void updatePOPhone(String newPhone) {
+        ProductOwner po = getProductOwner();
+        ProductOwner newPo = po.withOwnerPhone(newPhone);
+        setProductOwner(newPo);
+    }
 
-   public Product setName(String name) {
+
+    public Product setName(String name) {
       if (StringUtils.isBlank(name)) {
          throw new IllegalArgumentException("Illegal name");
       }

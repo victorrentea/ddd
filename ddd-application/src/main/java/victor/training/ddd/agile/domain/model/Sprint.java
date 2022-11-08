@@ -5,6 +5,7 @@ import lombok.*;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static javax.persistence.EnumType.STRING;
@@ -49,7 +50,11 @@ public class Sprint {
            fetch = FetchType.EAGER)
    private List<BacklogItem> items = new ArrayList<>();
 
-//   public Sprint(CreateSprintRequest dto) { // you just won a face 2 face code review // Depenency Rule>: Agnostic Domain
+   public List<BacklogItem> getItems() {
+      return Collections.unmodifiableList(items);
+   }
+
+   //   public Sprint(CreateSprintRequest dto) { // you just won a face 2 face code review // Depenency Rule>: Agnostic Domain
       // inside my holy Domain Model
       // date.parse
       // is it enough?
