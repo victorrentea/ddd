@@ -1,7 +1,10 @@
 package victor.training.ddd.agile.domain.model;
 
 import lombok.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 import victor.training.ddd.agile.domain.model.SprintItem.Status;
+import victor.training.ddd.agile.domain.repo.SprintItemRepo;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -14,7 +17,13 @@ import static javax.persistence.EnumType.STRING;
 @Entity
 @Data
 // AggregateRoot { SprintItem }
+//@Configurable // DARK VERY DARK SPRING> don't go there @?!!?!!!
 public class Sprint {
+
+//   @Autowired
+//   transient SprintItemRepo sprintItemRepo;
+
+
    @Id
    @GeneratedValue
    private Long id;

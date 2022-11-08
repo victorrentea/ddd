@@ -15,8 +15,8 @@ public class BacklogItem {
     @ManyToOne
     private Product product;
     @NotNull
-    private String title;
-    private String description;
+    private String title; // "b"
+    private String description; // ""
 
     @Version
     private Long version;
