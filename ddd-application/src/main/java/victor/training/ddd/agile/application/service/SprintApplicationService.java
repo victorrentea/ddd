@@ -2,6 +2,8 @@ package victor.training.ddd.agile.application.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
 import org.springframework.scheduling.annotation.Async;
@@ -32,14 +34,14 @@ import static org.springframework.transaction.event.TransactionPhase.AFTER_COMMI
 @Transactional // TODO only use it where NEEDED:
 @RestController
 @RequiredArgsConstructor
-public class SprintApplicationService {
+public class SprintApplicationService implements SprintApplicationServiceApi {
     private final SprintRepo sprintRepo;
     private final ProductRepo productRepo;
     private final BacklogItemRepo backlogItemRepo;
     private final EmailService emailService;
     private final MailingListClient mailingListClient;
 
-    @PostMapping("sprint")
+    @Override
     public Long createSprint(@RequestBody CreateSprintRequest dto) {
         Product product = productRepo.findOneById(dto.getProductId());
         Sprint sprint = new Sprint(product.incrementAndGetIteration(), product.getId())
@@ -47,26 +49,27 @@ public class SprintApplicationService {
         return sprintRepo.save(sprint).getId();
     }
 
+    @Override
     @GetMapping("sprint/{sprintId}")
-    public Sprint getSprint(@PathVariable long sprintId) { // TODO expose a DTO instead
+    public Sprint getSprint( long sprintId) { // TODO expose a DTO instead
         return sprintRepo.findOneById(sprintId);
     }
 
-    @PostMapping("sprint/{sprintId}/start")
-    public void startSprint(@PathVariable long sprintId) {
+    @Override
+    public void startSprint( long sprintId) {
         sprintRepo.findOneById(sprintId).start();
     }
 
-    @PostMapping("sprint/{sprintId}/end")
-    public void endSprint(@PathVariable long sprintId) {
+    @Override
+    public void endSprint( long sprintId) {
         sprintRepo.findOneById(sprintId).end();
     }
 
     /*****************************  ITEMS IN SPRINT *******************************************/
     private final SprintItemRepo sprintItemRepo;
 
-    @PostMapping("sprint/{sprintId}/item")
-    public Long addItem(@PathVariable long sprintId, @RequestBody AddBacklogItemRequest request) {
+    @Override
+    public Long addItem( long sprintId, @RequestBody AddBacklogItemRequest request) {
         Sprint sprint = sprintRepo.findOneById(sprintId);
 
         Long siId = sprintItemRepo.newId();
@@ -86,8 +89,8 @@ public class SprintApplicationService {
     }
 
 
-    @PostMapping("sprint/{sprintId}/item/{springItemId}/start")
-    public void startItem(@PathVariable long sprintId, @PathVariable long springItemId) {
+    @Override
+    public void startItem( long sprintId,  long springItemId) {
         Sprint sprint = sprintRepo.findOneById(sprintId);
         sprint.startItem(springItemId);
         // the magic of the Repository pattern:
@@ -110,7 +113,7 @@ public class SprintApplicationService {
 
 
     //        @PutMapping("sprint/{sprintId}/item/{springItemId}/status")// Marko ❤️ this (REST)
-    //        public void setStatus (@PathVariable Long sprintId, @PathVariable Long springItemId,@RequestBody boolean start){
+    //        public void setStatus (){
     //            if (start) {
     //                startItem(sprintId, springItemId);
     //            } else {
@@ -118,8 +121,9 @@ public class SprintApplicationService {
     //            }
     //        }
 
-    @PostMapping("sprint/{sprintId}/item/{springItemId}/complete") // victor ❤️ this (not REST)
-    public void completeItem(@PathVariable long sprintId, @PathVariable long springItemId) {
+
+    @Override
+    public void completeItem( long sprintId,  long springItemId) {
         Sprint sprint = sprintRepo.findOneById(sprintId);
         sprint.completeItem(springItemId);
         sprintRepo.save(sprint); // fires the @PreUpdate hibernate event -> spring -> AbstractAggregateRoot.domainEvents
@@ -163,27 +167,30 @@ public class SprintApplicationService {
         //            }
     }
 
-    @EventListener
-    // handling: sync in tx, sync after tx, async (🙏)
-//    @Async // fire-and-forget : not important side-effects
-//    @TransactionalEventListener(phase = AFTER_COMMIT) // only if COMMIT was OK
-    public void overTheHillsAndFarAway(SprintCompletedEvent event) {
-        Sprint sprint = sprintRepo.findOneById(event.getSprintId());
-        Product product = productRepo.findOneById(sprint.getProductId());
-        log.info("Sending CONGRATS email to team of product " + product.getCode() + ": They finished the items earlier. They have time to refactor! (OMG!)");
-        List<String> emails = mailingListClient.retrieveEmails(product.getTeamMailingList());
-        // this is NOT the core domain biz of Sprint
-        emailService.sendCongratsEmail(emails);
-    }
-//    @Order(2)
+    //    @Order(2)
+    @Override
     @EventListener
     public void meeeeToo(SprintCompletedEvent event) {
         // who goes first ?
     }
 
+    @EventListener
+    // handling: sync in tx, sync after tx, async (🙏)
+    //    @Async // fire-and-forget : not important side-effects
+    //    @TransactionalEventListener(phase = AFTER_COMMIT) // only if COMMIT was OK
+    public void overTheHillsAndFarAway(SprintCompletedEvent event) {
+        Sprint sprint = sprintRepo.findOneById(event.getSprintId());
+        Product product = productRepo.findOneById(sprint.getProductId());
+        SprintApplicationService.log.info("Sending CONGRATS email to team of product " + product.getCode() + ": They finished the items earlier. They have time to refactor! (OMG!)");
+        List<String> emails = mailingListClient.retrieveEmails(product.getTeamMailingList());
+        // this is NOT the core domain biz of Sprint
+        emailService.sendCongratsEmail(emails);
+    }
 
-    @PostMapping("sprint/{sprintId}/log-hours")
-    public void logHours(@PathVariable long sprintId, @RequestBody LogHoursRequest request) {
+
+
+    @Override
+    public void logHours( long sprintId, @RequestBody LogHoursRequest request) {
         Sprint sprint = sprintRepo.findOneById(sprintId);
         sprint.logHoursForItem(request.getBacklogId(), request.getHours());
     }

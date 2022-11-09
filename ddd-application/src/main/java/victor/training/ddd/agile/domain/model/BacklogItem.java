@@ -12,6 +12,8 @@ public class BacklogItem {
     @Id
     @GeneratedValue
     private Long id;
+//    @EmbeddedId
+//    private BacklogItemId{id:Long} id;
     @ManyToOne
     private Product product;
     @NotNull

@@ -18,6 +18,7 @@ import java.util.List;
 
 import static javax.persistence.EnumType.STRING;
 
+
 @Entity
 @Data
 // AggregateRoot { SprintItem }

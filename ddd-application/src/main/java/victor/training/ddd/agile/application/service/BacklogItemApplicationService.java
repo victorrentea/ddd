@@ -36,6 +36,9 @@ public class BacklogItemApplicationService {
           .setId(dto.getId())
           .setVersion(dto.getVersion());
       backlogItemRepo.save(backlogItem);
+      //instead
+      BacklogItem bi = backlogItemRepo.findOneById(dto.getId());
+//      bi.set.....
 
       // TDO  merge vs update ?
    }

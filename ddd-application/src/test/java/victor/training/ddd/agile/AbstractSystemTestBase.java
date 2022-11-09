@@ -16,7 +16,7 @@ public abstract class AbstractSystemTestBase {
    @Autowired
    BacklogItemApplicationService backlogItems;
    @Autowired
-   SprintApplicationService sprints;
+   SprintApplicationServiceApi sprints;
    @Autowired
    ReleaseApplicationService releases;
    @MockBean
