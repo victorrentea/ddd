@@ -27,9 +27,25 @@ public class Sprint {
    private int iteration;
    @ManyToOne
    private Product product;
+   //TODO remove the prev line and replace with Long productId; //! NOTE: keep the FK in DB, but restrict the object model from traversing that link
+      // => consequence
    private LocalDate startDate; // is NOT null after the sprint was started
    private LocalDate plannedEndDate;
    private LocalDate endDate;
+   
+   // why should Aggregates NOT reference each other by object links (like at line 29) -> for decoupling
+   public void innocentMethod() {
+//      product.setName("rippling changes out of my 'bubble' of consistency -> to a different aggregate");
+//      product.getTeamMailingList() // this will be replaced with some logic in an *Service
+            // productREpo.findById(sprint.getProductId()); ==> +1 SELECT => slight perf overhead +1 network call.
+      // - [ddd] it's bad practice to bring Repo of another Aggreg inside this agg. this practice is only for my childrenRepo
+      // - [clean code] don't bring the Product as arg if you only need the String mailingList;
+
+      // "Big Ball of Mud" - Monoliths that never saw the light of refactoring, people kept patching fixes over fixes for 5+ years.
+
+      // TOO MUCH COUPLING! kills an app.
+
+   }
 
    public void addItem(BacklogItem backlogItem) {
       items.add(backlogItem);

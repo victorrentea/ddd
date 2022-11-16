@@ -137,6 +137,7 @@ public class BacklogItem {
    @Enumerated(STRING)
    private Status status = Status.CREATED;
 
+  // TODO remove the bidirectional link
    @ManyToOne
    private Sprint sprint; // ⚠ not NULL when assigned to a sprint
    private Integer fpEstimation; // ⚠ not NULL when assigned to a sprint
