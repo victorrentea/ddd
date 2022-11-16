@@ -15,7 +15,6 @@ import victor.training.ddd.agile.repo.BacklogItemRepo;
 import victor.training.ddd.agile.repo.ProductRepo;
 import victor.training.ddd.agile.repo.SprintRepo;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,23 +44,14 @@ public class SprintService {
     }
 
     @PostMapping("sprint/{sprintId}/start")
+    @Transactional
     public void startSprint(@PathVariable long sprintId) {
-        Sprint sprint = sprintRepo.findOneById(sprintId);
-        if (sprint.getStatus() != Status.CREATED) {
-            throw new IllegalStateException();
-        }
-        sprint.setStartDate(LocalDate.now());
-        sprint.setStatus(Status.STARTED);
+        sprintRepo.findOneById(sprintId).start();
     }
 
     @PostMapping("sprint/{sprintId}/end")
     public void endSprint(@PathVariable long sprintId) {
-        Sprint sprint = sprintRepo.findOneById(sprintId);
-        if (sprint.getStatus() != Status.STARTED) {
-            throw new IllegalStateException();
-        }
-        sprint.setEndDate(LocalDate.now());
-        sprint.setStatus(Status.FINISHED);
+        sprintRepo.findOneById(sprintId).end();
     }
 
     /*****************************  ITEMS IN SPRINT *******************************************/
