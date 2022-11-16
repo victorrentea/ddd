@@ -38,8 +38,10 @@ public class BacklogItem {
 
   // TODO remove the bidirectional link
   @ManyToOne
-  private Sprint sprint; // ⚠ not NULL after it's assigned to a sprint
-  private Integer fpEstimation; // ⚠ not NULL when assigned to a sprint
+  private Sprint sprint; // ⚠ not NULL after it's assigned to a sprint < dissapear bidirectional dep -> KILL
+  private Integer fpEstimation; // ⚠ not NULL when assigned to a sprint <- required field to the Sprint Item
+    // the smaller domain objects you have, the more constraints you can implement in them
+//  ==> domain breakdown => more words "Sprint Item" in the discussion with Biz, spec, req, .feature
 
   private int hoursConsumed;
 
