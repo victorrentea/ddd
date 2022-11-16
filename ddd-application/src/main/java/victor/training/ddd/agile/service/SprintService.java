@@ -97,15 +97,7 @@ public class SprintService {
     public void completeItem(@PathVariable long sprintId, @PathVariable long backlogId) {
         Sprint sprint = sprintRepo.findOneById(sprintId);
         sprint.completeItem(backlogId);
-//        sprintRepo.save(sprint);
-
-        // if the last item in the sprint is completed, send a contratulations email to the team if they finished >=1 day earlier
-//        if (sprint.allItemsAreFinished()) {
-//            System.out.println("Sending CONGRATS email to team of product " + sprint.getProduct().getCode() +
-//                               ": You finished the items earlier. You have time to refactor! (OMG!)");
-//            List<String> emails = mailingListClient.retrieveEmails(sprint.getProduct().getTeamMailingList());
-//            emailService.sendCongratsEmail(emails);
-//        }
+        sprintRepo.save(sprint); // !! Mandatory to publish accumuklated events in the agg.
     }
     //overengineering
     class CompleteItemParams { // 'Command'
