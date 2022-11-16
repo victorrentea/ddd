@@ -71,22 +71,18 @@ public class SprintService {
 
     @PostMapping("sprint/{sprintId}/item/{backlogId}/start")
     public void startItem(@PathVariable long sprintId, @PathVariable long backlogId) {
-        BacklogItem backlogItem = backlogItemRepo.findOneById(backlogId);
-        checkSprintMatchesAndStarted(sprintId, backlogItem);
-        if (backlogItem.getStatus() != BacklogItem.Status.CREATED) {
-            throw new IllegalStateException("Item already started");
-        }
-        backlogItem.setStatus(BacklogItem.Status.STARTED);
+        sprintRepo.findOneById(sprintId).startItem(backlogId/*, backlogItemRepo*/);
+
+//        BacklogItem backlogItem = backlogItemRepo.findOneById(backlogId);
+//        checkSprintMatchesAndStarted(sprintId, backlogItem);
+//
+//        backlogItem.start();
     }
 
     @PostMapping("sprint/{sprintId}/item/{backlogId}/complete")
     public void completeItem(@PathVariable long sprintId, @PathVariable long backlogId) {
-        BacklogItem backlogItem = backlogItemRepo.findOneById(backlogId);
-        checkSprintMatchesAndStarted(sprintId, backlogItem);
-        if (backlogItem.getStatus() != BacklogItem.Status.STARTED) {
-            throw new IllegalStateException("Cannot complete an Item before starting it");
-        }
-        backlogItem.setStatus(BacklogItem.Status.DONE);
+        sprintRepo.findOneById(sprintId).completeItem(backlogId);
+
         Sprint sprint = sprintRepo.findOneById(sprintId);
         if (sprint.getItems().stream().allMatch(item -> item.getStatus() == BacklogItem.Status.DONE)) {
             System.out.println("Sending CONGRATS email to team of product " + sprint.getProduct().getCode() + ": They finished the items earlier. They have time to refactor! (OMG!)");
@@ -95,11 +91,11 @@ public class SprintService {
         }
     }
 
-    private void checkSprintMatchesAndStarted(long id, BacklogItem backlogItem) {
-        if (!backlogItem.getSprint().getId().equals(id)) {
+    private void checkSprintMatchesAndStarted(long sprintId, BacklogItem backlogItem) {
+        if (!backlogItem.getSprint().getId().equals(sprintId)) {
             throw new IllegalArgumentException("item not in sprint");
         }
-        Sprint sprint = sprintRepo.findOneById(id);
+        Sprint sprint = sprintRepo.findOneById(sprintId);
         if (sprint.getStatus() != Status.STARTED) {
             throw new IllegalStateException("Sprint not started");
         }

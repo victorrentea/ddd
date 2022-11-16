@@ -24,7 +24,28 @@ public class BacklogItem {
    private String title;
    private String description;
 
-   public enum Status {
+  public void complete() {
+      if (getStatus() != Status.STARTED) {
+          throw new IllegalStateException("Cannot complete an Item before starting it");
+      }
+      setStatus(Status.DONE);
+  }
+
+  public void start() {
+//    if (sprint.getStatus() != Sprint.Status.STARTED) {
+//      throw new IllegalStateException();
+//    }
+      if (getStatus() != Status.CREATED) {
+          throw new IllegalStateException("Item already started");
+      }
+      setStatus(Status.STARTED);
+  }
+
+  public boolean isDone() {
+    return status == Status.DONE;
+  }
+
+  public enum Status {
       CREATED,
       STARTED,
       DONE
