@@ -18,9 +18,7 @@ public class ProductService {
         if (productRepo.existsByCode(dto.getCode())) {
             throw new IllegalArgumentException("Code already defined");
         }
-        Product product = new Product()
-                .setCode(dto.getCode())
-                .setName(dto.getName())
+        Product product = new Product(dto.getCode(), dto.getName())
                 .setTeamMailingList(dto.getMailingList())
                 .setOwnerEmail(dto.getPoEmail())
                 .setOwnerName(dto.getPoName())

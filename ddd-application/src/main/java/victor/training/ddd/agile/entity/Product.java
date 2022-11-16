@@ -1,8 +1,11 @@
 package victor.training.ddd.agile.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 // consider encapsulating changes
@@ -13,7 +16,13 @@ public class Product {
    private Long id;
    private int currentIteration = 0;
    private int currentVersion = 0;
+   @NotNull
+   @NotBlank
+   @Column(nullable = false)
    private String code;
+   @NotNull
+   @NotBlank
+   @Column(nullable = false)
    private String name;
 
    // TODO extract in an ProductOwner value object @Embeddable (no setters)
@@ -31,6 +40,12 @@ public class Product {
 
    @OneToMany(mappedBy = "product")
    private List<Release> releases = new ArrayList<>();
+
+   public Product(String code, String name) {
+      // more strict than annotations: enforced even in tests
+      this.code = Objects.requireNonNull(code);
+      this.name = Objects.requireNonNull(name);
+   }
 
    public int incrementAndGetIteration() {
       currentIteration++;
@@ -101,13 +116,9 @@ public class Product {
       return this;
    }
 
-   public Product setCode(String code) {
-      this.code = code;
-      return this;
-   }
 
    public Product setName(String name) {
-      this.name = name;
+      this.name = Objects.requireNonNull(name);
       return this;
    }
 
