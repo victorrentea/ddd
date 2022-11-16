@@ -2,8 +2,11 @@ package victor.training.ddd.agile.entity;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.data.domain.AbstractAggregateRoot;
 import victor.training.ddd.agile.common.DDD.AggregateRoot;
+import victor.training.ddd.agile.common.DomainEvents;
 import victor.training.ddd.agile.repo.BacklogItemRepo;
+import victor.training.ddd.agile.service.SprintCompletedEvent;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -16,7 +19,7 @@ import static javax.persistence.EnumType.STRING;
 @AggregateRoot // this entity has got the added responsibility to look after all the :child entities inside it that it refers.
 @Entity
 //@Configurable // dark magic of spring; dont: because this opens the door to inject anything inan aggregate
-public class Sprint {
+public class Sprint extends AbstractAggregateRoot<Sprint> {
 //   @Autowired
 //   private BacklogItemRepo backlogItemRepo;
 
@@ -32,8 +35,12 @@ public class Sprint {
    private LocalDate startDate; // is NOT null after the sprint was started
    private LocalDate plannedEndDate;
    private LocalDate endDate;
-   
-   // why should Aggregates NOT reference each other by object links (like at line 29) -> for decoupling
+
+  public boolean allItemsAreFinished() {
+      return getItems().stream().allMatch(BacklogItem::isDone);
+  }
+
+  // why should Aggregates NOT reference each other by object links (like at line 29) -> for decoupling
    public void innocentMethod() {
 //      product.setName("rippling changes out of my 'bubble' of consistency -> to a different aggregate");
 //      product.getTeamMailingList() // this will be replaced with some logic in an *Service
@@ -102,6 +109,17 @@ public class Sprint {
          throw new IllegalStateException();
       }
       item(itemId).complete();
+
+     if (allItemsAreFinished()) {
+       // solution #1 static hack
+//       DomainEvents.publishEvent(new SprintCompletedEvent(id));
+       // solution #2 magical: When you repo.save() hibernate
+       // via some prepersist/perupdate hooks tells Spring to publish
+       // the events accumultaed in a transient field of the AbstractAggregateRoot
+       //   !!!!! you have to do Save
+       registerEvent(new SprintCompletedEvent(id));
+
+     }
 //      if (items.stream().allMatch(BacklogItem::isDone)) {
 //         status = Status.FINISHED;
 //      }

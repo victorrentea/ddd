@@ -1,7 +1,11 @@
 package victor.training.ddd.agile.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.event.EventListener;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.web.bind.annotation.*;
 import victor.training.ddd.agile.dto.AddBacklogItemRequest;
 import victor.training.ddd.agile.dto.CreateSprintRequest;
@@ -89,15 +93,37 @@ public class SprintService {
     }
 
     @PostMapping("sprint/{sprintId}/item/{backlogId}/complete")
+//    @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public void completeItem(@PathVariable long sprintId, @PathVariable long backlogId) {
-        sprintRepo.findOneById(sprintId).completeItem(backlogId);
-
         Sprint sprint = sprintRepo.findOneById(sprintId);
-        if (sprint.getItems().stream().allMatch(item -> item.getStatus() == BacklogItem.Status.DONE)) {
-            System.out.println("Sending CONGRATS email to team of product " + sprint.getProduct().getCode() + ": They finished the items earlier. They have time to refactor! (OMG!)");
-            List<String> emails = mailingListClient.retrieveEmails(sprint.getProduct().getTeamMailingList());
-            emailService.sendCongratsEmail(emails);
-        }
+        sprint.completeItem(backlogId);
+//        sprintRepo.save(sprint);
+
+        // if the last item in the sprint is completed, send a contratulations email to the team if they finished >=1 day earlier
+//        if (sprint.allItemsAreFinished()) {
+//            System.out.println("Sending CONGRATS email to team of product " + sprint.getProduct().getCode() +
+//                               ": You finished the items earlier. You have time to refactor! (OMG!)");
+//            List<String> emails = mailingListClient.retrieveEmails(sprint.getProduct().getTeamMailingList());
+//            emailService.sendCongratsEmail(emails);
+//        }
+    }
+    //overengineering
+    class CompleteItemParams { // 'Command'
+        //emailService, mailingListClient, product,
+    }
+    // TODO move in a Notification Service [outisde of the domain]
+    @EventListener
+    // CAREFUL! if the event is not thrown from a @Transaction,
+    // solution: @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void onSprintCompleted(SprintCompletedEvent event) {
+        Sprint sprint = sprintRepo.findOneById(event.getSprintId());
+        //returns EXACTLY the changed object that threw the event IFF you are in the same @Transaction
+//        Product product = productRepo.findOneById(sprint.getProductId());
+        Product product = sprint.getProduct();
+        System.out.println("Sending CONGRATS email to team of product " + product.getCode() +
+                           ": You finished the items earlier. You have time to refactor! (OMG!)");
+        List<String> emails = mailingListClient.retrieveEmails(product.getTeamMailingList());
+        emailService.sendCongratsEmail(emails);
     }
 
     private void checkSprintMatchesAndStarted(long sprintId, BacklogItem backlogItem) {
