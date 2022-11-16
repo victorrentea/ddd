@@ -35,6 +35,7 @@ public class Sprint {
    // Instead of having 10 null fields in the first 2-3 statuses, maybe create NEW dedicated Entities if/when you get to the later stage
    // PlacedOrder, ShippedOrder, ReturnedOrder vs a HUGE Order class with 12 null attributes at creation,
 
+   // If it's not clear who's the owner between X <-> Y, then => 2 aggregates.
 
    public enum Status {
       CREATED,
