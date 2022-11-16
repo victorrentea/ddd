@@ -63,8 +63,17 @@ public class SprintService {
         if (sprint.getStatus() != Status.CREATED) {
             throw new IllegalStateException("Can only add items to Sprint before it starts");
         }
-        backlogItem.setSprint(sprint);
-        sprint.getItems().add(backlogItem);
+
+        // risk of bidirectional JPA link ? WHY SHOULD YOU AVOID IT IN GENERAL (not only in DDD)
+        // - cycles at serialization
+        // - who is the owner - not clear?
+        // - tech problem: you forget to set one of the sides
+
+//        backlogItem.setSprint(sprint); // PERSISTS THE FK in DB
+//        sprint.getItems().add(backlogItem); // keeps the Object model in sync.
+        // if you really insist on using bidirectional link
+        sprint.addItem(backlogItem);
+
         backlogItem.setFpEstimation(request.getFpEstimation());
         return backlogItem.getId(); // Hint: if you have JPA issues getting the new ID, consider using UUID instead of sequence
     }

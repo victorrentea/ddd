@@ -8,6 +8,7 @@ import victor.training.ddd.agile.repo.BacklogItemRepo;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static javax.persistence.EnumType.STRING;
@@ -29,6 +30,11 @@ public class Sprint {
    private LocalDate startDate; // is NOT null after the sprint was started
    private LocalDate plannedEndDate;
    private LocalDate endDate;
+
+   public void addItem(BacklogItem backlogItem) {
+      items.add(backlogItem);
+      backlogItem.setSprint(this);
+   }
 
 
    // fields that only make sense after a certain state = BAD and confusing
@@ -134,7 +140,7 @@ public class Sprint {
    }
 
    public List<BacklogItem> getItems() {
-      return this.items;
+      return Collections.unmodifiableList(this.items);
    }
 
    public Sprint setId(Long id) {
