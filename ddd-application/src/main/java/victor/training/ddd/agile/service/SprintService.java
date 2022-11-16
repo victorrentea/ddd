@@ -2,10 +2,7 @@ package victor.training.ddd.agile.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.event.TransactionPhase;
-import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.web.bind.annotation.*;
 import victor.training.ddd.agile.dto.AddBacklogItemRequest;
 import victor.training.ddd.agile.dto.CreateSprintRequest;
@@ -96,7 +93,14 @@ public class SprintService {
 //    @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public void completeItem(@PathVariable long sprintId, @PathVariable long backlogId) {
         Sprint sprint = sprintRepo.findOneById(sprintId);
+
         sprint.completeItem(backlogId);
+
+        //
+//        if (sprint.allItemsAreFinished()) {
+//            onSprintCompleted(sprintId);
+//        }
+
         sprintRepo.save(sprint); // !! Mandatory to publish accumuklated events in the agg.
     }
     //overengineering
