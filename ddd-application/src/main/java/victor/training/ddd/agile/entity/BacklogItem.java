@@ -1,7 +1,6 @@
 package victor.training.ddd.agile.entity;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -11,37 +10,64 @@ import static javax.persistence.EnumType.STRING;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @Entity
 public class BacklogItem {
-   @Id
-   @GeneratedValue
-   private Long id;
-   @ManyToOne
-   private Product product;
+  @Id
+  @GeneratedValue
+  private Long id;
+  @ManyToOne
+  private Product product; // NO TODO replace with numeric productId Long
 
-@NotNull
-   private String title;
-   private String description;
+  @NotNull
+  private String title;
+  private String description;
+
+  public enum Status {
+    CREATED,
+    STARTED,
+    DONE
+  }
+  @Version
+  private Long version;
+
+  // TODO est 4h : move the fields below into a SprintItem class, that will have to also keep a backlogId FK to the original item
+  // TODO CR: (edit the test) we have to be able to add the same item in two sprints!
+  // the fields below this line only make sense after the item becomes part of a Sprint. -------------
+  @Enumerated(STRING)
+  private Status status = Status.CREATED;
+
+  // TODO remove the bidirectional link
+  @ManyToOne
+  private Sprint sprint; // ⚠ not NULL after it's assigned to a sprint
+  private Integer fpEstimation; // ⚠ not NULL when assigned to a sprint
+
+  private int hoursConsumed;
+
+
+
+  public void addHours(int hours) {
+    hoursConsumed += hours;
+  }
+
 
   public BacklogItem() {
   }
 
   public void complete() {
-      if (getStatus() != Status.STARTED) {
-          throw new IllegalStateException("Cannot complete an Item before starting it");
-      }
-      setStatus(Status.DONE);
+    if (getStatus() != Status.STARTED) {
+      throw new IllegalStateException("Cannot complete an Item before starting it");
+    }
+    setStatus(Status.DONE);
   }
 
   public void start() {
-//    if (sprint.getStatus() != Sprint.Status.STARTED) {
-//      throw new IllegalStateException();
-//    }
-      if (getStatus() != Status.CREATED) {
-          throw new IllegalStateException("Item already started");
-      }
-      setStatus(Status.STARTED);
+    //    if (sprint.getStatus() != Sprint.Status.STARTED) {
+    //      throw new IllegalStateException();
+    //    }
+    if (getStatus() != Status.CREATED) {
+      throw new IllegalStateException("Item already started");
+    }
+    setStatus(Status.STARTED);
   }
 
   public boolean isDone() {
@@ -129,26 +155,5 @@ public class BacklogItem {
     return this;
   }
 
-  public enum Status {
-      CREATED,
-      STARTED,
-      DONE
-   }
-   @Enumerated(STRING)
-   private Status status = Status.CREATED;
-
-  // TODO remove the bidirectional link
-   @ManyToOne
-   private Sprint sprint; // ⚠ not NULL when assigned to a sprint
-   private Integer fpEstimation; // ⚠ not NULL when assigned to a sprint
-
-   private int hoursConsumed;
-
-   @Version
-   private Long version;
-
-   public void addHours(int hours) {
-      hoursConsumed += hours;
-   }
 
 }
