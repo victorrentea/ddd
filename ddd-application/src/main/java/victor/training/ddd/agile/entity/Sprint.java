@@ -3,6 +3,8 @@ package victor.training.ddd.agile.entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import victor.training.ddd.agile.common.DomainEvents;
+import victor.training.ddd.agile.event.SprintCompletedEvent;
 import victor.training.ddd.agile.service.EmailService;
 import victor.training.ddd.agile.service.MailingListClient;
 
@@ -52,19 +54,15 @@ public class Sprint {
    }
 
 
-   public void complete(long backlogId,/*, BacklogItemRepo omg*/MailingListClient mailingListClient, EmailService emailService) {
+   public void complete(long backlogId/*, BacklogItemRepo omg*/) {
       if (status != Status.STARTED) {
          throw new IllegalStateException();
       }
       itemById(backlogId).complete();
 
-      // option 3: pass services as arg to methods of agg
+      // option 3: pass services as arg to methods of agg < weird.
       if (allItemsAreDone()) {
-         System.out.println("Sending CONGRATS email to team of product " +
-                            getProduct().getCode() + ": They finished the items earlier." +
-                            " They have time to refactor! (OMG!)");
-         List<String> emails = mailingListClient.retrieveEmails(getProduct().getTeamMailingList());
-         emailService.sendCongratsEmail(emails);
+         DomainEvents.publishEvent(new SprintCompletedEvent(id));
       }
    }
 

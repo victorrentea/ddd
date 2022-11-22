@@ -96,14 +96,26 @@ public class SprintService {
 
     @PostMapping("sprint/{sprintId}/item/{backlogId}/complete")
     public void completeItem(@PathVariable long sprintId, @PathVariable long backlogId) {
-        Sprint sprint = sprintRepo.findOneById(sprintId);
-        sprint.complete(backlogId, mailingListClient, emailService);
+        sprintRepo.findOneById(sprintId)
+                .complete(backlogId);
 
         // Level1: orchestrate external side effects or changes to other aggregates FROM A SERVICE
             // this is not enough OOP. I can PUSH more logic inside the Model !!!!
 
+        // Observer pattern
+        // Level2: Extreme-Extreme DDD : flow control via events, not orchestration from services.
+        // + extendability : easily add one more listener for the same signal OCP
+        // - hard to trace/ navigate code
+        // + you can judge each Agg in "isolation"
 
+        // Usage
+        // 1) Event Storming = "100 orange postits on wall"
+        // DDD-inspired analysys technique that starts asking first:
+        // what are the interesting EVENTS in my system
 
+        // whose goal is to be a middle ground between BIZ and DEV. Meeting in a safe new env. no tech terms.
+
+        // 2) Event Sourcing (AXON): persist those events somewhere so that you have a trace of 100% that happened
     }
 
     private void checkSprintMatchesAndStarted(long sprintId, BacklogItem backlogItem) {
