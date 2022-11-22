@@ -105,11 +105,11 @@ public class SprintService {
         }
     }
 
-    private void checkSprintMatchesAndStarted(long id, BacklogItem backlogItem) {
-        if (!backlogItem.getSprint().getId().equals(id)) {
+    private void checkSprintMatchesAndStarted(long sprintId, BacklogItem backlogItem) {
+        if (!backlogItem.getSprint().getId().equals(sprintId)) {
             throw new IllegalArgumentException("item not in sprint");
         }
-        Sprint sprint = sprintRepo.findOneById(id);
+        Sprint sprint = sprintRepo.findOneById(sprintId);
         if (sprint.getStatus() != Status.STARTED) {
             throw new IllegalStateException("Sprint not started");
         }
