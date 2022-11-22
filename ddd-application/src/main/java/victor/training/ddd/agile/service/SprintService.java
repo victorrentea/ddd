@@ -79,37 +79,38 @@ public class SprintService {
         return backlogItem.getId(); // Hint: if you have JPA issues getting the new ID, consider using UUID instead of sequence
     }
 
+
+
+
     @PostMapping("sprint/{sprintId}/item/{backlogId}/start")
     public void startItem(@PathVariable long sprintId, @PathVariable long backlogId) {
-        BacklogItem backlogItem = backlogItemRepo.findOneById(backlogId);
-        checkSprintMatchesAndStarted(sprintId, backlogItem);
-        if (backlogItem.getStatus() != BacklogItem.Status.CREATED) {
-            throw new IllegalStateException("Item already started");
-        }
-        backlogItem.setStatus(BacklogItem.Status.STARTED);
+//        BacklogItem backlogItem = backlogItemRepo.findOneById(backlogId);
+//        checkSprintMatchesAndStarted(sprintId, backlogItem);
+//        backlogItem.start();
+
+        // agg root
+        sprintRepo.findOneById(sprintId).startItem(backlogId);
     }
+
+
 
     @PostMapping("sprint/{sprintId}/item/{backlogId}/complete")
     public void completeItem(@PathVariable long sprintId, @PathVariable long backlogId) {
-        BacklogItem backlogItem = backlogItemRepo.findOneById(backlogId);
-        checkSprintMatchesAndStarted(sprintId, backlogItem);
-        if (backlogItem.getStatus() != BacklogItem.Status.STARTED) {
-            throw new IllegalStateException("Cannot complete an Item before starting it");
-        }
-        backlogItem.setStatus(BacklogItem.Status.DONE);
         Sprint sprint = sprintRepo.findOneById(sprintId);
-        if (sprint.getItems().stream().allMatch(item -> item.getStatus() == BacklogItem.Status.DONE)) {
-            System.out.println("Sending CONGRATS email to team of product " + sprint.getProduct().getCode() + ": They finished the items earlier. They have time to refactor! (OMG!)");
-            List<String> emails = mailingListClient.retrieveEmails(sprint.getProduct().getTeamMailingList());
-            emailService.sendCongratsEmail(emails);
-        }
+        sprint.complete(backlogId, mailingListClient, emailService);
+
+        // Level1: orchestrate external side effects or changes to other aggregates FROM A SERVICE
+            // this is not enough OOP. I can PUSH more logic inside the Model !!!!
+
+
+
     }
 
-    private void checkSprintMatchesAndStarted(long id, BacklogItem backlogItem) {
-        if (!backlogItem.getSprint().getId().equals(id)) {
+    private void checkSprintMatchesAndStarted(long sprintId, BacklogItem backlogItem) {
+        if (!backlogItem.getSprint().getId().equals(sprintId)) {
             throw new IllegalArgumentException("item not in sprint");
         }
-        Sprint sprint = sprintRepo.findOneById(id);
+        Sprint sprint = sprintRepo.findOneById(sprintId);
         if (sprint.getStatus() != Status.STARTED) {
             throw new IllegalStateException("Sprint not started");
         }
@@ -120,9 +121,8 @@ public class SprintService {
     public void logHours(@PathVariable long sprintId, @RequestBody LogHoursRequest request) {
         BacklogItem backlogItem = backlogItemRepo.findOneById(request.getBacklogId());
         checkSprintMatchesAndStarted(sprintId, backlogItem);
-        if (backlogItem.getStatus() != BacklogItem.Status.STARTED) {
-            throw new IllegalStateException("Item not started");
-        }
+
+
         backlogItem.addHours(request.getHours());
     }
 
@@ -135,7 +135,7 @@ public class SprintService {
             throw new IllegalStateException();
         }
         List<BacklogItem> doneItems = sprint.getItems().stream()
-                .filter(item -> item.getStatus() == BacklogItem.Status.DONE)
+                .filter(item -> item.isDone())
                 .collect(Collectors.toList());
         SprintMetrics dto = new SprintMetrics();
         dto.setConsumedHours(sprint.getItems().stream().mapToInt(BacklogItem::getHoursConsumed).sum());

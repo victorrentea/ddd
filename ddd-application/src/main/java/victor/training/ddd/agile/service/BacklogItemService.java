@@ -19,8 +19,8 @@ public class BacklogItemService {
    @Transactional
    public Long createBacklogItem(@RequestBody BacklogItemDto dto) {
       Product product = productRepo.findOneById(dto.getProductId());
-      BacklogItem backlogItem = new BacklogItem()
-          .setProduct(product)
+      BacklogItem backlogItem = new BacklogItem(/*product*/)
+          .setProduct(product) // TODO (for the reader): take via ctor + try kill the setter
           .setDescription(dto.getDescription())
           .setTitle(dto.getTitle());
       return backlogItemRepo.save(backlogItem).getId();
